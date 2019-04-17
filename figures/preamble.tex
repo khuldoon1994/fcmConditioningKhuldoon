@@ -1,0 +1,111 @@
+
+%\pagestyle{empty}
+
+\usepackage[table]{xcolor}
+\usepackage{graphicx}				%%..enhanced postscript figures...............%%
+\usepackage{url}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{here}
+\usepackage{lscape}
+\usepackage{siunitx}
+\usepackage{tabularx}
+%\usepackage[paperwidth=21cm, paperheight=20cm]{geometry}
+
+
+%\usepackage[T1]{fontenc}
+%\usepackage{lxfonts}
+\usepackage{cmbright}
+%\usepackage[math]{iwona}
+%\usepackage[T1]{fontenc}
+
+\usepackage[sfdefault,condensed]{cabin}
+%\usepackage[T1]{fontenc}
+
+
+\newcommand{\mr}{\mathrm}
+\newcommand{\bs}{\boldsymbol}
+\newcommand{\trans}{\mathrm{T}}
+
+\newcommand{\velF}{\boldsymbol{u}}
+\newcommand{\normF}{\boldsymbol{n}^\mathrm{F}}
+
+\newcommand{\posR}{\boldsymbol{X}}
+\newcommand{\posC}{\boldsymbol{x}}
+\newcommand{\dispS}{\boldsymbol{d}}
+\newcommand{\velS}{\dot{\boldsymbol{d}}}
+\newcommand{\accS}{\ddot{\boldsymbol{d}}}
+\newcommand{\defGrad}{\boldsymbol{F}}
+\newcommand{\identity}{\boldsymbol{I}}
+\newcommand{\tracS}{\boldsymbol{t}}
+\newcommand{\firstPK}{\boldsymbol{P}}
+\newcommand{\secondPK}{\boldsymbol{S}}
+\newcommand{\GLStrains}{\boldsymbol{E}}
+\newcommand{\rightCG}{\boldsymbol{C}}
+
+\newcommand{\WSS}{\tau_\mathrm{w}}
+
+
+\newcommand{\cq}{\boldsymbol{d}}
+\newcommand{\res}{\boldsymbol{r}}
+
+\newcommand{\rFour}{\mathit{IV}}
+\newcommand{\rSix}{\mathit{VI}}
+
+
+\newcommand{\stiffnessMatrix}
+{
+$$
+K^e 
+= 
+\int_{\Omega^\mr{e}} 
+\boldsymbol{B}^\mr{T} \, \boldsymbol{C} \, \boldsymbol{B} \, \mathrm{det}(\boldsymbol{J})\, 
+\mathrm{d}\Omega^\mr{e}
++
+\bs{K}^\mr{e}_\mr{p}
+$$
+}
+
+\newcommand{\loadVector}
+{
+$$
+F^e 
+= 
+\int_{\Omega^\mr{e}} \bs{N}^\mr{T} \, \bs{b} \, \mr{det}(\bs{J}) \, \mr{d}\Omega^{\mr{e}}
++
+\bs{F}^\mr{e}_\mr{p}
+$$
+}
+
+\newcommand{\integrals}
+{
+$$
+\int_{\Omega^\mr{e}} f(\bs{x}) \, \mr{d}\Omega^\mr{e}
+= 
+\int_{-1}^{1} \int_{-1}^{1} f(\bs{x}(\boldsymbol{r}_i))\, \mr{d}r\mr{d}s 
+\approx
+\sum_{i=1}^{N_\mr{qp}} w_i f(\bs{r}_i)
+$$
+}
+
+\newcommand{\allKe}{$\lbrace \bs{K}^{\mr{e}}_{1}, \bs{K}^{\mr{e}}_{2}, \ldots, \bs{K}^{\mr{e}}_{N_\mr{e}} \rbrace$
+}
+
+\newcommand{\allFe}{$\lbrace \bs{F}^{\mr{e}}_{1}, \bs{F}^{\mr{e}}_{2}, \ldots, \bs{F}^{\mr{e}}_{N_\mr{e}} \rbrace$
+}
+
+\newcommand{\allUe}{$\lbrace \bs{U}^{\mr{e}}_{1}, \bs{U}^{\mr{e}}_{2}, \ldots, \bs{U}^{\mr{e}}_{N_\mr{e}} \rbrace$
+}
+
+\newcommand{\allLe}{$\lbrace \bs{L}^{\mr{e}}_{1}, \bs{L}^{\mr{e}}_{2}, \ldots, \bs{L}^{\mr{e}}_{N_\mr{e}} \rbrace$
+}
+
+\newcommand{\allLse}{$\lbrace \bs{L}^{\mr{se}}_{1}, \bs{L}^{\mr{se}}_{2}, \ldots, \bs{L}^{\mr{se}}_{N_\mr{se}} \rbrace$
+}
+
+
+\newcommand{\Ne}{$\left[ N^{SE}_{1}, N^{SE}_{2}, \ldots, N^{SE}_{n_E} \right]$
+}
+
