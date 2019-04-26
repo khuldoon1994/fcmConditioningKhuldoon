@@ -208,5 +208,5 @@ pause();
 % Animation
 figure(3);
 postGridCells = goCreatePostGrid( problem, 5 );
-goAnimatePostGridSolution( problem, allUeDynamic, postGridCells, @eoEvaluateSolution, @eoEvaluateSolution, 3);
+goPlotAnimatedPostGridSolution( problem, allUeDynamic, postGridCells, @eoEvaluateSolution, @eoEvaluateSolution, 3);
 
