@@ -27,6 +27,7 @@ function [ solutionQuantities ] = goSolveLinearDynamics(problem, solutionPointer
 
     
     timeIntegration = problem.dynamics.timeIntegration;
+    dynamicSolver = problem.dynamics.dynamicSolver;
     [ nTotalDof ] = goNumberOfDof(problem);
     
     % set initial values to zero if not defined
@@ -58,12 +59,7 @@ function [ solutionQuantities ] = goSolveLinearDynamics(problem, solutionPointer
     globalMatrices = {M, D, K, F};
     globalInitialValues = {U0Dynamic, V0Dynamic, A0Dynamic};
     
-    if(strcmp(timeIntegration, 'Central Difference'))
-        solutionQuantities = cdmDynamicSolver(problem, solutionPointer, globalMatrices, globalInitialValues);
-    elseif(strcmp(timeIntegration, 'Newmark Integration'))
-        solutionQuantities = newmarkDynamicSolver(problem, solutionPointer, globalMatrices, globalInitialValues);
-    else
-        error('timeIntegration is not correct.');
-    end
+    % solve problem using dynamicSolver
+    solutionQuantities = dynamicSolver(problem, solutionPointer, globalMatrices, globalInitialValues);
 
 end
