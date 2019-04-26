@@ -1,4 +1,4 @@
-function [ values ] = moEvaluateLegendrePolynomials( order, r )
+function [ values ] = evaluateLegendrePolynomials( order, r )
 %EVALUATELEGENDREPOLYNOMIALS Summary of this function goes here
 %   Detailed erplanation goes here
 

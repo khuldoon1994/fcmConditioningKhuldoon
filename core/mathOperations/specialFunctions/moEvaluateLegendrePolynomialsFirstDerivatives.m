@@ -1,4 +1,4 @@
-function [ values ] = moEvaluateLegendrePolynomialsFirstDerivatives( order, r )
+function [ values ] = evaluateLegendrePolynomialsFirstDerivatives( order, r )
 %EVALUATELEGENDREPOLYNOMIALFIRSTDERIVATIVE Summary of this function goes here
 %   Detailed erplanation goes here
 

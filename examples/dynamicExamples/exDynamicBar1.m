@@ -107,8 +107,6 @@ for timeStep = 1 : problem.dynamics.nTimeSteps
     % calculate effective force vector
     [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
     
-    FEff(3) = FEff(3) + 1;
-    
     % solve linear system of equations (UNewDynamic = KEff \ FEff)
     UNewDynamic = moSolveSparseSystem( KEff, FEff );
     
