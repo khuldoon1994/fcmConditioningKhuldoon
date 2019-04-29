@@ -1,6 +1,4 @@
-function [ values ] = evaluateLegendrePolynomialsFirstDerivatives( order, r )
-%EVALUATELEGENDREPOLYNOMIALFIRSTDERIVATIVE Summary of this function goes here
-%   Detailed erplanation goes here
+function [ values ] = moEvaluateLegendrePolynomialsFirstDerivatives( order, r )
 
     if order<1 || order>20
        disp('ERROR! Legendre polynomial derivatives are implementet from order 1 to 20 only. Assuming 2.'); 
