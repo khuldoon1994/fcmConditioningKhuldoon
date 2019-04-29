@@ -23,35 +23,32 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name = 'dynamicBar1D (Central Difference Method)';
 problem.dimension = 1;
 
-% volume load
-f = @(x) 0;
-
 % static parameters
-% static parameters
-E = 70e9;
-A = 0.0006;
-L = 20.0;
+E = 1.0;
+A = 1.0;
+L = 1.0;
+f = @(x)( x/L );
 
 % dynamic parameters
-rho = 2700/A;              % mass density
-alpha = 0.0;               % damping coefficient
+rho = 1.0;              % mass density
+alpha = 1.0;            % damping coefficient
 kappa = rho * alpha;
 
-p = 1;
-n = 200;
+p = 5;
+n = 2;
 
 tStart = 0;
-tStop = 5;
+tStop = 10;
 nTimeSteps = 401;
 
-% create problem
 problem = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, tStart, tStop, nTimeSteps);
 
-% initialize dynamic problem
-problem = poInitializeDynamicProblem(problem);
+indexOfLastNode = n+1;
 
 
 %% dynamic analysis
+displacementAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
+
 % create system matrices
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 
@@ -63,42 +60,29 @@ F = goAssembleVector(allFe, allLe);
 
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);
-UDynamic = zeros(nTotalDof, 1);
-VDynamic = zeros(nTotalDof, 1);
+U0Dynamic = zeros(nTotalDof, 1);
+V0Dynamic = zeros(nTotalDof, 1);
 
 % compute initial acceleration
-[ ADynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, UDynamic, VDynamic);
+[ A0Dynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, U0Dynamic, V0Dynamic);
 
 % initialize values
-[ UOldDynamic, UDynamic ] = cdmInitialize(problem, UDynamic, VDynamic, ADynamic);
+[ UOldDynamic, UDynamic ] = cdmInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
 
 % create effective system matrices
 [ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K);
 
-% post processing stuff
-indexOfLastNode = n+1;
-displacementAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
-velocityAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
-displacementAtAllNodes = zeros(indexOfLastNode,problem.dynamics.nTimeSteps);
-% time loop
 for timeStep = 1 : problem.dynamics.nTimeSteps
     
-    disp(['time step ', num2str(timeStep)]);
-    fflush(stdout);
-    
     % extract necessary quantities from solution
-    displacementAtLastNode(timeStep) = UDynamic(indexOfLastNode);
-    velocityAtLastNode(timeStep) = VDynamic(indexOfLastNode);
-    displacementAtAllNodes(:,timeStep) = UDynamic;
+    displacementAtLastNode(timeStep) = UDynamic(3);
     
     % calculate effective force vector
     [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
-       
-    if(timeStep==100)
-       FEff(indexOfLastNode) = FEff(indexOfLastNode) + 1000;
-    end
     
-    % solve linear system of equations
+    FEff(3) = FEff(3) + 1;
+    
+    % solve linear system of equations (UNewDynamic = KEff \ FEff)
     UNewDynamic = moSolveSparseSystem( KEff, FEff );
     
     % calculate velocities and accelerations
@@ -109,31 +93,26 @@ for timeStep = 1 : problem.dynamics.nTimeSteps
     
 end
 
+% disassemble
+[ allUe ] = goDisassembleVector( UDynamic, allLe );
+
+% check for stability
+poCheckDynamicStabilityCDM(problem, M, K);
+
 
 %% post processing
 timeVector = goGetTimeVector(problem);
 
+% steady state value (of displacement at last node)
+uSteadyState = 16/48;
+
 % plotting necessary quantities over time
 figure(1);
+plot(timeVector, displacementAtLastNode/uSteadyState, 'LineWidth', 1.6);
+hold on;
+grid on;
+plot([timeVector(1), timeVector(end)], [1 1], 'k:', 'LineWidth', 1.6);
 
-subplot(1,2,1)
-plot(timeVector, displacementAtLastNode, '-');
-title('Displacement at last node');
-xlabel('Time [s]');
-ylabel('Displacement [m]');
-
-
-subplot(1,2,2)
-plot(timeVector, velocityAtLastNode, '-');
-title('Velocity at last node');
-xlabel('Time [s]');
-ylabel('Velcoity [m/s]');
-
-
-for i=1:nTimeSteps
-figure(2);
-%plot(L,displacementAtLastNode(i))
-plot(problem.nodes,displacementAtAllNodes(:,i))
-axis ([0,L,min(min(displacementAtAllNodes)), max(max(displacementAtAllNodes))])
-pause(0.001)
-end
+title([problem.dynamics.timeIntegration, ' Method: u_{norm}(t, x = L)']);
+xlabel('Time [sec]');
+ylabel('normalized Displacement [-]');
