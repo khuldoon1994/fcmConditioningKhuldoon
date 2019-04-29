@@ -23,51 +23,30 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name = 'dynamicBar1D (Central Difference Method)';
 problem.dimension = 1;
 
+% volume load
+f = @(x) 0;
+
 % static parameters
 E = 70e9;
 A = 0.0006;
 L = 20.0;
-p = 5;
 
 % dynamic parameters
-rho = 2700/A;              % mass density
-alpha = 1.0;            % damping coefficient
+rho = 2700;              % mass density
+alpha = 0.0;               % damping coefficient
 kappa = rho * alpha;
 
-% dynamic element types
-problem.elementTypes = { poCreateElementTypeDynamicLine1d(struct(...
-    'gaussOrder', p+1, ...
-    'youngsModulus', E, ...
-    'area', A, ...
-    'massDensity', rho, ...
-    'dampingCoefficient', kappa)) };
+% spatial discretization
+p = 1;
+n = 100;
 
-problem.nodes = [ 0, 0.5*L, L ];
+% temporal discretization
+tStart = 0;
+tStop = 0.05;
+nTimeSteps = 401;
 
-problem.elementNodeIndices = { [1 2], [2 3] };
-problem.elementTopologies = [ 1 1 ];
-problem.elementTypeIndices = [ 1 1 ];
-
-problem.subelementTypes = { poCreateSubelementTypeLegendreLine(struct('order', p)) };
-problem = poCreateSubElements( problem );
-problem = poCreateElementConnections( problem );
-
-problem.loads = { };
-problem.penalties = { [0, 1e60] };
-
-problem.elementLoads = { [], [] };
-problem.elementPenalties = { [], [] };
-problem.elementFoundations = { [], [] };
-
-problem.nodeLoads = { [],[],[] };
-problem.nodePenalties = { 1,[],[] };
-
-% time integration parameters
-problem.dynamics.timeIntegration = 'Central Difference';
-problem.dynamics.lumping = 'No Lumping';
-problem.dynamics.tStart = 0;
-problem.dynamics.tStop = 0.0005;
-problem.dynamics.nTimeSteps = 401;
+% create problem
+problem = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, tStart, tStop, nTimeSteps);
 
 % initialize dynamic problem
 problem = poInitializeDynamicProblem(problem);
@@ -85,35 +64,44 @@ F = goAssembleVector(allFe, allLe);
 
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);
-U0Dynamic = zeros(nTotalDof, 1);
-V0Dynamic = zeros(nTotalDof, 1);
+UDynamic = zeros(nTotalDof, 1);
+VDynamic = zeros(nTotalDof, 1);
 
 % compute initial acceleration
-[ A0Dynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, U0Dynamic, V0Dynamic);
+[ ADynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, UDynamic, VDynamic);
 
 % initialize values
-[ UOldDynamic, UDynamic ] = cdmInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
+[ UOldDynamic, UDynamic ] = cdmInitialize(problem, UDynamic, VDynamic, ADynamic);
 
 % create effective system matrices
 [ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K);
 
-VDynamic = V0Dynamic;
+% post processing stuff
+indexOfLastNode = n+1;
 displacementAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
 velocityAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
+displacementAtAllNodes = zeros(indexOfLastNode,problem.dynamics.nTimeSteps);
+velocityAtAllNodes = zeros(indexOfLastNode,problem.dynamics.nTimeSteps);
+
+% time loop
 for timeStep = 1 : problem.dynamics.nTimeSteps
     
+    disp(['time step ', num2str(timeStep)]);
+    
     % extract necessary quantities from solution
-    displacementAtLastNode(timeStep) = UDynamic(3);
-    velocityAtLastNode(timeStep) = VDynamic(3);
+    displacementAtLastNode(timeStep) = UDynamic(indexOfLastNode);
+    velocityAtLastNode(timeStep) = VDynamic(indexOfLastNode);
+    displacementAtAllNodes(:,timeStep) = UDynamic;
+    velocityAtAllNodes(:,timeStep) = VDynamic;
     
     % calculate effective force vector
     [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
        
-    if(timeStep==100)
-       FEff(3) = FEff(3) - 1000;
+    if(timeStep>100)
+       FEff(indexOfLastNode) = FEff(indexOfLastNode) - 1000;
     end
     
-    % solve linear system of equations (UNewDynamic = KEff \ FEff)
+    % solve linear system of equations
     UNewDynamic = moSolveSparseSystem( KEff, FEff );
     
     % calculate velocities and accelerations
@@ -128,18 +116,50 @@ end
 %% post processing
 timeVector = goGetTimeVector(problem);
 
-% plotting necessary quantities over time
+% plotting displacement and velocityover time
 figure(1);
 
 subplot(1,2,1)
 plot(timeVector, displacementAtLastNode, '-');
-title('Displacement at node 3');
+title('Displacement at last node');
 xlabel('Time [s]');
 ylabel('Displacement [m]');
 
-
 subplot(1,2,2)
 plot(timeVector, velocityAtLastNode, '-');
-title('Velocity at node 3');
+title('Velocity at last node');
 xlabel('Time [s]');
 ylabel('Velcoity [m/s]');
+
+
+% show displacement/velocity movie
+figure(2);
+displacementPlot = plot(problem.nodes,displacementAtAllNodes(:,1));
+hold on
+velocityPlot = plot(problem.nodes,velocityAtAllNodes(:,1));
+axis ([0,L,min(min(displacementAtAllNodes)), max(max(displacementAtAllNodes))]);
+title('Dynamic solution');
+xlabel('Axial coordinate [m]');
+ylabel('Current solution');
+legend('Displacement', 'Velocity');
+for i=1:nTimeSteps
+    set(displacementPlot,'XData',problem.nodes,'YData',displacementAtAllNodes(:,i));
+    set(velocityPlot,'XData',problem.nodes,'YData',0.01*velocityAtAllNodes(:,i));
+    drawnow;
+    pause(0.001)
+end
+
+
+% show displacement movie
+figure(3);
+zeroVector = 0*problem.nodes;
+displacementPlot = plot(problem.nodes,zeroVector,'.');
+axis ([0,L*1.2,-0.1,0.1]);
+title('Dynamic solution');
+xlabel('Axial coordinate [m]');
+for i=1:nTimeSteps
+    set(displacementPlot,'XData',problem.nodes'+10000*displacementAtAllNodes(:,i),'YData',zeroVector);
+    drawnow;
+    pause(0.001)
+end
+
