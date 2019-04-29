@@ -27,21 +27,22 @@ problem.dimension = 1;
 f = @(x) 0;
 
 % static parameters
-% static parameters
 E = 70e9;
 A = 0.0006;
 L = 20.0;
 
 % dynamic parameters
-rho = 2700/A;              % mass density
+rho = 2700;              % mass density
 alpha = 0.0;               % damping coefficient
 kappa = rho * alpha;
 
+% spatial discretization
 p = 1;
-n = 200;
+n = 100;
 
+% temporal discretization
 tStart = 0;
-tStop = 5;
+tStop = 0.05;
 nTimeSteps = 401;
 
 % create problem
@@ -80,22 +81,24 @@ indexOfLastNode = n+1;
 displacementAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
 velocityAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
 displacementAtAllNodes = zeros(indexOfLastNode,problem.dynamics.nTimeSteps);
+velocityAtAllNodes = zeros(indexOfLastNode,problem.dynamics.nTimeSteps);
+
 % time loop
 for timeStep = 1 : problem.dynamics.nTimeSteps
     
     disp(['time step ', num2str(timeStep)]);
-    fflush(stdout);
     
     % extract necessary quantities from solution
     displacementAtLastNode(timeStep) = UDynamic(indexOfLastNode);
     velocityAtLastNode(timeStep) = VDynamic(indexOfLastNode);
     displacementAtAllNodes(:,timeStep) = UDynamic;
+    velocityAtAllNodes(:,timeStep) = VDynamic;
     
     % calculate effective force vector
     [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
        
-    if(timeStep==100)
-       FEff(indexOfLastNode) = FEff(indexOfLastNode) + 1000;
+    if(timeStep>100)
+       FEff(indexOfLastNode) = FEff(indexOfLastNode) - 1000;
     end
     
     % solve linear system of equations
@@ -113,7 +116,7 @@ end
 %% post processing
 timeVector = goGetTimeVector(problem);
 
-% plotting necessary quantities over time
+% plotting displacement and velocityover time
 figure(1);
 
 subplot(1,2,1)
@@ -122,7 +125,6 @@ title('Displacement at last node');
 xlabel('Time [s]');
 ylabel('Displacement [m]');
 
-
 subplot(1,2,2)
 plot(timeVector, velocityAtLastNode, '-');
 title('Velocity at last node');
@@ -130,10 +132,34 @@ xlabel('Time [s]');
 ylabel('Velcoity [m/s]');
 
 
-for i=1:nTimeSteps
+% show displacement/velocity movie
 figure(2);
-%plot(L,displacementAtLastNode(i))
-plot(problem.nodes,displacementAtAllNodes(:,i))
-axis ([0,L,min(min(displacementAtAllNodes)), max(max(displacementAtAllNodes))])
-pause(0.001)
+displacementPlot = plot(problem.nodes,displacementAtAllNodes(:,1));
+hold on
+velocityPlot = plot(problem.nodes,velocityAtAllNodes(:,1));
+axis ([0,L,min(min(displacementAtAllNodes)), max(max(displacementAtAllNodes))]);
+title('Dynamic solution');
+xlabel('Axial coordinate [m]');
+ylabel('Current solution');
+legend('Displacement', 'Velocity');
+for i=1:nTimeSteps
+    set(displacementPlot,'XData',problem.nodes,'YData',displacementAtAllNodes(:,i));
+    set(velocityPlot,'XData',problem.nodes,'YData',0.01*velocityAtAllNodes(:,i));
+    drawnow;
+    pause(0.001)
 end
+
+
+% show displacement movie
+figure(3);
+zeroVector = 0*problem.nodes;
+displacementPlot = plot(problem.nodes,zeroVector,'.');
+axis ([0,L*1.2,-0.1,0.1]);
+title('Dynamic solution');
+xlabel('Axial coordinate [m]');
+for i=1:nTimeSteps
+    set(displacementPlot,'XData',problem.nodes'+10000*displacementAtAllNodes(:,i),'YData',zeroVector);
+    drawnow;
+    pause(0.001)
+end
+
