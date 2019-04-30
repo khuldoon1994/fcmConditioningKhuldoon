@@ -45,7 +45,6 @@ figure(fig);
 subplot(2,2,1);
 hold on;
 grid on;
-%plot(problem.nodes', zeros(1,nNodes)', 'ko');
 h1=plot(nodes, zeros(2,nElements), 'k-o'); 
 h2=plot(x,displacement,'r-');
 legend([h1(1),h2(1)],{'elements','displacement'});

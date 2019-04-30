@@ -32,7 +32,7 @@ problem.nodes = [ 0.0, 0.5*L, L ];
 problem.elementTopologies = [1 1];
 problem.elementTypeIndices = [1 1];
 problem.elementNodeIndices = { [ 1 2 ], [2 3] };
-                       
+
 % subelements or 'dof supports'
 problem.subelementTopologies = [1,1];
 problem.subelementTypeIndices = [1,1];
@@ -77,7 +77,6 @@ subplot(2,2,1);
 x=linspace(0,L,20);
 y=ref(x);
 plot(x,y,'k-');
-
 
 
 %% check
