@@ -12,7 +12,7 @@ In the terminal ...
 
  2. Clone the git repository:
     ```
-    git clone https://collaborating.tuhh.de/radtke/SiHoFemLab.git
+    git clone https://collaborating.tuhh.de/M-10/radtke/SiHoFemLab.git
     ```
 
 ## Build
