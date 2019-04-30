@@ -15,3 +15,6 @@ Used to assemble a complete system, uses the functions above.
 
 <h3> goDisassembleVector.m </h3>
 Used, e.g., to disassemble the solution vector.
+
+<h3> goDisassembleDynamicVector.m </h3>
+Used, e.g., to disassemble the dynamic solution vector (for every time step).

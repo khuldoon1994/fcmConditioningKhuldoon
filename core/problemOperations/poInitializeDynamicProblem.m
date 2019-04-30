@@ -6,6 +6,7 @@ function [ problem ] = poInitializeDynamicProblem(problem)
     standardTStart = 0;
     standardTStop = 10;
     standardNTimeSteps = 51;
+    standardDynamicSolver = @cdmDynamicSolver;
 
     if(~isfield(problem, 'dynamics'))
     % if structure "dynamics" not defined
@@ -15,12 +16,14 @@ function [ problem ] = poInitializeDynamicProblem(problem)
         problem.dynamics.tStop = standardTStop;
         problem.dynamics.nTimeSteps = standardNTimeSteps;
         problem.dynamics.parameter = standardParameter;
+        problem.dynamics.dynamicSolver = standardDynamicSolver;
         warning(['WARNING! No dynamics defined. Assume ', ...
                         standardTimeIntegration, ', ', ...
                         standardLumping, ', ', ...
                         num2str(standardTStart), ', ', ...
                         num2str(standardTStop), ', ', ...
-                        num2str(standardNTimeSteps)]);
+                        num2str(standardNTimeSteps), ', ', ...
+                        func2str(standardDynamicSolver)]);
     else
     % if structure "dynamics" defined, but fields not defined
         % if field "timeIntegration" not defined
@@ -48,10 +51,22 @@ function [ problem ] = poInitializeDynamicProblem(problem)
             problem.dynamics.nTimeSteps = standardNTimeSteps;
             warning(['WARNING! No dynamics.nTimeSteps defined. Assume ', num2str(standardNTimeSteps)]);
         end
-    end    
+        % if field "dynamicSolver" not defined
+        if(~isfield(problem.dynamics, 'dynamicSolver'))
+            problem.dynamics.dynamicSolver = standardDynamicSolver;
+            % no warning
+        end
+    end 
         
     % calculate sampling time "deltaT"
     deltaT = goGetSamplingTime(problem);
+    
+    % attach dynamicSolver to the "dynamics" structure
+    if(strcmp(problem.dynamics.timeIntegration, 'Central Difference'))
+        problem.dynamics.dynamicSolver = @cdmDynamicSolver;
+    elseif(strcmp(problem.dynamics.timeIntegration, 'Newmark Integration'))
+        problem.dynamics.dynamicSolver = @newmarkDynamicSolver;
+    end
     
     % apply sampling time to structure "dynamics"
     if(strcmp(problem.dynamics.timeIntegration, 'Central Difference'))
