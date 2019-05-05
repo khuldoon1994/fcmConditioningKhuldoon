@@ -26,12 +26,14 @@ function goPlotAnimatedPostGridSolution( problem, allUeDynamic, postGrid, soluti
           goPlotBasicCell(problem, topology, nodesGlobal, solution, deformation);
         end
         toc();
-        axis equal
+        axis equal;
         title(['Displacement solution, time = ', num2str(timeVector(timeStep))]);
-        colorbar;
+        % without colorbar it is much quicker
+        %colorbar;
         
         % update figure
-        drawnow();
+        drawnow limitrate;
+        pause(0.01);
         hold off;
     end
     
