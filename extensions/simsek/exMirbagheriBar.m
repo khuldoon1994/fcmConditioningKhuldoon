@@ -43,7 +43,7 @@ n = 100;
 % temporal discretization
 tStart = 0;
 tStop = 0.5;
-nTimeSteps = 1001;
+nTimeSteps = 505;
 
 % create problem
 problem = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, tStart, tStop, nTimeSteps);
