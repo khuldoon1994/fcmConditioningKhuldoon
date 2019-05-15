@@ -19,7 +19,6 @@ f = @(x) lambda*(lambda-1)*x^(lambda-2);
 ref = @(x) -x.^lambda + lambda*x;
 
 
-
 error=zeros(1,8);
 dof=zeros(1,8);
 for i=1:8
