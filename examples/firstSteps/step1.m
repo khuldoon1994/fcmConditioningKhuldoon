@@ -42,7 +42,7 @@ problem.elementTypeIndices = [ 1 1 ];
 problem.elementTypes = { poCreateElementTypeStandardLine1d(struct('gaussOrder', 6, 'youngsModulus', E, 'area', A )) };
 
 % Now we have a cell array of element types with length one.
-% In SiHoFemLab, the element types are their for mapping, integration,
+% In SiHoFemLab, the element types are there for mapping, integration,
 % and everything else needed to create an element stiffnes matrix and load
 % vector except the most important thing: the shape functions.
 % They are defined by subelement types and subelements. We care about them
@@ -52,7 +52,7 @@ problem = poCreateElementConnections( problem );
 
 % However, to be able to change the shape functions, we define the type
 % manually here:
-problem.subelementTypes = { poCreateSubelementTypeLegendreLine(struct('order', 5)) };
+problem.subelementTypes = { poCreateSubelementType( 'LEGENDRE_LINE', struct('order', 5) ) };
 
 
 % Next, we define the boundary conditions. The bar is loaded by a
@@ -74,4 +74,4 @@ problem.nodePenalties = { 1,[],[] };
 % That's it! The problem is ready to be solved. Run this script and explore
 % the problem structure that will be in the workspace afterwards.
 % You may also run poCheckProblem(problem) or goPlotMesh(problem,1) or
-% proceed with step 2.
+% proceed with step2.
