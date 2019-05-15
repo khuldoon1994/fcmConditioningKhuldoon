@@ -74,12 +74,12 @@ goPlotPostGrid( problem, postGridCells, 2);
 axis equal;
 
 % compute area
-integrand = @( problem, iElement, r, J, detJ) 1.0;
+integrand = @( problem, iElement, r, J, detJ ) 1.0;
 area = eoIntegrateFunction(problem, 1, integrand);
 areaRef = 0.5*pi*R-1;
 error = abs(area-areaRef);
 
-% disp(['area: ',num2str(area),', error: ',num2str(error)]);
+disp(['area: ',num2str(area),', error: ',num2str(error)]);
 
 %% check
 if error>1e-11
