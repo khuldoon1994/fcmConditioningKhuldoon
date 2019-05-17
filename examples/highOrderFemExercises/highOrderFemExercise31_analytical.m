@@ -43,8 +43,11 @@ dN4deta = @(xi,eta) 0.5*(1-xi);
 eX = @(eta) R*cos(pi*eta/4);
 eY = @(eta) R*sin(pi*eta/4);
 
-x = @(xi,eta) N1(xi,eta)*X1 + N4(xi,eta)*X4 + eX(eta).*(1+xi)/2;
-y = @(xi,eta) N1(xi,eta)*Y1 + N4(xi,eta)*Y4 + eY(eta).*(1+xi)/2;
+linX = @(xi,eta) N1(xi,eta)*X1 + N2(xi,eta)*X2 + N3(xi,eta)*X3 + N4(xi,eta)*X4;
+linY = @(xi,eta) N1(xi,eta)*Y1 + N2(xi,eta)*Y2 + N3(xi,eta)*Y3 + N4(xi,eta)*Y4;
+
+x = @(xi,eta) linX(xi,eta) + ( eX(eta) - ( (eta-1)/2*X2 + (eta+1)/2*X3 ) ).*(1+xi)/2;
+y = @(xi,eta) linY(xi,eta) + ( eY(eta) - ( (eta-1)/2*Y2 + (eta+1)/2*Y3 ) ).*(1+xi)/2;
 
 etas = linspace(-1,1,20);
 xis=ones(size(etas));
@@ -60,10 +63,12 @@ plot(xs,ys)
 deXdeta = @(eta) -pi/4*R*sin(pi*eta/4);
 deYdeta = @(eta) pi/4*R*cos(pi*eta/4);
 
-dxdxi = @(xi,eta) dN1dxi(xi,eta)*X1 + dN4dxi(xi,eta)*X4 + eX(eta)/2;
-dydxi = @(xi,eta) dN1dxi(xi,eta)*X1 + dN4dxi(xi,eta)*X4 + eY(eta)/2;
-dxdeta = @(xi,eta) dN1deta(xi,eta)*Y1 + dN4deta(xi,eta)*Y4 + deXdeta(eta).*(1+xi)/2;
-dydeta = @(xi,eta) dN1deta(xi,eta)*Y1 + dN4deta(xi,eta)*Y4 + deYdeta(eta).*(1+xi)/2;
+dlinXdxi = @(xi,eta) dN1dxi(xi,eta)*X1 + dN2dxi(xi,eta)*X2 + dN3dxi(xi,eta)*X3 + dN4dxi(xi,eta)*X4;
+dlinXdeta = @(xi,eta) dN1deta(xi,eta)*X1 + dN2deta(xi,eta)*X2 + dN3deta(xi,eta)*X3 + dN4deta(xi,eta)*X4;
+dlinYdxi = @(xi,eta) dN1dxi(xi,eta)*Y1 + dN2dxi(xi,eta)*Y2 + dN3dxi(xi,eta)*Y3 + dN4dxi(xi,eta)*Y4;
+dlinYdeta = @(xi,eta) dN1deta(xi,eta)*Y1 + dN2deta(xi,eta)*Y2 + dN3deta(xi,eta)*Y3 + dN4deta(xi,eta)*Y4;
+
+dxdxi = @(xi,eta) dlinXdxi(xi,eta) + eX(eta)/2;
 
 J = @(xi,eta) [ dxdxi(xi,eta) dydxi(xi,eta);
                 dxdeta(xi,eta) dydeta(xi,eta) ];

@@ -88,7 +88,9 @@ femEnergy1 = sqrt(0.5*U'*K*U)
 
 % energy computation thru integral
 N = @(problem, elementIndex, xi) eoEvaluateShapeFunctionGlobalDerivative( problem, elementIndex, xi );
+
 integrand = @(problem, elementIndex, xi, jacobian, detJ, Ue) E*A* (N(problem, elementIndex, xi) * Ue)*(N(problem, elementIndex, xi) * Ue);
+
 elementEnergy1 = eoIntegrateSolutionFunction( problem, 1, allUe{1}, integrand );
 elementEnergy2 = eoIntegrateSolutionFunction( problem, 2, allUe{2}, integrand );
 

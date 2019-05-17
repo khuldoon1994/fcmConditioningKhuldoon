@@ -2,6 +2,8 @@
 clear all;
 close all;
 
+%% setup
+
 X1=0;
 X2=1;
 a=1/5;
@@ -18,6 +20,7 @@ Q = @(xi) 0.5*(1-xi)*X1 + 0.5*(1+xi)*X2 + (xi.*xi-1)*a;
 invQ = @(x) (2*(4*a*x - 2*a + 4*a.^2 + 1/4).^(1/2) - 1)/(4*a);
              
 
+%% computation
 N1 = @(xi) 0.5*(1-xi);
 N2 = @(xi) 0.5*(1+xi);
 
@@ -42,10 +45,10 @@ xlabel('x')
 ylabel('N(xi(x))')
 
 
-
-syms a
-syms x;
-syms xi;
-syms Q;
-Q = 0.5*(1-xi)*X1 + 0.5*(1+xi)*X2 + (xi*xi-1)*a;
-sol = solve(Q==x,xi);
+%% How to get the inverse mapping
+%syms a
+%syms x;
+%syms xi;
+%syms Q;
+%Q = 0.5*(1-xi)*X1 + 0.5*(1+xi)*X2 + (xi*xi-1)*a;
+%sol = solve(Q==x,xi);

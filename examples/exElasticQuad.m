@@ -5,7 +5,7 @@
 %            1 - 2
 
 %% clear variables, close figures
-%clear all; %#ok
+clear all; %#ok
 close all;
 warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
