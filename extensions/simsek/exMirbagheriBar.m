@@ -32,7 +32,7 @@ A = 0.0006;
 L = 20.0;
 
 % dynamic parameters
-rho = 2700;              % mass density
+rho = 2700/A;              % mass density
 alpha = 0.0;               % damping coefficient
 kappa = rho * alpha;
 
@@ -42,8 +42,8 @@ n = 100;
 
 % temporal discretization
 tStart = 0;
-tStop = 0.5;
-nTimeSteps = 505;
+tStop = 100;
+nTimeSteps = 10000;
 
 % create problem
 problem = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, tStart, tStop, nTimeSteps);
