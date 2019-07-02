@@ -14,9 +14,9 @@
 % Central Difference Method
 
 %% clear variables, close figures
-clear all;
-close all;
-clc;
+%clear all;
+%close all;
+%clc;
 warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
 %% problem definition
@@ -107,14 +107,13 @@ for timeStep = 1 : problem.dynamics.nTimeSteps
     
     UNewDynamic = twDisplacement(problem, UDynamic, VDynamic, ADynamic);
     
-    VNewDynamic = twVelocity(problem, VDynamic, ADynamic, ANewDynamic);
+    VNewDynamic = twVelocity(problem, VDynamic, ADynamic);
    
     % calculate effective force vector
     [ FEff ] = twEffectiveSystemForceVector(problem, D, K, F, VNewDynamic, UNewDynamic);
     
     ANewDynamic = moSolveSparseSystem( KEff, FEff );
-    
-    
+        
     % update kinematic quantities
     [ UDynamic, UOldDynamic ] = cdmUpdateKinematics(UNewDynamic, UDynamic);
     ADynamic = ANewDynamic; 
