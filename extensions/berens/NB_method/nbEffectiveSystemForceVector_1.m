@@ -11,5 +11,5 @@ function [ FEff_1 ] = nbEffectiveSystemForceVector_1(problem, D, K, F, VDynamic,
     % add penalty constraints to effective force vector
     [ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
     FEff_1 = FEff_1 + Fp;
-    
+   
 end

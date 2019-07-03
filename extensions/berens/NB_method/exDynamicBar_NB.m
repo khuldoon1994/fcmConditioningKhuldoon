@@ -14,8 +14,8 @@
 % NB (Noh and Bathe) method from Mirbagheri paper 
 
 %% clear variables, close figures
-clear all;
-close all;
+% clear all;
+% close all;
 clc;
 warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
@@ -70,12 +70,11 @@ problem.nodePenalties = { 1,[],[] };
 problem.dynamics.timeIntegration = 'Central Difference';
 problem.dynamics.lumping = 'No Lumping';
 problem.dynamics.tStart = 0;
-problem.dynamics.tStop = 50;         %initial value 10 
-problem.dynamics.nTimeSteps = 1500;   %initial value 401
+problem.dynamics.tStop = 10;         %initial value 10 
+problem.dynamics.nTimeSteps = 401;   %initial value 401
 
 % initialize dynamic problem
 problem = poInitializeDynamicProblem(problem);
-
 
 %% dynamic analysis
 displacementAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
@@ -98,8 +97,8 @@ V0Dynamic = zeros(nTotalDof, 1);
 % compute initial acceleration
 [ A0Dynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, U0Dynamic, V0Dynamic);
 
-% initialize values
-[ UOldDynamic, UDynamic, VDynamic, ADynamic ] = cdmInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
+% initialize values (Removed UOldDynamic) 
+[ UDynamic, VDynamic, ADynamic ] = cdmInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
 
 % create effective system matrices = constant and equal for both subtimesteps 
 [ KEff ] = nbEffectiveSystemStiffnessMatrix(problem, M);
@@ -108,9 +107,8 @@ V0Dynamic = zeros(nTotalDof, 1);
 for timeStep = 1 : problem.dynamics.nTimeSteps
     
     % extract necessary quantities from solution  - UDynamic(3) = last node
-    displacementAtLastNode(timeStep) = UDynamic(3);
-    
-    
+     displacementAtLastNode(timeStep) = UDynamic(3);
+        
     %% first subtimestep 
     
     % UNewDynamic_1 
@@ -137,15 +135,15 @@ for timeStep = 1 : problem.dynamics.nTimeSteps
     ANewDynamic_2 = moSolveSparseSystem( KEff, FEff_2 );
     
     % VNewDynamic_2
-    VNewDynamic_2 = nbVelocity_2(problem, VNewDynamic_1, UDynamic, UNewDynamic_1,UNewDynamic_2, p_nb);
-    
-   
+    VNewDynamic_2 = nbVelocity_2(problem, VNewDynamic_1, ADynamic, ANewDynamic_1, ANewDynamic_2, p_nb);
+      
     % update kinematic quantities for next time step 
-    %[ UDynamic, UOldDynamic ] = cdmUpdateKinematics(UNewDynamic_2, UDynamic);
     UDynamic = UNewDynamic_2; 
     ADynamic = ANewDynamic_2; 
-    VDynamic = VNewDynamic_2 ; 
+    VDynamic = VNewDynamic_2; 
+       
 end
+
 
 % disassemble
 [ allUe ] = goDisassembleVector( UDynamic, allLe );

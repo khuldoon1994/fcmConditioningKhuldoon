@@ -1,4 +1,4 @@
-function [ uMinus1, u, uDot, uDdot ] = cdmInitialize_2(problem, u0, u0Dot, u0Ddot)
+function [ u, uDot, uDdot ] = cdmInitialize(problem, u0, u0Dot, u0Ddot)
 % NOTHING WAS CHANGED to cdmInitialize 
 
     %calculate initial values for Central Difference Method
@@ -20,7 +20,6 @@ function [ uMinus1, u, uDot, uDdot ] = cdmInitialize_2(problem, u0, u0Dot, u0Ddo
     a3 = (deltaT^2)/2;
     
     %initial values
-    uMinus1 = u0 - deltaT*u0Dot + a3*u0Ddot;
     u = u0;
     uDot = u0Dot;
     uDdot = u0Ddot;
