@@ -15,12 +15,16 @@ problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;
 
+% parameters
+m = 2.5;                    % mass
+g = 9.81;                   % gravity
+
 % subelement types
 subelementType1 = poCreateSubelementType( 'POINT_2D', struct() );
 problem.subelementTypes = { subelementType1 };
 
 % element types
-elementType1 = poCreateElementType( 'DYNAMIC_POINT_2D', struct( 'mass', 2.5 ) );
+elementType1 = poCreateElementType( 'DYNAMIC_POINT_2D', struct( 'mass', m ) );
 problem.elementTypes = { elementType1 };
 
 % nodes
@@ -41,7 +45,7 @@ problem.subelementNodeIndices = { [1] };
 problem.elementConnections = { { { 1 [1] } } };
                                    
 % boundary conditions
-problem.loads = { [0; -9.81] };
+problem.loads = { [0; -g] };
 problem.penalties = { };
 problem.foundations = { };
 

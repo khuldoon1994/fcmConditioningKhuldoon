@@ -2,7 +2,7 @@ function [ Lse, dofCounter ] = seoCreateLocationVector(problem, subelementIndex,
 %getLocationVector Create the location vector for the current element
 
     subelementTypeIndex = problem.subelementTypeIndices(subelementIndex);
-    dimension = problem.dimension;;
+    dimension = problem.dimension;
     
     % number of nodal shape functions in this subelement
     nNodalShapes = problem.subelementTypes{subelementTypeIndex}.numberOfNodalShapes;
