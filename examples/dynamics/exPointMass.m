@@ -15,9 +15,9 @@ problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;
 
-% parameters
-m = 2.5;                    % mass
-g = 9.81;                   % gravity
+% mass and gravity
+m = 2.5;
+g = 9.81;
 
 % subelement types
 subelementType1 = poCreateSubelementType( 'POINT_2D', struct() );
@@ -45,7 +45,7 @@ problem.subelementNodeIndices = { [1] };
 problem.elementConnections = { { { 1 [1] } } };
                                    
 % boundary conditions
-problem.loads = { [0; -g] };
+problem.loads = { [0; -m*g] };
 problem.penalties = { };
 problem.foundations = { };
 
@@ -68,9 +68,9 @@ problem.dynamics.lumping = 'No Lumping';
 problem = poInitializeDynamicProblem(problem);
 
 % plot mesh and boundary conditions
-goPlotLoads(problem,1,0.1);
-%goPlotMesh(problem,1);
-%goPlotPenalties(problem,1);
+goPlotLoads(problem,1,1);
+goPlotMesh(problem,1);
+goPlotPenalties(problem,1);
 
 %% dynamic analysis
 displacementOverTime = zeros(2, problem.dynamics.nTimeSteps);
@@ -87,14 +87,14 @@ F = goAssembleVector(allFe, allLe);
 
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);
-U0Dynamic = [0; 0];
-V0Dynamic = [20; 30];
+U0 = [0; 0];
+V0 = [20; 30];
 
 % compute initial acceleration
-[ A0Dynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, U0Dynamic, V0Dynamic);
+[ A0 ] = goComputeInitialAcceleration(problem, M, D, K, F, U0, V0);
 
 % initialize values
-[ UDynamic, VDynamic, ADynamic ] = newmarkInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
+[ U, V, A ] = newmarkInitialize(problem, U0, V0, A0);
 
 % create effective system matrices
 [ KEff ] = newmarkEffectiveSystemStiffnessMatrix(problem, M, D, K);
@@ -103,20 +103,20 @@ V0Dynamic = [20; 30];
 for timeStep = 1 : problem.dynamics.nTimeSteps
     
     % extract necessary quantities from solution
-    displacementOverTime(:,timeStep) = UDynamic;
-    velocityOverTime(:,timeStep) = VDynamic;
+    displacementOverTime(:,timeStep) = U;
+    velocityOverTime(:,timeStep) = V;
 
     % calculate effective force vector
-    [ FEff ] = newmarkEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, VDynamic, ADynamic);
+    [ FEff ] = newmarkEffectiveSystemForceVector(problem, M, D, K, F, U, V, A);
     
-    % solve linear system of equations (UNewDynamic = KEff \ FEff)
-    UNewDynamic = moSolveSparseSystem( KEff, FEff );
+    % solve linear system of equations (UNew = KEff \ FEff)
+    UNew = moSolveSparseSystem( KEff, FEff );
     
     % calculate velocities and accelerations
-    [ VNewDynamic, ANewDynamic ] = newmarkVelocityAcceleration(problem, UNewDynamic, UDynamic, VDynamic, ADynamic);
+    [ VNew, ANew ] = newmarkVelocityAcceleration(problem, UNew, U, V, A);
     
     % update kinematic quantities
-    [ UDynamic, VDynamic, ADynamic ] = newmarkUpdateKinematics(UNewDynamic, VNewDynamic, ANewDynamic);
+    [ U, V, A ] = newmarkUpdateKinematics(UNew, VNew, ANew);
     
 end
 
@@ -127,7 +127,7 @@ ylabel("y-position")
 
 %% check
 URef=[2.00499999999507537e+02 -1.93864452500081171e+0]';
-if sum(URef==UDynamic)==3
+if sum(URef==U)==3
    error('exElasticBar: Check failed!'); 
 else
    disp('exElasticBar: Check passed.'); 

@@ -24,9 +24,7 @@ function goPlotLoads( problem, fig, factor )
                 quiver3(position(1), position(2), position(3), load(1), load(2), load(3),'Color','red','LineWidth',2,'MaxHeadSize',1);
             end
         elseif elementTopology == 5 % point
-            iElement
-            problem.elementNodeIndices(iElement)
-            position = problem.nodes(:, problem.elementNodeIndices{iElement})
+            position = problem.nodes(:, problem.elementNodeIndices{iElement});
             position = moMakeFull(position, 3, 0);
             load = eoEvaluateTotalLoad(problem, iElement, []);
             load = moMakeFull(load, 3, 0)*factor;
