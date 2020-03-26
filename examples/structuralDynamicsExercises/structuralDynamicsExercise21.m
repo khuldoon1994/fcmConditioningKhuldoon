@@ -22,9 +22,6 @@ A = 1;
 rho = 1;
 kappa = 0;
 
-% gravity
-g = 9.81;
-
 % subelement types
 subelementType1 = poCreateSubelementType( 'LINEAR_LINE', struct() );
 problem.subelementTypes = { subelementType1 };
@@ -38,37 +35,39 @@ elementType1 = poCreateElementType( 'DYNAMIC_TRUSS_2D', struct(...
 problem.elementTypes = { elementType1 };
 
 % nodes
-problem.nodes = [ 0.0 2.5; 
-                  0.0 1.5];
+problem.nodes = [ 0.0 1.0 1.0; 
+                  0.0 0.0 1.0 ];
 
 % elements or 'quadrature supports'
-problem.elementTopologies = [1];
-problem.elementTypeIndices = [1];
-problem.elementNodeIndices = { [1 2] };
+problem.elementTopologies = [1, 1, 1];
+problem.elementTypeIndices = [1, 1, 1];
+problem.elementNodeIndices = { [1 2], [2 3], [1 3] };
                        
 % elements or 'dof supports'
-problem.subelementTopologies = [1];
-problem.subelementTypeIndices = [1];
-problem.subelementNodeIndices = { [1 2] };
+problem.subelementTopologies = [1, 1, 1];
+problem.subelementTypeIndices = [1, 1, 1];
+problem.subelementNodeIndices = { [1 2], [2 3], [1 3] };
 
 % connections / transformations between elements and subelements
-problem.elementConnections = { { { 1 [1] } } };
+problem.elementConnections = { { { 1 [1] } }, { { 2 [1] } }, { { 3 [1] } } };
                                    
 % boundary conditions
-problem.loads = { [0; -m*g] };
+problem.loads = { [0.2; 0.1] };
 problem.penalties = { [0, 1e60;
+                       0, 1e60],
+                      [0, 0;
                        0, 1e60] };
 problem.foundations = { };
 
 % element boundary condition connections
-problem.elementLoads = { [] };
-problem.elementPenalties = { [] };
-problem.elementFoundations = { [] };
+problem.elementLoads = { [], [], [] };
+problem.elementPenalties = { [], [], [] };
+problem.elementFoundations = { [], [], [] };
 
 % TODO: make nodal boundary condition work...
-problem.nodeLoads = { [], [] };
-problem.nodePenalties = { [1], [] };
-problem.nodeFoundations = { [], [] };
+problem.nodeLoads = { [], [], [1] };
+problem.nodePenalties = { [1], [2], [] };
+problem.nodeFoundations = { [], [], [] };
 
 
 % time integration parameters
@@ -81,16 +80,15 @@ problem.dynamics.lumping = 'No Lumping';
 problem = poInitializeDynamicProblem(problem);
 
 % plot mesh and boundary conditions
-goPlotLoads(problem,1,1);
-goPlotMesh(problem,1);
-goPlotPenalties(problem,1);
+goPlotLoads(problem, 1, 1);
+goPlotMesh(problem, 1);
+goPlotPenalties(problem, 1);
 
 %% dynamic analysis
-displacementOverTime = zeros(4, problem.dynamics.nTimeSteps);
-velocityOverTime = zeros(4, problem.dynamics.nTimeSteps);
+displacementOverTime = zeros(6, problem.dynamics.nTimeSteps);
+velocityOverTime = zeros(6, problem.dynamics.nTimeSteps);
 
 % create system matrices
-problem.solution = zeros(4,1);
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 
 % assemble
@@ -101,8 +99,8 @@ F = goAssembleVector(allFe, allLe);
 
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);
-U0 = zeros(4,1);
-V0 = zeros(4,1);
+U0 = zeros(nTotalDof,1);
+V0 = zeros(nTotalDof,1);
 
 
 % compute initial acceleration
@@ -123,12 +121,10 @@ for timeStep = 1 : problem.dynamics.nTimeSteps
 
     % calculate effective force vector
     [ FEff ] = newmarkEffectiveSystemForceVector(problem, M, D, K, F, U, V, A);
-    FEff = [0; 0; 0; -10000];
+    FEff += [0; 0; 0; 0; 0.2; 0.1];
     
     % solve linear system of equations (UNew = KEff \ FEff)
     UNew = moSolveSparseSystem( KEff, FEff );
-    %UNew(1:2) = zeros(1,2);
-    problem.solution = UNew;
     
     % calculate velocities and accelerations
     [ VNew, ANew ] = newmarkVelocityAcceleration(problem, UNew, U, V, A);
@@ -138,8 +134,11 @@ for timeStep = 1 : problem.dynamics.nTimeSteps
     
 end
 
+
 %% post processing
-plot(2.5 + displacementOverTime(3,:), 1.5 + displacementOverTime(4,:))
+goPlotDisplacementArrows2d(problem, U, 1)
+figure(2)
+plot(2.5 + displacementOverTime(5,:), 1.5 + displacementOverTime(6,:))
 xlabel("x-position")
 ylabel("y-position")
 
@@ -150,3 +149,4 @@ if sum(URef==U)==3
 else
    disp('exElasticBar: Check passed.'); 
 end
+

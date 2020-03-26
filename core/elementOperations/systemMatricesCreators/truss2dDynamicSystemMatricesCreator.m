@@ -11,9 +11,11 @@ function [ Me, De, Ke, Fe ] = truss2dDynamicSystemMatricesCreator(problem, eleme
     kappa = problem.elementTypes{elementTypeIndex}.dampingCoefficient;
     
     % geometry
-    n1 = problem.nodes(:, problem.elementNodeIndices{elementIndex}(1));
-    n2 = problem.nodes(:, problem.elementNodeIndices{elementIndex}(2));
-    d = n2 - n1
+    i1 = problem.elementNodeIndices{elementIndex}(1);
+    n1 = problem.nodes(:, i1);
+    i2 = problem.elementNodeIndices{elementIndex}(2);
+    n2 = problem.nodes(:, i2);
+    d = n2 - n1;
     L = norm(d);
     
     % sine and cosines
@@ -24,7 +26,7 @@ function [ Me, De, Ke, Fe ] = truss2dDynamicSystemMatricesCreator(problem, eleme
     c2 = c*c;
     
     % single dof "matrices"
-    Ke = E*A/L*[c2 sc -c2 -sc; sc s2 -sc -s2; -s2 -sc c2 sc; -sc -s2 sc s2];
+    Ke = E*A/L*[c2 sc -c2 -sc; sc s2 -sc -s2; -c2 -sc c2 sc; -sc -s2 sc s2];
     Me = 0.5*eye(4)*rho*A*L;
     De = 0.5*eye(4)*kappa*A*L;
     Fe = zeros(4,1);
