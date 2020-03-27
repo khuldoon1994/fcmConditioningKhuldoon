@@ -20,7 +20,7 @@ Creates the global penalty stiffness matrix $`\mathbf{K}_p`$ and global penalty 
 ```
 
 ### goCreateDynamicElementMatrices.m
-The dynamic version of _goCreateElementMatrices.m_
+The dynamic version of *goCreateElementMatrices.m*. Includes mass and damping matrices.
 ```matlab
 [allMe, allDe, allKe, allFe, allLe] = goCreateDynamicElementMatrices(problem);
 ```
