@@ -47,19 +47,8 @@ problem.elementFoundations = { [], [] };
 problem.nodeLoads = { [],[],[] };
 problem.nodePenalties = { 1,[],[] };
 
-% time integration parameters
-problem.dynamics.timeIntegration = 'Central Difference';
-problem.dynamics.lumping = 'No Lumping';
-problem.dynamics.tStart = 0;
-problem.dynamics.tStop = 10;
-problem.dynamics.nTimeSteps = 401;
-
-% initialize dynamic problem
-problem = poInitializeDynamicProblem(problem);
-
 
 %% dynamic analysis
-displacementAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
 
 % create system matrices
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
