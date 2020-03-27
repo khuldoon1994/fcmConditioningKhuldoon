@@ -28,7 +28,7 @@ function [ newType ] = poCreateElementTypeDynamicPoint2d( typeData )
     
     newType.mappingEvaluator = @pointMapping;
     
-    newType.elementPlotter = @plotPoint
-    newType.postGridCellCreator = @(problem, elementIndex, cuts) cell(0,1);;
+    newType.elementPlotter = @plotPoint;
+    newType.postGridCellCreator = @(problem, elementIndex, cuts) cell(0,1);
     
 end
