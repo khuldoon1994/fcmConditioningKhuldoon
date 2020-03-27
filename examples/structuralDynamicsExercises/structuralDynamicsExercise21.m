@@ -85,8 +85,8 @@ goPlotMesh(problem, 1);
 goPlotPenalties(problem, 1);
 
 %% dynamic analysis
-displacementOverTime = zeros(6, problem.dynamics.nTimeSteps);
-velocityOverTime = zeros(6, problem.dynamics.nTimeSteps);
+% displacementOverTime = zeros(6, problem.dynamics.nTimeSteps);
+% velocityOverTime = zeros(6, problem.dynamics.nTimeSteps);
 
 % create system matrices
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
@@ -97,54 +97,65 @@ D = goAssembleMatrix(allDe, allLe);
 K = goAssembleMatrix(allKe, allLe);
 F = goAssembleVector(allFe, allLe);
 
-% set initial displacement and velocity
-[ nTotalDof ] = goNumberOfDof(problem);
-U0 = zeros(nTotalDof,1);
-V0 = zeros(nTotalDof,1);
+% % set initial displacement and velocity
+% [ nTotalDof ] = goNumberOfDof(problem);
+% U0 = zeros(nTotalDof,1);
+% V0 = zeros(nTotalDof,1);
+% 
+% 
+% % compute initial acceleration
+% [ A0 ] = goComputeInitialAcceleration(problem, M, D, K, F, U0, V0);
+% 
+% % initialize values
+% [ U, V, A ] = newmarkInitialize(problem, U0, V0, A0);
+% 
+% % create effective system matrices
+% [ KEff ] = newmarkEffectiveSystemStiffnessMatrix(problem, M, D, K);
+% 
+% 
+% for timeStep = 1 : problem.dynamics.nTimeSteps
+%     
+%     % extract necessary quantities from solution
+%     displacementOverTime(:,timeStep) = U;
+%     velocityOverTime(:,timeStep) = V;
+% 
+%     % calculate effective force vector
+%     [ FEff ] = newmarkEffectiveSystemForceVector(problem, M, D, K, F, U, V, A);
+%     FEff = FEff + [0; 0; 0; 0; 0.2; 0.1];
+%     
+%     % solve linear system of equations (UNew = KEff \ FEff)
+%     UNew = moSolveSparseSystem( KEff, FEff );
+%     
+%     % calculate velocities and accelerations
+%     [ VNew, ANew ] = newmarkVelocityAcceleration(problem, UNew, U, V, A);
+%     
+%     % update kinematic quantities
+%     [ U, V, A ] = newmarkUpdateKinematics(UNew, VNew, ANew);
+%     
+% end
 
+% add penalty constraints to effective stiffness matrix
+[ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
+K = K + Kp;
+F = F + Fp;
 
-% compute initial acceleration
-[ A0 ] = goComputeInitialAcceleration(problem, M, D, K, F, U0, V0);
+F = F + [0; 0; 0; 0; 0.2; 0.1];
 
-% initialize values
-[ U, V, A ] = newmarkInitialize(problem, U0, V0, A0);
-
-% create effective system matrices
-[ KEff ] = newmarkEffectiveSystemStiffnessMatrix(problem, M, D, K);
-
-
-for timeStep = 1 : problem.dynamics.nTimeSteps
-    
-    % extract necessary quantities from solution
-    displacementOverTime(:,timeStep) = U;
-    velocityOverTime(:,timeStep) = V;
-
-    % calculate effective force vector
-    [ FEff ] = newmarkEffectiveSystemForceVector(problem, M, D, K, F, U, V, A);
-    FEff += [0; 0; 0; 0; 0.2; 0.1];
-    
-    % solve linear system of equations (UNew = KEff \ FEff)
-    UNew = moSolveSparseSystem( KEff, FEff );
-    
-    % calculate velocities and accelerations
-    [ VNew, ANew ] = newmarkVelocityAcceleration(problem, UNew, U, V, A);
-    
-    % update kinematic quantities
-    [ U, V, A ] = newmarkUpdateKinematics(UNew, VNew, ANew);
-    
-end
+U = K\F;
 
 
 %% post processing
 goPlotDisplacementArrows2d(problem, U, 1)
-figure(2)
-plot(2.5 + displacementOverTime(5,:), 1.5 + displacementOverTime(6,:))
-xlabel("x-position")
-ylabel("y-position")
+% figure(2)
+% plot(2.5 + displacementOverTime(5,:), 1.5 + displacementOverTime(6,:))
+% xlabel("x-position")
+% ylabel("y-position")
+
+% plot deformed mesh
 
 %% check
-URef=[2.00499999999507537e+02 -1.93864452500081171e+0]';
-if sum(URef==U)==3
+URef=[0, 0, 0, 0, 0.1+2*sqrt(2)/5, -0.1]';
+if norm(URef-U) > 1e-12
    error('exElasticBar: Check failed!'); 
 else
    disp('exElasticBar: Check passed.'); 
