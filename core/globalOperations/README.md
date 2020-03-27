@@ -13,7 +13,7 @@ Creates all element matrices (stiffness matrix, right hand side or load vector a
 The returned data structures are cell arrays of (dense) matrices.
 
 ### goCreateAndAssemblePenaltyMatrices.m
-Creates the global penalty stiffness matrix **Kp** and global penalty force vector **Fp**.
+Creates the global penalty stiffness matrix $`\mathbf{K}_p`$ and global penalty force vector $`\mathbf{F}_p`$.
 
 ```matlab
 [Kp, Fp] = goCreateAndAssemblePenaltyMatrices(problem)
