@@ -50,6 +50,9 @@ problem.nodePenalties = { 1,[],[] };
 
 %% dynamic analysis
 
+% initialize dynamic problem /////////////////////// delete /////////////
+problem = poInitializeDynamicProblem(problem);
+
 % create system matrices
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 

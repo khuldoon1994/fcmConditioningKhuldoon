@@ -15,7 +15,7 @@ function [ problem ] = poInitializeDynamicProblem(problem)
         problem.dynamics.tStart = standardTStart;
         problem.dynamics.tStop = standardTStop;
         problem.dynamics.nTimeSteps = standardNTimeSteps;
-        problem.dynamics.parameter = standardParameter;
+%         problem.dynamics.parameter = standardParameter;
         problem.dynamics.dynamicSolver = standardDynamicSolver;
         warning(['WARNING! No dynamics defined. Assume ', ...
                         standardTimeIntegration, ', ', ...
