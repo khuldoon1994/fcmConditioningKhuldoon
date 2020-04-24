@@ -124,11 +124,3 @@ end
 plot(displacementOverTime(1,:), displacementOverTime(2,:))
 xlabel("x-position")
 ylabel("y-position")
-
-%% check
-URef=[2.00499999999507537e+02 -1.93864452500081171e+0]';
-if sum(URef==U)==3
-   error('exElasticBar: Check failed!'); 
-else
-   disp('exElasticBar: Check passed.'); 
-end
