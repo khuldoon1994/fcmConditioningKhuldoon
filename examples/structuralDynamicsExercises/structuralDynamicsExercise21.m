@@ -8,7 +8,7 @@ close all;
 warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
 %% problem definition
-problem.name='pointMass';
+problem.name='ex21';
 problem.dimension = 2;
 
 problem.dynamics.tStart = 0;
