@@ -1,4 +1,4 @@
-function [ Me, De, Ke, Fe ] = pointMassDynamicSystemMatricesCreator(problem, elementIndex)
+function [ Me, Ke, Fe ] = pointMassDynamicSystemMatricesCreator(problem, elementIndex)
 
     % gather some information
     elementTypeIndex = problem.elementTypeIndices(elementIndex);
@@ -6,7 +6,6 @@ function [ Me, De, Ke, Fe ] = pointMassDynamicSystemMatricesCreator(problem, ele
     
     % single dof "matrices"
     Ke = zeros(2,2);
-    De = zeros(2,2);
     Me = eye(2)*problem.elementTypes{elementTypeIndex}.mass;
     Fe = eoEvaluateTotalLoad(problem, elementIndex, []);
     
