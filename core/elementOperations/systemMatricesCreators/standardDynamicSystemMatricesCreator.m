@@ -13,7 +13,7 @@ function [ Me, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementI
     % create copy of function handles for shorter notation
     quadraturePointGetter = problem.elementTypes{elementTypeIndex}.quadraturePointGetter;
     elasticityMatrixGetter = problem.elementTypes{elementTypeIndex}.elasticityMatrixGetter;
-    dynamicMaterialGetter = problem.elementTypes{elementTypeIndex}.dynamicMaterialGetter;
+    massDensityGetter = problem.elementTypes{elementTypeIndex}.massDensityGetter;
 
     % create quadrature points
     [ points, weights ] = quadraturePointGetter(problem, elementIndex);
@@ -41,7 +41,7 @@ function [ Me, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementI
         Fe = Fe + N'*b * weights(i) * detJ;
         
         % add mass matrix integrand (and damping matrix integrand)
-        rho = dynamicMaterialGetter(problem, elementIndex, localCoordinates);
+        rho = massDensityGetter(problem, elementIndex, localCoordinates);
         Me = Me + N'*rho*N * weights(i) * detJ;
         
         % add lumped mass integrand

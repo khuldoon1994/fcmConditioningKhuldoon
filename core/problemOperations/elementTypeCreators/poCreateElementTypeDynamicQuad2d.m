@@ -52,8 +52,8 @@ function [ newType ] = poCreateElementTypeDynamicQuad2d( typeData )
     newType.elasticityMatrixGetterData.youngsModulus = E;
     newType.elasticityMatrixGetterData.poissonRatio = nu;
     
-    newType.dynamicMaterialGetter = @linearDynamicMaterial;
-    newType.dynamicMaterialGetterData.massDensity = rho;
+    newType.massDensityGetter = @linearMassDensity;
+    newType.massDensityGetterData.massDensity = rho;
     
     newType.elementPlotter = @plotLinearQuad;
     newType.postGridCellCreator = @createQuadPostGridCells;
