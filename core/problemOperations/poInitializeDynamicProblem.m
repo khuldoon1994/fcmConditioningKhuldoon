@@ -2,7 +2,6 @@ function [ problem ] = poInitializeDynamicProblem(problem)
     
     %standard parameters
     standardTimeIntegration = 'Central Difference';
-    standardLumping = 'No Lumping';
     standardTStart = 0;
     standardTStop = 10;
     standardNTimeSteps = 51;
@@ -11,15 +10,12 @@ function [ problem ] = poInitializeDynamicProblem(problem)
     if(~isfield(problem, 'dynamics'))
     % if structure "dynamics" not defined
         problem.dynamics.timeIntegration = standardTimeIntegration;
-        problem.dynamics.lumping = standardLumping;
         problem.dynamics.tStart = standardTStart;
         problem.dynamics.tStop = standardTStop;
         problem.dynamics.nTimeSteps = standardNTimeSteps;
-        problem.dynamics.parameter = standardParameter;
         problem.dynamics.dynamicSolver = standardDynamicSolver;
         warning(['WARNING! No dynamics defined. Assume ', ...
                         standardTimeIntegration, ', ', ...
-                        standardLumping, ', ', ...
                         num2str(standardTStart), ', ', ...
                         num2str(standardTStop), ', ', ...
                         num2str(standardNTimeSteps), ', ', ...
@@ -30,11 +26,6 @@ function [ problem ] = poInitializeDynamicProblem(problem)
         if(~isfield(problem.dynamics, 'timeIntegration'))
             problem.dynamics.timeIntegration = standardTimeIntegration;
             warning(['WARNING! No dynamics.timeIntegration defined. Assume ', standardTimeIntegration]);
-        end
-        % if field "lumping" not defined
-        if(~isfield(problem.dynamics, 'lumping'))
-            problem.dynamics.lumping = standardLumping;
-            warning(['WARNING! No dynamics.lumping defined. Assume ', standardLumping]);
         end
         % if field "tStart" not defined
         if(~isfield(problem.dynamics, 'tStart'))

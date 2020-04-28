@@ -62,7 +62,6 @@ problem.nodeFoundations = { [] };
 
 % time integration parameters
 problem.dynamics.timeIntegration = 'Newmark Integration';
-problem.dynamics.lumping = 'No Lumping';
 
 % initialize dynamic problem
 problem = poInitializeDynamicProblem(problem);

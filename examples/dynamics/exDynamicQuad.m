@@ -87,7 +87,6 @@ problem.nodeFoundations = { [],[],[] };
 
 % time integration parameters
 problem.dynamics.timeIntegration = 'Central Difference';
-problem.dynamics.lumping = 'No Lumping';
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 201;
