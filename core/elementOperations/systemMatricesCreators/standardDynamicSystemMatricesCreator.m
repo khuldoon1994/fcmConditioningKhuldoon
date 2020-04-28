@@ -8,7 +8,6 @@ function [ Me, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementI
     Ke = zeros(nDof,nDof);
     Me = zeros(nDof,nDof);
     Fe = zeros(nDof,1);
-    mass = 0;
 
     % create copy of function handles for shorter notation
     quadraturePointGetter = problem.elementTypes{elementTypeIndex}.quadraturePointGetter;
@@ -44,18 +43,9 @@ function [ Me, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementI
         rho = massDensityGetter(problem, elementIndex, localCoordinates);
         Me = Me + N'*rho*N * weights(i) * detJ;
         
-        % add lumped mass integrand
-        mass = mass + rho * weights(i) * detJ;
-        
         % add elastic foundation integrand
         c = eoEvaluateTotalFoundationStiffness(problem, elementIndex, localCoordinates);
         Ke = Ke + N'* c * N * weights(i) * detJ;
-    end
-    
-    % Mass Lumping
-    lumping = problem.dynamics.lumping;
-    if(strcmp(lumping, 'Mass Lumping'))
-        Me = mass/nDof * eye(nDof);
     end
     
 end
