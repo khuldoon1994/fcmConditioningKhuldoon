@@ -64,7 +64,6 @@ problem.nodePenalties = { 1,[],[] };
 
 % time integration parameters
 problem.dynamics.timeIntegration = 'Newmark Integration';
-problem.dynamics.lumping = 'No Lumping';
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;

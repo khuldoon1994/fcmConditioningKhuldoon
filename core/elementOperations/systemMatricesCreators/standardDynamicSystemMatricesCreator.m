@@ -54,11 +54,4 @@ function [ Me, De, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elem
         Ke = Ke + N'* c * N * weights(i) * detJ;
     end
     
-    % Mass Lumping
-    lumping = problem.dynamics.lumping;
-    if(strcmp(lumping, 'Mass Lumping'))
-        Me = mass/nDof * eye(nDof);
-        De = kappa/rho * Me;
-    end
-    
 end

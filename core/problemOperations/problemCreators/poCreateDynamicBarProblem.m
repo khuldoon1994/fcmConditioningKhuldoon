@@ -108,7 +108,6 @@ function [ problem ] = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, t
     
     % linear Dynamics
     problem.dynamics.timeIntegration = 'Central Difference';
-    problem.dynamics.lumping = 'No Lumping';
     problem.dynamics.tStart = tStart;
     problem.dynamics.tStop = tStop;
     problem.dynamics.nTimeSteps = nTimeSteps;
