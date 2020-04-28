@@ -10,7 +10,6 @@ function [ newType ] = poCreateElementTypeDynamicLine1d( typeData )
 %   youngsModulus: The youngsModulus.
 %   area:          The cross sectional area.
 %   rho:           The mass density.
-%   kappa:         The damping coefficient.
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateDynamicElementType may be used for convenience.
@@ -23,7 +22,6 @@ function [ newType ] = poCreateElementTypeDynamicLine1d( typeData )
     E = moParseScalar('youngsModulus',typeData,1,'typeData for element type DYNAMIC_LINE_1D');
     A = moParseScalar('area',typeData,1,'typeData for element type DYNAMIC_LINE_1D');
     rho = moParseScalar('massDensity',typeData,1,'typeData for element type DYNAMIC_LINE_1D');
-    kappa = moParseScalar('dampingCoefficient',typeData,0,'typeData for element type DYNAMIC_LINE_1D');
     
     
     %% create type
@@ -41,7 +39,6 @@ function [ newType ] = poCreateElementTypeDynamicLine1d( typeData )
     
     newType.dynamicMaterialGetter = @linearDynamicMaterial;
     newType.dynamicMaterialGetterData.massDensity = rho;
-    newType.dynamicMaterialGetterData.dampingCoefficient = kappa;
     
     newType.mappingEvaluator = @linearLineMapping;
     newType.jacobianEvaluator = @linearLineJacobian;

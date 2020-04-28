@@ -1,4 +1,4 @@
-function [ Me, De, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementIndex)
+function [ Me, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementIndex)
 
     % gather some information
     elementTypeIndex = problem.elementTypeIndices(elementIndex);
@@ -6,7 +6,6 @@ function [ Me, De, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elem
     
     % initialize matrices
     Ke = zeros(nDof,nDof);
-    De = zeros(nDof,nDof);
     Me = zeros(nDof,nDof);
     Fe = zeros(nDof,1);
     mass = 0;
@@ -42,9 +41,8 @@ function [ Me, De, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elem
         Fe = Fe + N'*b * weights(i) * detJ;
         
         % add mass matrix integrand (and damping matrix integrand)
-        [rho, kappa] = dynamicMaterialGetter(problem, elementIndex, localCoordinates);
+        rho = dynamicMaterialGetter(problem, elementIndex, localCoordinates);
         Me = Me + N'*rho*N * weights(i) * detJ;
-        De = De + N'*kappa*N * weights(i) * detJ;
         
         % add lumped mass integrand
         mass = mass + rho * weights(i) * detJ;
@@ -58,7 +56,6 @@ function [ Me, De, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elem
     lumping = problem.dynamics.lumping;
     if(strcmp(lumping, 'Mass Lumping'))
         Me = mass/nDof * eye(nDof);
-        De = kappa/rho * Me;
     end
     
 end

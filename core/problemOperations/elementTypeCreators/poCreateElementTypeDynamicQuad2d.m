@@ -12,7 +12,6 @@ function [ newType ] = poCreateElementTypeDynamicQuad2d( typeData )
 %   nu:            The poissonRatio.
 %   area:          The cross sectional area.
 %   rho:           The mass density.
-%   kappa:         The damping coefficient.
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateDynamicElementType may be used for convenience.
@@ -25,8 +24,7 @@ function [ newType ] = poCreateElementTypeDynamicQuad2d( typeData )
     E = moParseScalar('youngsModulus',typeData,1,'typeData for element type DYNAMIC_QUAD_2D');
     nu = moParseScalar('poissonRatio',typeData,1,'typeData for element type DYNAMIC_QUAD_2D');
     rho = moParseScalar('massDensity',typeData,1,'typeData for element type DYNAMIC_QUAD_2D');
-    kappa = moParseScalar('dampingCoefficient',typeData,0,'typeData for element type DYNAMIC_QUAD_2D');
-
+    
     physics = moParseString('physics',typeData, 'PLAIN_STRAIN', 'typeData for element type DYNAMIC_QUAD_2D');
     elasticityMatrixGetter=@linearPlaneStrainElasticityMatrix;
     if strcmp(physics,'PLANE_STRESS')
@@ -56,7 +54,6 @@ function [ newType ] = poCreateElementTypeDynamicQuad2d( typeData )
     
     newType.dynamicMaterialGetter = @linearDynamicMaterial;
     newType.dynamicMaterialGetterData.massDensity = rho;
-    newType.dynamicMaterialGetterData.dampingCoefficient = kappa;
     
     newType.elementPlotter = @plotLinearQuad;
     newType.postGridCellCreator = @createQuadPostGridCells;

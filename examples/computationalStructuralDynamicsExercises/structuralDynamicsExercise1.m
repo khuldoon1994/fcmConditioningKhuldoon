@@ -32,16 +32,16 @@ p = 5;
 
 % dynamic parameters
 rho = 1.0;              % mass density
-alpha = 1.0;            % damping coefficient
-kappa = rho * alpha;
+% Rayleigh-Damping (D = massCoeff*M + stiffCoeff*K)
+problem.dynamics.massCoeff = 1.0;
+problem.dynamics.stiffCoeff = 0.0;
 
 % dynamic element types
 problem.elementTypes = { poCreateElementTypeDynamicLine1d(struct(...
     'gaussOrder', p+1, ...
     'youngsModulus', E, ...
     'area', A, ...
-    'massDensity', rho, ...
-    'dampingCoefficient', kappa)) };
+    'massDensity', rho) };
 
 problem.nodes = [ 0, 0.5*L, L ];
 
