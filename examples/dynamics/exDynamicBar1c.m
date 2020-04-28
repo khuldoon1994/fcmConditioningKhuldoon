@@ -22,25 +22,27 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name = 'dynamicBar1D (Central Difference Method)';
 problem.dimension = 1;
 
-% static parameters
+% parameter
+rho = 1.0;
 E = 1.0;
 A = 1.0;
 L = 1.0;
 f = @(x)( x/L );
 
-% dynamic parameters
-rho = 1.0;              % mass density
-alpha = 1.0;            % damping coefficient
-kappa = rho * alpha;
+% damping parameter
+massCoeff = 1.0;
+stiffCoeff = 0.0;
 
-p = 5;
+p = 1;
 n = 2;
 
 tStart = 0;
 tStop = 10;
 nTimeSteps = 401;
 
-problem = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, tStart, tStop, nTimeSteps);
+problem = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, ...
+                                    tStart, tStop, nTimeSteps, ...
+                                    massCoeff, stiffCoeff);
 
 indexOfLastNode = n+1;
 

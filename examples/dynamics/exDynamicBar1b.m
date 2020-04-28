@@ -22,25 +22,24 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name = 'dynamicBar1D (Central Difference Method)';
 problem.dimension = 1;
 
-% static parameters
+% parameter
+rho = 1.0;
 E = 1.0;
 A = 1.0;
 L = 1.0;
 f = @(x)( x/L );
-p = 5;
+p = 1;
 
-% dynamic parameters
-rho = 1.0;              % mass density
-alpha = 1.0;            % damping coefficient
-kappa = rho * alpha;
+% damping parameter
+problem.dynamics.massCoeff = 1.0;
+problem.dynamics.stiffCoeff = 0.0;
 
 % dynamic element types
 problem.elementTypes = { poCreateElementTypeDynamicLine1d(struct(...
     'gaussOrder', p+1, ...
     'youngsModulus', E, ...
     'area', A, ...
-    'massDensity', rho, ...
-    'dampingCoefficient', kappa)) };
+    'massDensity', rho)) };
 
 problem.nodes = [ 0, 0.5*L, L ];
 

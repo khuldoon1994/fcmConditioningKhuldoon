@@ -22,16 +22,15 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name = 'dynamicBar1D (Central Difference Method)';
 problem.dimension = 1;
 
-% static parameters
+% parameter
+rho = 1.0;
 E = 1.0;
 A = 1.0;
 L = 1.0;
 f = @(x)( x/L );
-p = 5;
+p = 1;
 
-% dynamic parameters
-rho = 1.0;              % mass density
-% Rayleigh-Damping (D = massCoeff*M + stiffCoeff*K)
+% damping parameter
 problem.dynamics.massCoeff = 1.0;
 problem.dynamics.stiffCoeff = 0.0;
 
