@@ -20,12 +20,20 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name = 'dynamicBar1D';
 problem.dimension = 1;
 
+% parameter
+rho = 1.0;
+E = 1.0;
+A = 1.0;
+L = 1.0;
+f = @(x)( x/L );
+p = 1;
+
 % dynamic element types
 problem.elementTypes = { poCreateElementTypeDynamicLine1d(struct(...
-    'gaussOrder', 2, ...
-    'youngsModulus', 1.0, ...
-    'area', 1.0, ...
-    'massDensity', 1.0, ...
+    'gaussOrder', p+1, ...
+    'youngsModulus', E, ...
+    'area', A, ...
+    'massDensity', rho, ...
     'dampingCoefficient', 0.0)) };
 
 problem.nodes = [ 0, 0.5, 1.0 ];
@@ -37,8 +45,8 @@ problem.elementTypeIndices = [ 1 1 ];
 problem = poCreateSubElements( problem );
 problem = poCreateElementConnections( problem );
 
-problem.subelementTypes = { poCreateSubelementTypeLegendreLine(struct('order', 1)) };
-problem.loads = { @(x) 1.0 };
+problem.subelementTypes = { poCreateSubelementTypeLegendreLine(struct('order', p)) };
+problem.loads = { f };
 problem.penalties = { [0, 1e60] };
 problem.elementLoads = { 1, 1 };
 problem.elementPenalties = { [], [] };
@@ -52,6 +60,8 @@ problem.nodePenalties = { 1,[],[] };
 
 % initialize dynamic problem /////////////////////// delete /////////////
 % problem = poInitializeDynamicProblem(problem);
+% nE = 11;
+% problem = poCreateDynamicBarProblem(E, A, rho, 0.0, L, p, nE, f, 0, 10, 1);
 
 % create system matrices
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
