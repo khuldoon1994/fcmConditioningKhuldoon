@@ -11,7 +11,7 @@
 %    /|                     |---> 
 %    /|_____________________|--->
 %
-%    material parameter: E, mu, pho, kappa
+%    material parameter: rho, E, nu
 
 %% clear variables, close figures
 clear all;
