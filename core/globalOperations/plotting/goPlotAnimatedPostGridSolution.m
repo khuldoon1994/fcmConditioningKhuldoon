@@ -19,10 +19,10 @@ function goPlotAnimatedPostGridSolution( problem, allUeDynamic, postGrid, soluti
           nodesGlobal = postGrid{iPostGridCell}{2};
           cellIndex = postGrid{iPostGridCell}{3};
           nodesLocal = postGrid{iPostGridCell}{4};
-          
+        
           solution = solutionCalculator(problem, cellIndex, allUe{cellIndex}, nodesLocal);
           deformation = deformationCalculator(problem, cellIndex, allUe{cellIndex}, nodesLocal);      
-          
+        
           goPlotBasicCell(problem, topology, nodesGlobal, solution, deformation);
         end
         toc();
