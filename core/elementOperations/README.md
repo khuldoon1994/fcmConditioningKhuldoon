@@ -139,8 +139,6 @@ where $`P`$ is the penalty value.
 
 ##  Subdirectories in SiHoFemLab/core/  ##
 
-### dynamicMaterialEvaluators/ ###
-
 ### elasticityMatrixEvaluators/ ###
 
 ### elementPlotters/ ###
@@ -148,6 +146,8 @@ where $`P`$ is the penalty value.
 ### jacobianEvaluators/ ###
 
 ### mappingEvaluators/ ###
+
+### massDensityEvaluators/ ###
 
 ### postGridCellCreators/ ###
 

@@ -4,11 +4,10 @@
 %                        f(x)
 %   /|---> ---> ---> ---> ---> ---> ---> --->
 %   /|=======================================
-%   /|          E,A,rho,kappa,L
+%   /|          rho,E,A,L
 %
-% A bar, characterized by its Youngs modulus E, area A,
-% mass density rho, damping coefficient kappa and length L
-% is loaded by a distributed force (one-dimensional "body-force").
+% A bar, characterized by its density rho, Youngs modulus E, area A and
+% length L is loaded by a distributed force (one-dimensional "body-force").
 %
 % This elastodynamic problem will be analyzed using
 % Central Difference Method
@@ -23,17 +22,17 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name = 'dynamicBar1D (Central Difference Method)';
 problem.dimension = 1;
 
-% static parameters
+% parameter
+rho = 1.0;
 E = 1.0;
 A = 1.0;
 L = 1.0;
 f = @(x)( x/L );
 p = 5;
 
-% dynamic parameters
-rho = 1.0;              % mass density
-alpha = 1.0;            % damping coefficient
-kappa = rho * alpha;
+% damping parameter
+massCoeff = 1.0;
+stiffCoeff = 0.0;
 
 % create dynamic problem structure
 tStart = 0;
@@ -41,7 +40,9 @@ tStop = 10;
 nTimeSteps = 401;
 nElements = 2;
 
-problem = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, nElements, f, tStart, tStop, nTimeSteps);
+problem = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, ...
+                                    tStart, tStop, nTimeSteps, ...
+                                    massCoeff, stiffCoeff);
 
 % initialize dynamic problem
 problem = poInitializeDynamicProblem(problem);
