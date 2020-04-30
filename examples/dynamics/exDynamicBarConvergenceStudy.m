@@ -11,7 +11,6 @@ f = @(x) cos(2*pi*x)+ sin(2*pi*x);
 E = 1;
 A = 1;
 rho = 1;
-kappa = 0;
 
 %% loop and increase number of dof
 dofsP = zeros(1,10);
@@ -26,7 +25,7 @@ for i=1:10
     p = 2;
     n = round(sqrt(2)^(1+i))-1;
 %    problem = poCreateElasticBarProblem(1.0,1.0,1.0,p,n,f);
-    problem = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, 0,1,1);
+    problem = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, 0,1,1);
     problem.elementTypes{1}.quadraturePointGetter=@blendedQuadrature1d;
     
     % analysis
@@ -63,7 +62,7 @@ for i=1:10
     n = 1;
     p = i;
     %problem = poCreateElasticBarProblem(1.0,1.0,1.0,p,n,f);
-    problem = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, 0,1,1);
+    problem = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, 0,1,1);
     problem.elementTypes{1}.quadraturePointGetter=@blendedQuadrature1d;
 
     % analysis
