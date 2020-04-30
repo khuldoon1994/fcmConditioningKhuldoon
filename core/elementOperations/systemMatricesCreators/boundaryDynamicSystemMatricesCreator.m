@@ -1,4 +1,4 @@
-function [ Me, De, Ke, Fe ] = boundaryDynamicSystemMatricesCreator(problem, elementIndex)
+function [ Me, Ke, Fe ] = boundaryDynamicSystemMatricesCreator(problem, elementIndex)
 
     % gather some information
     elementTypeIndex = problem.elementTypeIndices(elementIndex);
@@ -6,7 +6,6 @@ function [ Me, De, Ke, Fe ] = boundaryDynamicSystemMatricesCreator(problem, elem
     
     % initialize matrices
     Ke = zeros(nDof,nDof);
-    De = zeros(nDof,nDof);
     Me = zeros(nDof,nDof);
     Fe = zeros(nDof,1);
 

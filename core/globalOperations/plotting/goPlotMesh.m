@@ -38,11 +38,11 @@ function goPlotMesh( problem, fig )
     names(handles==0) = {};
     handles(handles==0) = [];
     
-    if verLessThan('matlab', '9.2')
-        legend(handles, names,  'Interpreter', 'none');
-    else
-        legend(handles, names,  'Interpreter', 'none', 'AutoUpdate', 'off');
-    end
+    %if verLessThan('matlab', '9.2')
+    %    legend(handles, names,  'Interpreter', 'none');
+    %else
+    %    legend(handles, names,  'Interpreter', 'none', 'AutoUpdate', 'off');
+    %end
     
     axis equal;
 
