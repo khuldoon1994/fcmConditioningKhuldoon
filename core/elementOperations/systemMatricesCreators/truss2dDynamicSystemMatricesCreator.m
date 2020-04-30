@@ -1,4 +1,4 @@
-function [ Me, De, Ke, Fe ] = truss2dDynamicSystemMatricesCreator(problem, elementIndex)
+function [ Me, Ke, Fe ] = truss2dDynamicSystemMatricesCreator(problem, elementIndex)
 
     % gather some information
     elementTypeIndex = problem.elementTypeIndices(elementIndex);
@@ -8,7 +8,6 @@ function [ Me, De, Ke, Fe ] = truss2dDynamicSystemMatricesCreator(problem, eleme
     E = problem.elementTypes{elementTypeIndex}.youngsModulus;
     A = problem.elementTypes{elementTypeIndex}.area;
     rho = problem.elementTypes{elementTypeIndex}.massDensity;
-    kappa = problem.elementTypes{elementTypeIndex}.dampingCoefficient;
     
     % geometry
     i1 = problem.elementNodeIndices{elementIndex}(1);
@@ -28,7 +27,6 @@ function [ Me, De, Ke, Fe ] = truss2dDynamicSystemMatricesCreator(problem, eleme
     % single dof "matrices"
     Ke = E*A/L*[c2 sc -c2 -sc; sc s2 -sc -s2; -c2 -sc c2 sc; -sc -s2 sc s2];
     Me = rho*A*L/6*[2*c2 2*sc c2 sc; 2*sc 2*s2 sc s2; c2 sc 2*c2 2*sc; sc s2 2*sc 2*s2];
-    De = kappa/rho*Me;
     Fe = zeros(4,1);
     
 end

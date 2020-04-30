@@ -15,12 +15,15 @@ problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;
 
-% material and structure
+% parameter
+rho = 1;
 m = 2.5;
 E = 1;
 A = 1;
-rho = 1;
-kappa = 0;
+
+% damping parameter
+problem.dynamics.massCoeff = 0.0;
+problem.dynamics.stiffCoeff = 0.0;
 
 % subelement types
 subelementType1 = poCreateSubelementType( 'LINEAR_LINE', struct() );
@@ -30,8 +33,7 @@ problem.subelementTypes = { subelementType1 };
 elementType1 = poCreateElementType( 'DYNAMIC_TRUSS_2D', struct(...
     'youngsModulus', E, ...
     'area', A, ...
-    'massDensity', rho, ...
-    'dampingCoefficient', kappa));
+    'massDensity', rho));
 problem.elementTypes = { elementType1 };
 
 % nodes

@@ -15,12 +15,15 @@ problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;
 
-% material and structure
+% parameter
+rho = 1;
 m = 2.5;
 E = 1;
 A = 1;
-rho = 1;
-kappa = 0;
+
+% damping parameter
+problem.dynamics.massCoeff = 0.0;
+problem.dynamics.stiffCoeff = 0.0;
 
 % gravity
 g = 9.81;
@@ -33,8 +36,7 @@ problem.subelementTypes = { subelementType1 };
 elementType1 = poCreateElementType( 'DYNAMIC_TRUSS_2D', struct(...
     'youngsModulus', E, ...
     'area', A, ...
-    'massDensity', rho, ...
-    'dampingCoefficient', kappa));
+    'massDensity', rho));
 problem.elementTypes = { elementType1 };
 
 % nodes
@@ -138,15 +140,15 @@ for timeStep = 1 : problem.dynamics.nTimeSteps
     
 end
 
-%% post processing
-plot(2.5 + displacementOverTime(3,:), 1.5 + displacementOverTime(4,:))
-xlabel("x-position")
-ylabel("y-position")
-
-%% check
-URef=[2.00499999999507537e+02 -1.93864452500081171e+0]';
-if sum(URef==U)==3
-   error('exElasticBar: Check failed!'); 
-else
-   disp('exElasticBar: Check passed.'); 
-end
+% %% post processing
+% plot(2.5 + displacementOverTime(3,:), 1.5 + displacementOverTime(4,:))
+% xlabel("x-position")
+% ylabel("y-position")
+% 
+% %% check
+% URef=[2.00499999999507537e+02 -1.93864452500081171e+0]';
+% if sum(URef==U)==3
+%    error('exElasticBar: Check failed!'); 
+% else
+%    disp('exElasticBar: Check passed.'); 
+% end
