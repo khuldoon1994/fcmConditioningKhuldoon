@@ -1,6 +1,7 @@
-function [ problem ] = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, tStart, tStop, nTimeSteps)
-% Creates a ready to use problem data structure. An elastic bar with Youngs
-% modulus E, area A, mass density rho, damping coefficient kappa and 
+function [ problem ] = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, ...
+    tStart, tStop, nTimeSteps, massCoeff, stiffCoeff)
+% Creates a ready to use problem data structure. An elastic bar with
+% Youngs modulus E, area A, mass density rho and 
 % length L is discretized with n elements with shape
 % functions of order p (integrated Legendre polynomials). It is loaded by a
 % distributed force f, which can be a function handle.
@@ -18,36 +19,42 @@ function [ problem ] = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, t
         rho = 1;
     end
     if nargin < 4
-        % no damping
-        kappa = 0;
-    end
-    if nargin < 5
         L = 1;
     end
-    if nargin < 6
+    if nargin < 5
         % quadratic shape functions
         p = 2;
     end
-    if nargin < 7
+    if nargin < 6
         % one element
         n = 1;
     end
-    if nargin < 8
+    if nargin < 7
         f = @(x)( x/L );
     end
-    if nargin < 9
+    if nargin < 8
         tStart = 0;
     end
-    if nargin < 10
+    if nargin < 9
         tStop = 10;
     end
-    if nargin < 11
+    if nargin < 10
         nTimeSteps = 1001;
+    end
+    if nargin < 11
+        massCoeff = 1.0;
+    end
+    if nargin < 12
+        stiffCoeff = 0.0;
     end
     
     %% problem definition
     problem.name = 'dynamicBar1D';
     problem.dimension = 1;
+    
+    % damping parameter
+    problem.dynamics.massCoeff = massCoeff;
+    problem.dynamics.stiffCoeff = stiffCoeff;
     
     % subelement types
     subelementTypeData.order = p;
@@ -55,7 +62,7 @@ function [ problem ] = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, t
     problem.subelementTypes = { subelementType1 };
     
     % element types
-    elementTypeData1 = struct( 'gaussOrder', p+1, 'youngsModulus', E, 'area', A, 'massDensity', rho, 'dampingCoefficient', kappa );
+    elementTypeData1 = struct( 'gaussOrder', p+1, 'youngsModulus', E, 'area', A, 'massDensity', rho );
     elementType1 = poCreateElementType( 'DYNAMIC_LINE_1D', elementTypeData1 );
     problem.elementTypes = { elementType1 };
     
@@ -108,7 +115,6 @@ function [ problem ] = poCreateDynamicBarProblem(E, A, rho, kappa, L, p, n, f, t
     
     % linear Dynamics
     problem.dynamics.timeIntegration = 'Central Difference';
-    problem.dynamics.lumping = 'No Lumping';
     problem.dynamics.tStart = tStart;
     problem.dynamics.tStop = tStop;
     problem.dynamics.nTimeSteps = nTimeSteps;
