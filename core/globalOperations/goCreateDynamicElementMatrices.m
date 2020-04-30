@@ -29,7 +29,7 @@ function [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices(
         elementTypeIndex = problem.elementTypeIndices(iElement);
         systemMatricesCreator = problem.elementTypes{elementTypeIndex}.systemMatricesCreator;
         
-        % create mass matrix, damping matrix, stiffness matrix and load vector
+        % create mass matrix, stiffness matrix and load vector
         [ allMe{iElement}, allKe{iElement}, allFe{iElement} ] = systemMatricesCreator(problem, iElement);
         
         % apply Rayleigh damping
