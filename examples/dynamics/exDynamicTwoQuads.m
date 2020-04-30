@@ -11,7 +11,7 @@
 %    /|                     |---> 
 %    /|_____________________|--->
 %
-%    material parameter: E, mu, pho, kappa
+%    material parameter: rho, E, nu
 
 %% clear variables, close figures
 clear all;
@@ -23,37 +23,25 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name = 'dynamicTwoQuads2D (Central Difference Method)';
 problem.dimension = 2;
 
-% static parameters
+% parameter
+rho = 1.0;
 E = 1.0;
 nu = 0.3;
 p = 2;
 traction = 0.15;
 
-% dynamic parameters
-rho = 1.0;
-kappa = 1.0;
+% damping parameter
+problem.dynamics.massCoeff = 1.0;
+problem.dynamics.stiffCoeff = 0.0;
 
 
 problem.nodes = [ 0.0, 1.0, 2.0, 0.0, 1.0, 2.0;
                   0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ];
 
-% % define standard element types ...
-% elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu) );
-% elementType2 = poCreateElementType( 'STANDARD_LINE_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu) );
-% % problem.elementTypes = { elementType1, elementType2 };
-% 
-% % ... and convert them to dynamic element types
-% elementType1 = poConvertElementTypeToDynamic( elementType1, struct('massDensity', rho, 'dampingCoefficient', kappa) );
-% elementType2 = poConvertElementTypeToDynamic( elementType2, struct('massDensity', rho, 'dampingCoefficient', kappa) );
-% problem.elementTypes = { elementType1, elementType2 };
-
-% alternative:
-%--------------------------------------------------------------------------
-% directly define dynamic element types
-elementType1 = poCreateElementType( 'DYNAMIC_QUAD_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'massDensity', rho, 'dampingCoefficient', kappa) );
-elementType2 = poCreateElementType( 'DYNAMIC_LINE_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'massDensity', rho, 'dampingCoefficient', kappa) );
+% element types
+elementType1 = poCreateElementType( 'DYNAMIC_QUAD_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'massDensity', rho) );
+elementType2 = poCreateElementType( 'DYNAMIC_LINE_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'massDensity', rho) );
 problem.elementTypes = { elementType1, elementType2 };
-%--------------------------------------------------------------------------
 
 subelementType1 = poCreateSubelementType( 'LEGENDRE_QUAD', struct('order', p) );
 subelementType2 = poCreateSubelementType( 'LEGENDRE_EDGE', struct('order', p) );

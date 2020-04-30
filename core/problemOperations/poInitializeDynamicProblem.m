@@ -52,6 +52,16 @@ function [ problem ] = poInitializeDynamicProblem(problem)
     % calculate sampling time "deltaT"
     deltaT = goGetSamplingTime(problem);
     
+    % apply parameters for Rayleigh damping
+    if(~isfield(problem.dynamics, 'massCoeff'))
+        problem.dynamics.massCoeff = 0.0;
+        % no warning
+    end
+    if(~isfield(problem.dynamics, 'stiffCoeff'))
+        problem.dynamics.stiffCoeff = 0.0;
+        % no warning
+    end
+    
     % attach dynamicSolver to the "dynamics" structure
     if(strcmp(problem.dynamics.timeIntegration, 'Central Difference'))
         problem.dynamics.dynamicSolver = @cdmDynamicSolver;

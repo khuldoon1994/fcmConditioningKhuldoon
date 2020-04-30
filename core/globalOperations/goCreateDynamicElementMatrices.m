@@ -18,6 +18,10 @@ function [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices(
     allFe = cell(nElements,1);
     allLe = cell(nElements,1);
     
+    % get Rayleigh damping coefficients
+    massCoeff = problem.dynamics.massCoeff;
+    stiffCoeff = problem.dynamics.stiffCoeff;
+    
     % loop over elements
     for iElement = 1:nElements
         
@@ -25,8 +29,11 @@ function [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices(
         elementTypeIndex = problem.elementTypeIndices(iElement);
         systemMatricesCreator = problem.elementTypes{elementTypeIndex}.systemMatricesCreator;
         
-        % create mass matrix, damping matrix, stiffness matrix and load vector
-        [ allMe{iElement}, allDe{iElement}, allKe{iElement}, allFe{iElement} ] = systemMatricesCreator(problem, iElement);
+        % create mass matrix, stiffness matrix and load vector
+        [ allMe{iElement}, allKe{iElement}, allFe{iElement} ] = systemMatricesCreator(problem, iElement);
+        
+        % apply Rayleigh damping
+        allDe{iElement} = massCoeff*allMe{iElement} + stiffCoeff*allKe{iElement};
         
         % create location vector
         [ allLe{iElement} ] = eoGetLocationVector(problem, iElement, allLse);

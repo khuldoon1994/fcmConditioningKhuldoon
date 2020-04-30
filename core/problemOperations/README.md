@@ -178,9 +178,6 @@ critical sampling time $`\Delta t_{crit}`$. The analysis will be predicted as st
 Contains the corresponding function which expects as the only input argument the problem data structure. It checks whether all necessary fields are provided and whether their values make sense.
 **It is a good advise to alway call this function after setting up a problem!**
 
-###  poConvertElementTypeToDynamic.m  ###
-Converts an already existing standard element type to its dynamic version.
-
 ###  poCreateElementType.m  ###
 Contains the corresponding function which creates an element type as explained above.
 
