@@ -4,11 +4,10 @@
 %                        f(x)
 %   /|---> ---> ---> ---> ---> ---> ---> --->
 %   /|=======================================
-%   /|          E,A,rho,kappa,L
+%   /|          rho,E,A,L
 %
-% A bar, characterized by its Youngs modulus E, area A,
-% mass density rho, damping coefficient kappa and length L
-% is loaded by a distributed force (one-dimensional "body-force").
+% A bar, characterized by its density rho, Youngs modulus E, area A and
+% length L is loaded by a distributed force (one-dimensional "body-force").
 %
 % This elastodynamic problem will be analyzed using
 % Central Difference Method
@@ -23,25 +22,24 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name = 'dynamicBar1D (Central Difference Method)';
 problem.dimension = 1;
 
-% static parameters
+% parameter
+rho = 1.0;
 E = 1.0;
 A = 1.0;
 L = 1.0;
 f = @(x)( x/L );
-p = 5;
+p = 1;
 
-% dynamic parameters
-rho = 1.0;              % mass density
-alpha = 1.0;            % damping coefficient
-kappa = rho * alpha;
+% damping parameter
+problem.dynamics.massCoeff = 1.0;
+problem.dynamics.stiffCoeff = 0.0;
 
 % dynamic element types
 problem.elementTypes = { poCreateElementTypeDynamicLine1d(struct(...
     'gaussOrder', p+1, ...
     'youngsModulus', E, ...
     'area', A, ...
-    'massDensity', rho, ...
-    'dampingCoefficient', kappa)) };
+    'massDensity', rho)) };
 
 problem.nodes = [ 0, 0.5*L, L ];
 
@@ -64,7 +62,6 @@ problem.nodePenalties = { 1,[],[] };
 
 % time integration parameters
 problem.dynamics.timeIntegration = 'Central Difference';
-problem.dynamics.lumping = 'No Lumping';
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;
