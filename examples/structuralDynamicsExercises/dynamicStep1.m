@@ -13,50 +13,47 @@
 clear all;
 close all;
 clc;
-warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
 %% problem definition
-problem.name = 'dynamicBar1D';
+problem.name = 'linearElasticBar';
 problem.dimension = 1;
-
-% parameter
-rho = 1.0;
-E = 1.0;
-A = 1.0;
-L = 1.0;
-f = @(x)( x/L );
-p = 1;
 
 % element type
 elementType1 = poCreateElementTypeDynamicLine1d(struct(...
-    'gaussOrder', p+1, ...
-    'youngsModulus', E, ...
-    'area', A, ...
-    'massDensity', rho));
-problem.elementTypes = { elementType1 };
+    'gaussOrder', 2, ...
+    'youngsModulus', 1.0, ...
+    'area', 1.0, ...
+    'massDensity', 1.0));
 
-problem.nodes = [ 0, 0.5, 1.0 ];
+problem.elementTypes = { elementType1 };
 
 problem.elementNodeIndices = { [1 2], [2 3] };
 problem.elementTopologies = [ 1 1 ];
 problem.elementTypeIndices = [ 1 1 ];
 
-problem = poCreateSubElements( problem );
-problem = poCreateElementConnections( problem );
+% nodes
+problem.nodes = [ 0, 0.5, 1.0 ];
 
 % subelement type
-subelementType1 = poCreateSubelementTypeLegendreLine(struct('order', p));
+subelementType1 = poCreateSubelementTypeLinearLine();
+
 problem.subelementTypes = { subelementType1 };
 
-problem.loads = { f };
+problem = poCreateSubElements( problem );
+
+% connect elements and subelements
+problem = poCreateElementConnections( problem );
+
+problem.loads = { @(x)( x ) };
 problem.elementLoads = { 1, 1 };
+
 problem.elementFoundations = { [], [] };
 
 % damping parameter
 problem.dynamics.massCoeff = 1.0;
 problem.dynamics.stiffCoeff = 0.0;
 
-%% Computation of system matrices and vectors
+%% computation of system matrices and vectors
 % create system matrices
 [allMe,allDe,allKe,allFe,allLe] = goCreateDynamicElementMatrices(problem);
 
