@@ -27,13 +27,16 @@ L = 1.0;
 f = @(x)( x/L );
 p = 1;
 
-% element type
-elementType1 = poCreateElementTypeDynamicLine1d(struct(...
+% damping parameter
+problem.dynamics.massCoeff = 1.0;
+problem.dynamics.stiffCoeff = 0.0;
+
+% dynamic element types
+problem.elementTypes = { poCreateElementTypeDynamicLine1d(struct(...
     'gaussOrder', p+1, ...
     'youngsModulus', E, ...
     'area', A, ...
-    'massDensity', rho));
-problem.elementTypes = { elementType1 };
+    'massDensity', rho)) };
 
 problem.nodes = [ 0, 0.5, 1.0 ];
 
@@ -44,21 +47,26 @@ problem.elementTypeIndices = [ 1 1 ];
 problem = poCreateSubElements( problem );
 problem = poCreateElementConnections( problem );
 
-% subelement type
-subelementType1 = poCreateSubelementTypeLegendreLine(struct('order', p));
-problem.subelementTypes = { subelementType1 };
-
+problem.subelementTypes = { poCreateSubelementTypeLegendreLine(struct('order', p)) };
 problem.loads = { f };
+% problem.penalties = { [0, 1e60] };
 problem.elementLoads = { 1, 1 };
+% problem.elementPenalties = { [], [] };
 problem.elementFoundations = { [], [] };
 
-% damping parameter
-problem.dynamics.massCoeff = 1.0;
-problem.dynamics.stiffCoeff = 0.0;
+problem.nodeLoads = { [],[],[] };
+% problem.nodePenalties = { 1,[],[] };
 
-%% Computation of system matrices and vectors
+
+%% dynamic analysis
+
+% initialize dynamic problem /////////////////////// delete /////////////
+% problem = poInitializeDynamicProblem(problem);
+% nE = 11;
+% problem = poCreateDynamicBarProblem(E, A, rho, 0.0, L, p, nE, f, 0, 10, 1);
+
 % create system matrices
-[allMe,allDe,allKe,allFe,allLe] = goCreateDynamicElementMatrices(problem);
+[ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 
 % assemble
 M = goAssembleMatrix(allMe, allLe);
