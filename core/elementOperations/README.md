@@ -147,8 +147,6 @@ where $`P`$ is the penalty value.
 
 ### mappingEvaluators/ ###
 
-### massDensityEvaluators/ ###
-
 ### postGridCellCreators/ ###
 
 ### quadraturePointGetters/ ###
