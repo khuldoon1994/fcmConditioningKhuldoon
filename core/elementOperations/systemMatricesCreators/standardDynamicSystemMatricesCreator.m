@@ -12,7 +12,7 @@ function [ Me, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementI
     % create copy of function handles for shorter notation
     quadraturePointGetter = problem.elementTypes{elementTypeIndex}.quadraturePointGetter;
     elasticityMatrixGetter = problem.elementTypes{elementTypeIndex}.elasticityMatrixGetter;
-    massDensityGetter = problem.elementTypes{elementTypeIndex}.massDensityGetter;
+    massDensity = problem.elementTypes{elementTypeIndex}.massDensity;
 
     % create quadrature points
     [ points, weights ] = quadraturePointGetter(problem, elementIndex);
@@ -39,8 +39,8 @@ function [ Me, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementI
         b = eoEvaluateTotalLoad(problem, elementIndex, localCoordinates);
         Fe = Fe + N'*b * weights(i) * detJ;
         
-        % add mass matrix integrand (and damping matrix integrand)
-        rho = massDensityGetter(problem, elementIndex, localCoordinates);
+        % add mass matrix integrand
+        rho = massDensity;
         Me = Me + N'*rho*N * weights(i) * detJ;
         
         % add elastic foundation integrand
