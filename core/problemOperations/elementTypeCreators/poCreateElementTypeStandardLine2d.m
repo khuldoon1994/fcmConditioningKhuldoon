@@ -1,6 +1,6 @@
 function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
 %poCreateElementTypeStandardLine2d  Creates a standard two-dimensional line
-% or truss element.
+% element that is usually used for integrating edge loads.
 %
 %   newType = poCreateElementTypeStandardLine2d(typeData) creates a new
 %   type according to the parameters given in typeData.
@@ -22,6 +22,7 @@ function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
     E = moParseScalar('youngsModulus',typeData,1,'typeData for element type STANDARD_LINE_2D');
     nu = moParseScalar('poissonRatio',typeData,1,'typeData for element type STANDARD_LINE_2D');
 
+    %% TODO: Why is this needed? It's a boundary element...  
     physics = moParseString('physics',typeData, 'PLAIN_STRAIN', 'typeData for element type STANDARD_LINE_2D');
     elasticityMatrixGetter=@linearPlaneStrainElasticityMatrix;
     if strcmp(physics,'PLANE_STRESS')
@@ -42,6 +43,7 @@ function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
     
     newType.systemMatricesCreator = @boundarySystemMatricesCreator;
     
+    %% TODO: Why is this needed? It's a boundary element...  
     newType.elasticityMatrixGetter = elasticityMatrixGetter;
     newType.elasticityMatrixGetterData.youngsModulus = E;
     newType.elasticityMatrixGetterData.poissonRatio = nu;
