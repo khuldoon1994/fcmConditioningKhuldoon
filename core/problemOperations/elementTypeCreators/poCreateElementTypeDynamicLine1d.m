@@ -37,8 +37,7 @@ function [ newType ] = poCreateElementTypeDynamicLine1d( typeData )
     newType.elasticityMatrixGetterData.youngsModulus =  E;
     newType.elasticityMatrixGetterData.area = A;
     
-    newType.massDensityGetter = @linearMassDensity;
-    newType.massDensityGetterData.massDensity = rho;
+    newType.massDensity = rho;
     
     newType.mappingEvaluator = @linearLineMapping;
     newType.jacobianEvaluator = @linearLineJacobian;
