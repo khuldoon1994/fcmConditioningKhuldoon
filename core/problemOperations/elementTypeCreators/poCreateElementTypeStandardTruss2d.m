@@ -1,8 +1,8 @@
-function [ newType ] = poCreateElementTypeDynamicTruss2d( typeData )
-%poCreateElementTypeDynamicTruss2d  Creates a dynamic two-dimensional line
+function [ newType ] = poCreateElementTypeStandardTruss2d( typeData )
+%poCreateElementTypeStandardTruss2d  Creates a dynamic two-dimensional line
 % or truss element.
 %
-%   newType = poCreateElementTypeDynamicTruss2d(typeData) creates a new
+%   newType = poCreateElementTypeStandardTruss2d(typeData) creates a new
 %   type according to the parameters given in typeData.
 %
 %   typeData must be a structure array with the following fields:
@@ -12,17 +12,17 @@ function [ newType ] = poCreateElementTypeDynamicTruss2d( typeData )
 %   rho:           The mass density.
 %  
 %   Instead of calling this function directly, the function 
-%   poCreateDynamicElementType may be used for convenience.
+%   poCreateStandardElementType may be used for convenience.
 %   
-%   See also poCreateElementType, poCreateElementTypeDynamicQuad2d,
+%   See also poCreateElementType, poCreateElementTypeStandardQuad2d,
 
     %% parse input
-    E = moParseScalar('youngsModulus',typeData,1,'typeData for element type DYNAMIC_TRUSS_2D');
-    A = moParseScalar('area',typeData,1,'typeData for element type DYNAMIC_TRUSS_2D');
-    rho = moParseScalar('massDensity',typeData,1,'typeData for element type DYNAMIC_TRUSS_2D');
+    E = moParseScalar('youngsModulus',typeData,1,'typeData for element type STANDARD_TRUSS_2D');
+    A = moParseScalar('area',typeData,1,'typeData for element type STANDARD_TRUSS_2D');
+    rho = moParseScalar('massDensity',typeData,1,'typeData for element type STANDARD_TRUSS_2D');
 
     %% create type
-    newType.name = 'DYNAMIC_TRUSS_2D';
+    newType.name = 'STANDARD_TRUSS_2D';
     
     newType.localDimension = 1;
     
