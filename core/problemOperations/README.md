@@ -162,7 +162,7 @@ problem.elementPenalties = {
 };
 ```
 
-**The best way to understand all the fields of the problem data structure is to look through the [examples](/core/examples).**
+**The best way to understand all the fields of the problem data structure is to look through the [examples](/examples).**
 
 
 ##  Files in core/problemOperations ##
