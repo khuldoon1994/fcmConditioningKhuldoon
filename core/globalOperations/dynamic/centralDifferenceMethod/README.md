@@ -47,7 +47,7 @@ end
 </code></pre>
 
 <p style="float: left; font-size: 12pt; text-align: center; width: 100%; margin-right: 1%; margin-bottom: 0.5em;">
-<img src="extensions/mahangorji/linearDynamics/Theory/scheme_CDM.png" width="100%">
+<img src="../../../../extensions/mahangorji/linearDynamics/Theory/scheme_CDM.png" width="100%">
 Algorithm of the Central Difference Method: Calculate the next timestep from the  <b>last two</b> timesteps (since we solve a <b>second order</b> DGL).
 Assume $`\underline{U}_{-1} = \underline{U}_{0} = 0`$ (system is in equilibrium for $`t \leq 0`$).
 </p>
