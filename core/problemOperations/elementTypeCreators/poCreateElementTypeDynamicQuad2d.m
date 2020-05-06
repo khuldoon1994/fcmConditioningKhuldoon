@@ -43,7 +43,8 @@ function [ newType ] = poCreateElementTypeDynamicQuad2d( typeData )
     newType.jacobianEvaluator = @linearQuadJacobian;
     newType.mapperData = { };
     
-    newType.systemMatricesCreator = @standardDynamicSystemMatricesCreator;
+    newType.systemMatricesCreator = @standardSystemMatricesCreator;
+    newType.dynamicSystemMatricesCreator = @dynamicSystemMatricesCreator;
     
     newType.quadraturePointGetter = @gaussianQuadrature2d;
     newType.quadraturePointGetterData.gaussOrder = p;

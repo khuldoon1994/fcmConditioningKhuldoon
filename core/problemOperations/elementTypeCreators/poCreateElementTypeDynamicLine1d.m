@@ -28,7 +28,8 @@ function [ newType ] = poCreateElementTypeDynamicLine1d( typeData )
     newType.name = 'DYNAMIC_LINE_1D';
     newType.localDimension = 1;
     
-    newType.systemMatricesCreator = @standardDynamicSystemMatricesCreator;
+    newType.systemMatricesCreator = @standardSystemMatricesCreator;
+    newType.dynamicSystemMatricesCreator = @dynamicSystemMatricesCreator;
     
     newType.quadraturePointGetter = @gaussianQuadrature1d;
     newType.quadraturePointGetterData.gaussOrder = p;

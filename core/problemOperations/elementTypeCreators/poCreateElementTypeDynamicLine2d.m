@@ -39,7 +39,8 @@ function [ newType ] = poCreateElementTypeDynamicLine2d( typeData )
     
     newType.localDimension = 1;
     
-    newType.systemMatricesCreator = @boundaryDynamicSystemMatricesCreator;
+    newType.systemMatricesCreator = @boundarySystemMatricesCreator;
+    newType.dynamicSystemMatricesCreator = @dynamicBoundarySystemMatricesCreator;
     
     newType.quadraturePointGetter = @gaussianQuadrature1d;
     newType.quadraturePointGetterData.gaussOrder = p;

@@ -14,7 +14,7 @@ function [ newType ] = poCreateElementTypeDynamicTruss2d( typeData )
 %   Instead of calling this function directly, the function 
 %   poCreateDynamicElementType may be used for convenience.
 %   
-%   See also p poCreateElementType, poCreateElementTypeDynamicQuad2d,
+%   See also poCreateElementType, poCreateElementTypeDynamicQuad2d,
 
     %% parse input
     E = moParseScalar('youngsModulus',typeData,1,'typeData for element type DYNAMIC_TRUSS_2D');
@@ -26,7 +26,8 @@ function [ newType ] = poCreateElementTypeDynamicTruss2d( typeData )
     
     newType.localDimension = 1;
     
-    newType.systemMatricesCreator = @truss2dDynamicSystemMatricesCreator;
+    newType.systemMatricesCreator = @standardTruss2dSystemMatricesCreator;
+    newType.dynamicSystemMatricesCreator = @dynamicTruss2dSystemMatricesCreator;
     
     newType.youngsModulus = E;
     newType.area = A;

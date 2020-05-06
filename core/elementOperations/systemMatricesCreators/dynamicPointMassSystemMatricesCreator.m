@@ -1,4 +1,4 @@
-function [ Me, Ke, Fe ] = pointMassDynamicSystemMatricesCreator(problem, elementIndex)
+function [ Me, Ke, Fe ] = dynamicPointMassSystemMatricesCreator(problem, elementIndex)
 
     % gather some information
     elementTypeIndex = problem.elementTypeIndices(elementIndex);

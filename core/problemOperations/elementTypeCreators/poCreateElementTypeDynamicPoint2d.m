@@ -22,7 +22,8 @@ function [ newType ] = poCreateElementTypeDynamicPoint2d( typeData )
     newType.name = 'DYNAMIC_POINT_2D';
     newType.localDimension = 0;
     
-    newType.systemMatricesCreator = @pointMassDynamicSystemMatricesCreator;
+    newType.systemMatricesCreator = @standardPointMassSystemMatricesCreator;
+    newType.dynamicSystemMatricesCreator = @dynamicPointMassSystemMatricesCreator;
     
     newType.mass = mass;
     

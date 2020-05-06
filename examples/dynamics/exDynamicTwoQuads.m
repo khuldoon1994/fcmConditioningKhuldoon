@@ -95,7 +95,6 @@ problem = poInitializeDynamicProblem(problem);
 
 
 %% static analysis
-[ ~, ~, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 [ K, F ] = goAssembleSystem(allKe, allFe, allLe);
 
