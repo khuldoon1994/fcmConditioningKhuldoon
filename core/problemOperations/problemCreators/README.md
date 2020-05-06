@@ -8,4 +8,4 @@ This subdirectory contains functions that create an entire problem. This is usef
 Creates the well known problem of a clambed truss loaded by a distributed force.
 
 <h3>poCreateDynamicBarProblem.m</h3>
-This is the dynamic version of _poCreateElasticBarProblem.m_
+This is the dynamic version of <i>poCreateElasticBarProblem.m</i>.
