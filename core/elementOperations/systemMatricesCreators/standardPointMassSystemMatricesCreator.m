@@ -5,7 +5,7 @@ function [ Ke, Fe ] = standardPointMassSystemMatricesCreator(problem, elementInd
     nDof = eoGetNumberOfShapeFunctions(problem,elementIndex) * problem.dimension;
     
     % single dof "matrices"
-    Ke = zeros(2,2);
+    Ke = zeros(nDof,nDof);
     Fe = eoEvaluateTotalLoad(problem, elementIndex, []);
     
 end

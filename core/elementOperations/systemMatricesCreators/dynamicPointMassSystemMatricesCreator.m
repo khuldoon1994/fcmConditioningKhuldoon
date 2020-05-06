@@ -4,9 +4,12 @@ function [ Me, Ke, Fe ] = dynamicPointMassSystemMatricesCreator(problem, element
     elementTypeIndex = problem.elementTypeIndices(elementIndex);
     nDof = eoGetNumberOfShapeFunctions(problem,elementIndex) * problem.dimension;
     
+    % structure
+    mass = problem.elementTypes{elementTypeIndex}.mass;
+    
     % single dof "matrices"
-    Ke = zeros(2,2);
-    Me = eye(2)*problem.elementTypes{elementTypeIndex}.mass;
+    Ke = zeros(nDof,nDof);
+    Me = mass*eye(nDof);
     Fe = eoEvaluateTotalLoad(problem, elementIndex, []);
     
 end
