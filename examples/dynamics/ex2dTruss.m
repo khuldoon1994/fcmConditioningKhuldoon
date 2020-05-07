@@ -56,8 +56,8 @@ problem.subelementNodeIndices = { [1 2] };
 % connections / transformations between elements and subelements
 problem.elementConnections = { { { 1 [1] } } };
                                    
-% boundary conditions
-problem.loads = { [0; -m*g] };
+% boundary conditions % TODO: make element loads work...
+problem.loads = { [0; -m*g], [2, 1] };
 problem.penalties = { [0, 1e60;
                        0, 1e60] };
 problem.foundations = { };
@@ -68,7 +68,7 @@ problem.elementPenalties = { [] };
 problem.elementFoundations = { [] };
 
 % TODO: make nodal boundary condition work...
-problem.nodeLoads = { [], [] };
+problem.nodeLoads = { [], [2] };
 problem.nodePenalties = { [1], [] };
 problem.nodeFoundations = { [], [] };
 
@@ -99,7 +99,7 @@ problem.solution = zeros(4,1);
 M = goAssembleMatrix(allMe, allLe);
 D = goAssembleMatrix(allDe, allLe);
 K = goAssembleMatrix(allKe, allLe);
-F = goAssembleVector(allFe, allLe);
+F = goAssembleVector(allFe, allLe) + goCreateNodalLoadVector(problem);
 
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);
@@ -140,6 +140,7 @@ for timeStep = 1 : problem.dynamics.nTimeSteps
     
 end
 
+%% TODO: Reactivate test
 % %% post processing
 % plot(2.5 + displacementOverTime(3,:), 1.5 + displacementOverTime(4,:))
 % xlabel("x-position")
