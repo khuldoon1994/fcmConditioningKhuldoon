@@ -11,6 +11,7 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name='2dTruss';
 problem.dimension = 2;
 
+problem.dynamics.time = 0;
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;
@@ -118,6 +119,8 @@ V0 = zeros(4,1);
 
 
 for timeStep = 1 : problem.dynamics.nTimeSteps
+    
+    problem.dynamics.time = (problem.dynamics.tStop - problem.dynamics.tStart)*timeStep/problem.dynamics.nTimeSteps;
     
     % extract necessary quantities from solution
     displacementOverTime(:,timeStep) = U;

@@ -10,6 +10,7 @@ function [ problem ] = poInitializeDynamicProblem(problem)
     if(~isfield(problem, 'dynamics'))
     % if structure "dynamics" not defined
         problem.dynamics.timeIntegration = standardTimeIntegration;
+        problem.dynamics.time = standardTStart;
         problem.dynamics.tStart = standardTStart;
         problem.dynamics.tStop = standardTStop;
         problem.dynamics.nTimeSteps = standardNTimeSteps;
@@ -32,7 +33,11 @@ function [ problem ] = poInitializeDynamicProblem(problem)
             problem.dynamics.tStart = standardTStart;
             warning(['WARNING! No dynamics.tStart defined. Assume ', num2str(standardTStart)]);
         end
-        % if field "tStop" not defined
+        % if field "time" not defined
+        if(~isfield(problem.dynamics, 'time'))
+            problem.dynamics.time = problem.dynamics.tStart;
+            warning(['WARNING! No dynamics.time defined. Assume ', num2str(problem.dynamics.tStart)]);
+        end        % if field "tStop" not defined
         if(~isfield(problem.dynamics, 'tStop'))
             problem.dynamics.tStop = standardTStop;
             warning(['WARNING! No dynamics.tStop defined. Assume ', num2str(standardTStop)]);

@@ -19,9 +19,9 @@ function [ totalLoad ] = eoEvaluateTotalLoad( problem, elementIndex, r )
             % load is constant
             totalLoad = totalLoad + load;    
         else
-            % load is a function of the global position
+            % load is a function of the global position and time
             X=eoEvaluateMapping(problem,elementIndex,r);
-            totalLoad = totalLoad + load(X);
+            totalLoad = totalLoad + load(X, problem.time);
         end
         
     end
