@@ -8,17 +8,18 @@ nTotalDof = goNumberOfDof(problem);
 % compute load vector
 F = zeros(nTotalDof,1);
 for i=1:nNodes
-   loadVector = zeros(2,1);
-   loadIndices = problem.nodeLoads{1};
+   loadVector = zeros(dim,1);
+   loadIndices = problem.nodeLoads{i};
    for k=1:numel(loadIndices)
         loadIndex = loadIndices(k);
-        load = problem.loads(loadIndex);
+        load = problem.loads{loadIndex};
         % add value to total load
         if isnumeric(load)
             % load is constant
             loadVector = loadVector + load;    
         else
-            loadVector = loadVector + load(problem.dynamics.time);
+            t = problem.dynamics.time;
+            loadVector = loadVector + load(t);
         end
 
     end

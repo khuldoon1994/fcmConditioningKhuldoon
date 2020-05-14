@@ -21,7 +21,8 @@ function [ totalLoad ] = eoEvaluateTotalLoad( problem, elementIndex, r )
         else
             % load is a function of the global position and time
             X=eoEvaluateMapping(problem,elementIndex,r);
-            totalLoad = totalLoad + load(X, problem.time);
+            t = problem.dynamics.time;
+            totalLoad = totalLoad + load(X, t);
         end
         
     end

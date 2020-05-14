@@ -58,7 +58,7 @@ problem.subelementNodeIndices = { [1 2] };
 problem.elementConnections = { { { 1 [1] } } };
                                    
 % boundary conditions % TODO: make element loads work...
-problem.loads = { [0; -m*g], [2, 1] };
+problem.loads = { [0; -m*g], [2; 1] };
 problem.penalties = { [0, 1e60;
                        0, 1e60] };
 problem.foundations = { };
