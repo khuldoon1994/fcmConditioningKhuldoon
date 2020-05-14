@@ -39,8 +39,8 @@ problem.nodes = [ 0.0, 1.0, 2.0, 0.0, 1.0, 2.0;
                   0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ];
 
 % element types
-elementType1 = poCreateElementType( 'DYNAMIC_QUAD_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'massDensity', rho) );
-elementType2 = poCreateElementType( 'DYNAMIC_LINE_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'massDensity', rho) );
+elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'massDensity', rho) );
+elementType2 = poCreateElementType( 'STANDARD_LINE_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'massDensity', rho) );
 problem.elementTypes = { elementType1, elementType2 };
 
 subelementType1 = poCreateSubelementType( 'LEGENDRE_QUAD', struct('order', p) );
@@ -95,7 +95,6 @@ problem = poInitializeDynamicProblem(problem);
 
 
 %% static analysis
-[ ~, ~, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 [ K, F ] = goAssembleSystem(allKe, allFe, allLe);
 

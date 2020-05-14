@@ -63,7 +63,7 @@ function [ problem ] = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, ...
     
     % element types
     elementTypeData1 = struct( 'gaussOrder', p+1, 'youngsModulus', E, 'area', A, 'massDensity', rho );
-    elementType1 = poCreateElementType( 'DYNAMIC_LINE_1D', elementTypeData1 );
+    elementType1 = poCreateElementType( 'STANDARD_LINE_1D', elementTypeData1 );
     problem.elementTypes = { elementType1 };
     
     % nodes

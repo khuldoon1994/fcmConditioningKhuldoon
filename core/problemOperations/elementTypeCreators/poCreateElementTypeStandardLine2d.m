@@ -8,12 +8,14 @@ function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
 %   typeData must be a structure array with the following fields:
 %   gaussOrder:    The gaussian order.
 %   youngsModulus: The youngsModulus.
+%   nu:            The poissonRatio.
 %   area:          The cross sectional area.
+%   rho:           The mass density.
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateElementType may be used for convenience.
 %   
-%   See also p poCreateElementType, poCreateElementTypeStandardLine2d, 
+%   See also poCreateElementType, poCreateElementTypeStandardLine2d, 
 %   poCreateElementTypeStandardQuad2d,
 
 
@@ -21,6 +23,7 @@ function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
     p = moParseScalar('gaussOrder',typeData,2,'typeData for element type STANDARD_LINE_2D');
     E = moParseScalar('youngsModulus',typeData,1,'typeData for element type STANDARD_LINE_2D');
     nu = moParseScalar('poissonRatio',typeData,1,'typeData for element type STANDARD_LINE_2D');
+    rho = moParseScalar('massDensity',typeData,1,'typeData for element type STANDARD_LINE_2D');
 
     %% TODO: Why is this needed? It's a boundary element...  
     physics = moParseString('physics',typeData, 'PLAIN_STRAIN', 'typeData for element type STANDARD_LINE_2D');
@@ -42,11 +45,14 @@ function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
     newType.quadraturePointGetterData.gaussOrder = p;
     
     newType.systemMatricesCreator = @boundarySystemMatricesCreator;
+    newType.dynamicSystemMatricesCreator = @dynamicBoundarySystemMatricesCreator;
     
     %% TODO: Why is this needed? It's a boundary element...  
     newType.elasticityMatrixGetter = elasticityMatrixGetter;
     newType.elasticityMatrixGetterData.youngsModulus = E;
     newType.elasticityMatrixGetterData.poissonRatio = nu;
+    
+    newType.massDensity = rho;
     
     newType.mappingEvaluator = @linearLineMapping;
     newType.jacobianEvaluator = @linearLineJacobian;

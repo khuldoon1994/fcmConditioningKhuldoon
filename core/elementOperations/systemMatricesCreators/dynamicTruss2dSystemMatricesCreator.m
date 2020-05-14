@@ -1,4 +1,4 @@
-function [ Me, Ke, Fe ] = truss2dDynamicSystemMatricesCreator(problem, elementIndex)
+function [ Me, Ke, Fe ] = dynamicTruss2dSystemMatricesCreator(problem, elementIndex)
 
     % gather some information
     elementTypeIndex = problem.elementTypeIndices(elementIndex);
