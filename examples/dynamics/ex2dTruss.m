@@ -100,7 +100,11 @@ problem.solution = zeros(4,1);
 M = goAssembleMatrix(allMe, allLe);
 D = goAssembleMatrix(allDe, allLe);
 K = goAssembleMatrix(allKe, allLe);
-F = goAssembleVector(allFe, allLe) + goCreateNodalLoadVector(problem);
+F = goAssembleVector(allFe, allLe);
+
+% add nodal forces
+Fn = goCreateNodalLoadVector(problem);
+F = F + Fn;
 
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);

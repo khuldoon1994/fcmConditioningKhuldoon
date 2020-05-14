@@ -43,7 +43,7 @@ function [ Me, Ke, Fe ] = dynamicTruss2dSystemMatricesCreator(problem, elementIn
 
             % shape functions and mapping evaluation
             shapeFunctions = eoEvaluateShapeFunctions(problem, elementIndex, localCoordinates);
-             jacobian = eoEvaluateJacobian(problem,elementIndex,localCoordinates);
+            jacobian = eoEvaluateJacobian(problem,elementIndex,localCoordinates);
             detJ = det(jacobian);
 
             % add load vector integrand
