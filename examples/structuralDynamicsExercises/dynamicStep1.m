@@ -55,11 +55,11 @@ problem.dynamics.stiffCoeff = 0.0;
 
 %% computation of system matrices and vectors
 % create system matrices
-[allMe,allDe,allKe,allFe,allLe] = goCreateDynamicElementMatrices(problem);
+[allMe,allCe,allKe,allFe,allLe] = goCreateDynamicElementMatrices(problem);
 
 % assemble
 M = goAssembleMatrix(allMe, allLe);
-D = goAssembleMatrix(allDe, allLe);
+C = goAssembleMatrix(allCe, allLe);
 K = goAssembleMatrix(allKe, allLe);
 F = goAssembleVector(allFe, allLe);
 
@@ -69,7 +69,7 @@ clampLeftSide_Vector = @(Vector) Vector(2:end);
 
 % apply boundary condition
 M = clampLeftSide_Matrix(M);
-D = clampLeftSide_Matrix(D);
+C = clampLeftSide_Matrix(C);
 K = clampLeftSide_Matrix(K);
 F = clampLeftSide_Vector(F);
 
