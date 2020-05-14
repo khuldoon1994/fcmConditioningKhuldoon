@@ -1,4 +1,4 @@
-function [ Me, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementIndex)
+function [ Me, Ke, Fe ] = dynamicSystemMatricesCreator(problem, elementIndex)
 
     % gather some information
     elementTypeIndex = problem.elementTypeIndices(elementIndex);

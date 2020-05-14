@@ -24,7 +24,7 @@ subelementType1 = poCreateSubelementType( 'POINT_2D', struct() );
 problem.subelementTypes = { subelementType1 };
 
 % element types
-elementType1 = poCreateElementType( 'DYNAMIC_POINT_2D', struct( 'mass', m ) );
+elementType1 = poCreateElementType( 'STANDARD_POINT_2D', struct( 'mass', m ) );
 problem.elementTypes = { elementType1 };
 
 % nodes
