@@ -24,7 +24,7 @@ function [ Me, Ke, Fe ] = dynamicTruss2dSystemMatricesCreator(problem, elementIn
     s2 = s*s;
     c2 = c*c;
     
-    % single dof "matrices"
+    % element matrices
     Ke = E*A/L*[c2 sc -c2 -sc; sc s2 -sc -s2; -c2 -sc c2 sc; -sc -s2 sc s2];
     Me = rho*A*L/6*[2*c2 2*sc c2 sc; 2*sc 2*s2 sc s2; c2 sc 2*c2 2*sc; sc s2 2*sc 2*s2];
     Fe = zeros(4,1);

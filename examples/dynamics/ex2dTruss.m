@@ -11,6 +11,7 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name='2dTruss';
 problem.dimension = 2;
 
+problem.dynamics.time = 0;
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;
@@ -56,8 +57,8 @@ problem.subelementNodeIndices = { [1 2] };
 % connections / transformations between elements and subelements
 problem.elementConnections = { { { 1 [1] } } };
                                    
-% boundary conditions
-problem.loads = { [0; -m*g] };
+% boundary conditions % TODO: make element loads work...
+problem.loads = { [0; -m*g], [2; 1] };
 problem.penalties = { [0, 1e60;
                        0, 1e60] };
 problem.foundations = { };
@@ -68,7 +69,7 @@ problem.elementPenalties = { [] };
 problem.elementFoundations = { [] };
 
 % TODO: make nodal boundary condition work...
-problem.nodeLoads = { [], [] };
+problem.nodeLoads = { [], [2] };
 problem.nodePenalties = { [1], [] };
 problem.nodeFoundations = { [], [] };
 
@@ -101,6 +102,10 @@ D = goAssembleMatrix(allDe, allLe);
 K = goAssembleMatrix(allKe, allLe);
 F = goAssembleVector(allFe, allLe);
 
+% add nodal forces
+Fn = goCreateNodalLoadVector(problem);
+F = F + Fn;
+
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);
 U0 = zeros(4,1);
@@ -118,6 +123,8 @@ V0 = zeros(4,1);
 
 
 for timeStep = 1 : problem.dynamics.nTimeSteps
+    
+    problem.dynamics.time = (problem.dynamics.tStop - problem.dynamics.tStart)*timeStep/problem.dynamics.nTimeSteps;
     
     % extract necessary quantities from solution
     displacementOverTime(:,timeStep) = U;
@@ -140,6 +147,7 @@ for timeStep = 1 : problem.dynamics.nTimeSteps
     
 end
 
+%% TODO: Reactivate test
 % %% post processing
 % plot(2.5 + displacementOverTime(3,:), 1.5 + displacementOverTime(4,:))
 % xlabel("x-position")

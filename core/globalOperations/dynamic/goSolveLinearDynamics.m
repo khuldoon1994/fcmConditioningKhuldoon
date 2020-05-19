@@ -52,6 +52,10 @@ function [ solutionQuantities ] = goSolveLinearDynamics(problem, solutionPointer
     K = goAssembleMatrix(allKe, allLe);
     F = goAssembleVector(allFe, allLe);
     
+    % add nodal forces
+    Fn = goCreateNodalLoadVector(problem);
+    F = F + Fn;
+    
     % compute initial acceleration
     [ A0Dynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, U0Dynamic, V0Dynamic);
     
