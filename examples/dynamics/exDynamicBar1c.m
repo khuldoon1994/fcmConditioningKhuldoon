@@ -29,6 +29,7 @@ E = 1.0;
 A = 1.0;
 L = 1.0;
 f = @(x)( x/L );
+F = 0;
 
 % damping parameter
 massCoeff = 1.0;
@@ -41,7 +42,7 @@ tStart = 0;
 tStop = 10;
 nTimeSteps = 401;
 
-problem = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, ...
+problem = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, F, ...
                                     tStart, tStop, nTimeSteps, ...
                                     massCoeff, stiffCoeff);
 

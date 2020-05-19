@@ -3,11 +3,12 @@
 %
 %                        f(x)
 %   /|---> ---> ---> ---> ---> ---> ---> --->
-%   /|=======================================
+%   /|======================================= --> F
 %   /|          rho,E,A,L
 %
 % A bar, characterized by its density rho, Youngs modulus E, area A and
-% length L is loaded by a distributed force (one-dimensional "body-force").
+% length L is loaded by a distributed force (one-dimensional "body-force")
+% and a nodal load F.
 
 %% clear variables, close figures
 clear all;
@@ -44,8 +45,9 @@ problem = poCreateSubElements( problem );
 % connect elements and subelements
 problem = poCreateElementConnections( problem );
 
-problem.loads = { @(x)( x ) };
+problem.loads = { @(x)( x ), 1 };
 problem.elementLoads = { 1, 1 };
+problem.nodeLoads = { [],[],2 };
 
 problem.elementFoundations = { [], [] };
 
@@ -62,6 +64,10 @@ M = goAssembleMatrix(allMe, allLe);
 C = goAssembleMatrix(allCe, allLe);
 K = goAssembleMatrix(allKe, allLe);
 F = goAssembleVector(allFe, allLe);
+
+% add nodal forces
+Fn = goCreateNodalLoadVector(problem);
+F = F + Fn;
 
 % helper functions
 clampLeftSide_Matrix = @(Matrix) Matrix(2:end,2:end);

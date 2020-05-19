@@ -3,11 +3,12 @@
 %
 %                        f(x)
 %   /|---> ---> ---> ---> ---> ---> ---> --->
-%   /|=======================================
+%   /|======================================= --> F
 %   /|          rho,E,A,L
 %
 % A bar, characterized by its density rho, Youngs modulus E, area A and
-% length L is loaded by a distributed force (one-dimensional "body-force").
+% length L is loaded by a distributed force (one-dimensional "body-force")
+% and a nodal load F.
 
 %% clear variables, close figures
 clear all;
@@ -25,6 +26,7 @@ E = 1.0;
 A = 1.0;
 L = 1.0;
 f = @(x)( x/L );
+F = 1;
 p = 1;
 
 % damping parameter
@@ -48,13 +50,13 @@ problem = poCreateSubElements( problem );
 problem = poCreateElementConnections( problem );
 
 problem.subelementTypes = { poCreateSubelementTypeLegendreLine(struct('order', p)) };
-problem.loads = { f };
+problem.loads = { f, F };
 % problem.penalties = { [0, 1e60] };
 problem.elementLoads = { 1, 1 };
 % problem.elementPenalties = { [], [] };
 problem.elementFoundations = { [], [] };
 
-problem.nodeLoads = { [],[],[] };
+problem.nodeLoads = { [],[],2 };
 % problem.nodePenalties = { 1,[],[] };
 
 
@@ -73,6 +75,10 @@ M = goAssembleMatrix(allMe, allLe);
 C = goAssembleMatrix(allCe, allLe);
 K = goAssembleMatrix(allKe, allLe);
 F = goAssembleVector(allFe, allLe);
+
+% add nodal forces
+Fn = goCreateNodalLoadVector(problem);
+F = F + Fn;
 
 % helper functions
 clampLeftSide_Matrix = @(Matrix) Matrix(2:end,2:end);
