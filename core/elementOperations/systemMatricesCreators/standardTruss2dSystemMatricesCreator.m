@@ -23,7 +23,7 @@ function [ Ke, Fe ] = standardTruss2dSystemMatricesCreator(problem, elementIndex
     s2 = s*s;
     c2 = c*c;
     
-    % single dof "matrices"
+    % element matrices
     Ke = E*A/L*[c2 sc -c2 -sc; sc s2 -sc -s2; -c2 -sc c2 sc; -sc -s2 sc s2];
     Fe = zeros(4,1);
     

@@ -27,8 +27,11 @@ rho = 1.0;
 E = 1.0;
 A = 1.0;
 L = 1.0;
-f = @(x)( x/L );
 p = 1;
+
+% loads
+f = @(x) x/L;
+F0 = 0;
 
 % damping parameter
 problem.dynamics.massCoeff = 1.0;
@@ -51,13 +54,14 @@ problem = poCreateSubElements( problem );
 problem = poCreateElementConnections( problem );
 
 problem.subelementTypes = { poCreateSubelementTypeLegendreLine(struct('order', p)) };
-problem.loads = { f };
+problem.loads = { f, F0 };
 problem.penalties = { [0, 1e60] };
+
 problem.elementLoads = { 1, 1 };
 problem.elementPenalties = { [], [] };
 problem.elementFoundations = { [], [] };
 
-problem.nodeLoads = { [],[],[] };
+problem.nodeLoads = { [],[],2 };
 problem.nodePenalties = { 1,[],[] };
 
 % time integration parameters
@@ -81,6 +85,10 @@ M = goAssembleMatrix(allMe, allLe);
 D = goAssembleMatrix(allDe, allLe);
 K = goAssembleMatrix(allKe, allLe);
 F = goAssembleVector(allFe, allLe);
+
+% add nodal forces
+Fn = goCreateNodalLoadVector(problem);
+F = F + Fn;
 
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);
