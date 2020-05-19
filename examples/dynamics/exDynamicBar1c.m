@@ -3,11 +3,12 @@
 %
 %                        f(x)
 %   /|---> ---> ---> ---> ---> ---> ---> --->
-%   /|=======================================
+%   /|======================================= --> F
 %   /|          rho,E,A,L
 %
 % A bar, characterized by its density rho, Youngs modulus E, area A and
-% length L is loaded by a distributed force (one-dimensional "body-force").
+% length L is loaded by a distributed force (one-dimensional "body-force")
+% and a nodal load F.
 %
 % This elastodynamic problem will be analyzed using
 % Central Difference Method
@@ -58,6 +59,10 @@ M = goAssembleMatrix(allMe, allLe);
 D = goAssembleMatrix(allDe, allLe);
 K = goAssembleMatrix(allKe, allLe);
 F = goAssembleVector(allFe, allLe);
+
+% add nodal forces
+Fn = goCreateNodalLoadVector(problem);
+F = F + Fn;
 
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);
