@@ -89,6 +89,7 @@ problem.dynamics.timeIntegration = 'Newmark Integration';
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 201;
+problem.dynamics.time = 0;
 
 % initialize dynamic problem
 problem = poInitializeDynamicProblem(problem);
@@ -189,6 +190,7 @@ title(['Displacement solution (p = ', num2str(p), ')']);
 
 
 %% post processing (animation)
+disp('press enter to continue');
 pause();
 
 % Animation
