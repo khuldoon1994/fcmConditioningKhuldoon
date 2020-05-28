@@ -3,14 +3,15 @@
 %
 %                        f(x)
 %   /|---> ---> ---> ---> ---> ---> ---> --->
-%   /|=======================================
+%   /|======================================= --> F
 %   /|          rho,E,A,L
 %
 % A bar, characterized by its density rho, Youngs modulus E, area A and
-% length L is loaded by a distributed force (one-dimensional "body-force").
+% length L is loaded by a distributed force (one-dimensional "body-force")
+% and a nodal load F.
 %
 % This elastodynamic problem will be analyzed using
-% Central Difference Method
+% Newmark Integration Method
 
 %% clear variables, close figures
 clear all;
@@ -19,7 +20,7 @@ clc;
 warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
 %% problem definition
-problem.name = 'dynamicBar1D (Central Difference Method)';
+problem.name = 'dynamicBar1D (Newmark Integration Method)';
 problem.dimension = 1;
 
 % parameter
@@ -28,7 +29,7 @@ E = 1.0;
 A = 1.0;
 L = 1.0;
 f = @(x)( x/L );
-p = 1;
+p = 5;
 
 % damping parameter
 problem.dynamics.massCoeff = 1.0;
@@ -61,7 +62,8 @@ problem.nodeLoads = { [],[],[] };
 problem.nodePenalties = { 1,[],[] };
 
 % time integration parameters
-problem.dynamics.timeIntegration = 'Central Difference';
+problem.dynamics.timeIntegration = 'Newmark Integration';
+problem.dynamics.time = 0;
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;
@@ -72,6 +74,7 @@ problem = poInitializeDynamicProblem(problem);
 
 %% dynamic analysis
 displacementAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
+velocityAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
 
 % create system matrices
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
@@ -82,6 +85,13 @@ D = goAssembleMatrix(allDe, allLe);
 K = goAssembleMatrix(allKe, allLe);
 F = goAssembleVector(allFe, allLe);
 
+% add nodal forces
+Fn = goCreateNodalLoadVector(problem);
+F = F + Fn;
+
+% compute penalty stiffness matrix and penalty load vector
+[ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
+
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);
 U0Dynamic = zeros(nTotalDof, 1);
@@ -91,50 +101,50 @@ V0Dynamic = zeros(nTotalDof, 1);
 [ A0Dynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, U0Dynamic, V0Dynamic);
 
 % initialize values
-[ UOldDynamic, UDynamic ] = cdmInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
+[ UDynamic, VDynamic, ADynamic ] = newmarkInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
 
 % create effective system matrices
-[ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K);
+[ KEff ] = newmarkEffectiveSystemStiffnessMatrix(problem, M, D, K);
+% ... and add penalty constraints
+KEff = KEff + Kp;
 
 for timeStep = 1 : problem.dynamics.nTimeSteps
     
     % extract necessary quantities from solution
     displacementAtLastNode(timeStep) = UDynamic(3);
+    velocityAtLastNode(timeStep) = VDynamic(3);
     
     % calculate effective force vector
-    [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
+    [ FEff ] = newmarkEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, VDynamic, ADynamic);
+    % ... and add penalty constraints
+    FEff = FEff + Fp;
     
     % solve linear system of equations (UNewDynamic = KEff \ FEff)
     UNewDynamic = moSolveSparseSystem( KEff, FEff );
     
     % calculate velocities and accelerations
-    [ VDynamic, ADynamic ] = cdmVelocityAcceleration(problem, UNewDynamic, UDynamic, UOldDynamic);
+    [ VNewDynamic, ANewDynamic ] = newmarkVelocityAcceleration(problem, UNewDynamic, UDynamic, VDynamic, ADynamic);
     
     % update kinematic quantities
-    [ UDynamic, UOldDynamic ] = cdmUpdateKinematics(UNewDynamic, UDynamic);
+    [ UDynamic, VDynamic, ADynamic ] = newmarkUpdateKinematics(UNewDynamic, VNewDynamic, ANewDynamic);
     
 end
 
 % disassemble
-[ allUe ] = goDisassembleVector( UDynamic, allLe );
-
-% check for stability
-poCheckDynamicStabilityCDM(problem, M, K);
+[ allUe ] = goDisassembleVector( UNewDynamic, allLe );
 
 
 %% post processing
 timeVector = goGetTimeVector(problem);
 
-% steady state value (of displacement at last node)
-uSteadyState = 16/48;
-
 % plotting necessary quantities over time
 figure(1);
-plot(timeVector, displacementAtLastNode/uSteadyState, 'LineWidth', 1.6);
+plot(timeVector, displacementAtLastNode, 'LineWidth', 1.6);
 hold on;
 grid on;
-plot([timeVector(1), timeVector(end)], [1 1], 'k:', 'LineWidth', 1.6);
+plot(timeVector, velocityAtLastNode, 'LineWidth', 1.6);
 
-title([problem.dynamics.timeIntegration, ' Method: u_{norm}(t, x = L)']);
+legend('u(t, x = L)', 'v(t, x = L)', 'Location', 'best');
+title([problem.dynamics.timeIntegration, ' Method: u(t, x = L), v(t, x = L)']);
 xlabel('Time [sec]');
-ylabel('normalized Displacement [-]');
+ylabel('Displacement [m], Velocity [m/s]');
