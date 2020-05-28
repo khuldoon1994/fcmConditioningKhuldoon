@@ -18,7 +18,7 @@ Sets up a point mass with initial velocity under gravitation.
 Sets up a two dimensional plate unter tension and solves the elastodynamic problem.
 
 ### exDynamicQuad2.m ###
-The two dimensional plate from exDynamicQuad, but with 2 elements.
+The two dimensional plate from exDynamicQuad discretized with 2 elements.
 
 ### exDynamicTruss2d.m ###
 Sets up a truss system which is loaded by a nodal force.
