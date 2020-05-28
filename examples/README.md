@@ -1,6 +1,12 @@
 # Examples #
 
 ## Subdirectories in examples/ ##
+### dynamics/ ###
+Examples for elastodynamic simulations.
+
+### fcm/ ###
+Examples of the finite cell method.
+
 ### firstSteps/ ###
 Two extensively documented example to get an overview.
 
