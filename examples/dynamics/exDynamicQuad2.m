@@ -20,7 +20,7 @@ clc;
 warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
 %% problem definition
-problem.name = 'dynamicTwoQuads2D (Central Difference Method)';
+problem.name = 'dynamicQuad2D (Central Difference Method, 2x1 elements)';
 problem.dimension = 2;
 
 % parameter
