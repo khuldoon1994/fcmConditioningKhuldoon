@@ -23,13 +23,13 @@ function [ solutionQuantities ] = cdmDynamicSolver(problem, solutionPointer, glo
     K = globalMatrices{3};
     F = globalMatrices{4};
     
-    % compute penalty stiffness matrix and penalty load vector
-    [ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
-    
     % extract initial values from globalInitialValues
     U0Dynamic = globalInitialValues{1};
     V0Dynamic = globalInitialValues{2};
     A0Dynamic = globalInitialValues{3};
+    
+    % compute penalty stiffness matrix and load vector
+    [ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
     
     % initialize values
     [ UOldDynamic, UDynamic, VDynamic, ADynamic ] = cdmInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
