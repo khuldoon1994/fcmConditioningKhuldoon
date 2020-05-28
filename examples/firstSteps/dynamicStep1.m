@@ -45,7 +45,7 @@ problem = poCreateSubElements( problem );
 % connect elements and subelements
 problem = poCreateElementConnections( problem );
 
-problem.loads = { @(x)( x ), 1 };
+problem.loads = { @(x)( x ), 0 };
 problem.elementLoads = { 1, 1 };
 problem.nodeLoads = { [],[],2 };
 
