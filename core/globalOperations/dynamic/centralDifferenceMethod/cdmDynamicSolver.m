@@ -34,6 +34,9 @@ function [ solutionQuantities ] = cdmDynamicSolver(problem, solutionPointer, glo
     % create effective system matrices
     [ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K);
     
+    % ... and add penalty constraints
+    KEff = KEff + Kp;
+    
     for iTimeStep = 1:nTimeSteps
         
         % extract necessary quantities from solution
@@ -46,6 +49,9 @@ function [ solutionQuantities ] = cdmDynamicSolver(problem, solutionPointer, glo
         
         % calculate effective force vector
         [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
+        
+        % and add penalty constraints
+        FEff = FEff + Fp;
         
         % solve linear system of equations (UNewDynamic = KEff \ FEff)
         UNewDynamic = moSolveSparseSystem( KEff, FEff );

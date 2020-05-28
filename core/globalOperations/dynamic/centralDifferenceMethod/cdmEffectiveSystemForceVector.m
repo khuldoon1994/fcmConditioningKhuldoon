@@ -15,8 +15,4 @@ function [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, u, uOld)
     % effective force vector
     FEff = F - (K-a2*M)*u  - (a0*M-a1*D)*uOld;
     
-    % add penalty constraints to effective force vector
-    [ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
-    FEff = FEff + Fp;
-    
 end
