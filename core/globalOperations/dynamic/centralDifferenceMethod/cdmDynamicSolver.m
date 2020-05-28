@@ -23,10 +23,6 @@ function [ solutionQuantities ] = cdmDynamicSolver(problem, solutionPointer, glo
     K = globalMatrices{3};
     F = globalMatrices{4};
     
-    % add nodal forces
-    Fn = goCreateNodalLoadVector(problem);
-    F = F + Fn;
-    
     % compute penalty stiffness matrix and penalty load vector
     [ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
     
