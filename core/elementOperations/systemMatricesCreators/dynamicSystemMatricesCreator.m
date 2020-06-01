@@ -41,6 +41,10 @@ function [ Me, Ke, Fe ] = dynamicSystemMatricesCreator(problem, elementIndex)
         
         % add mass matrix integrand
         rho = massDensity;
+        if(problem.dimension == 1)
+            A = problem.elementTypes{elementTypeIndex}.area;
+            rho = massDensity*A;
+        end
         Me = Me + N'*rho*N * weights(i) * detJ;
         
         % add elastic foundation integrand

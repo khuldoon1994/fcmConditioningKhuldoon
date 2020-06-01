@@ -53,6 +53,7 @@ function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
     newType.elasticityMatrixGetterData.poissonRatio = nu;
     
     newType.massDensity = rho;
+    newType.area = A;
     
     newType.mappingEvaluator = @linearLineMapping;
     newType.jacobianEvaluator = @linearLineJacobian;
