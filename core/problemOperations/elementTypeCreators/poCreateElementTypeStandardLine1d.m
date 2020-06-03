@@ -8,18 +8,20 @@ function [ newType ] = poCreateElementTypeStandardLine1d( typeData )
 %   typeData must be a structure array with the following fields:
 %   gaussOrder:    The gaussian order.
 %   youngsModulus: The youngsModulus.
+%   rho:           The mass density.
 %   area:          The cross sectional area.
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateElementType may be used for convenience.
 %   
-%   See also p poCreateElementType, poCreateElementTypeStandardLine2d, 
+%   See also poCreateElementType, poCreateElementTypeStandardLine2d, 
 %   poCreateElementTypeStandardQuad2d,
 
     %% parse input
     p = moParseScalar('gaussOrder',typeData,2,'typeData for element type STANDARD_LINE_1D');
-    E = moParseScalar('youngsModulus',typeData,1,'typeData for element type STANDARD_LINE_1D');
-    A = moParseScalar('area',typeData,1,'typeData for element type STANDARD_LINE_1D');
+    E = moParseScalar('youngsModulus',typeData,1.0,'typeData for element type STANDARD_LINE_1D');
+    A = moParseScalar('area',typeData,1.0,'typeData for element type STANDARD_LINE_1D');
+    rho = moParseScalar('massDensity',typeData,1.0,'typeData for element type STANDARD_LINE_1D');
     
     
     %% create type
@@ -27,13 +29,16 @@ function [ newType ] = poCreateElementTypeStandardLine1d( typeData )
     newType.localDimension = 1;
     
     newType.systemMatricesCreator = @standardSystemMatricesCreator;
+    newType.dynamicSystemMatricesCreator = @dynamicSystemMatricesCreator;
     
     newType.quadraturePointGetter = @gaussianQuadrature1d;
     newType.quadraturePointGetterData.gaussOrder = p;
     
     newType.elasticityMatrixGetter = @linearElasticityMatrix1d;
     newType.elasticityMatrixGetterData.youngsModulus =  E;
-    newType.elasticityMatrixGetterData.area = A;
+    
+    newType.massDensity = rho;
+    newType.area = A;
 
     newType.mappingEvaluator = @linearLineMapping;
     newType.jacobianEvaluator = @linearLineJacobian;

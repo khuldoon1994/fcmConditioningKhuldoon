@@ -10,7 +10,15 @@ Sets up a problem data structure for a simple one-dimensional problem.
 Solves the problem from step 1.
 
 ### step3.m ###
-Sets up a problem data structure for a simple two-dimensional problem and solves it.
+Sets up a problem data structure for a simple two-dimensional problem, solves it
+and postprocesses the results.
 
-### step4.m ###
-Postprocesses the results from step 3.
+### dynamicStep1.m ###
+Sets up a problem data structure for a simple one-dimensional problem for
+an elastodynamic simulation and computes the system matrices and vectors.
+
+### dynamicStep2a.m ###
+Solves the problem from dynamic step 1 with the Central Difference Method.
+
+### dynamicStep2b.m ###
+Solves the problem from dynamic step 1 with the Newmark Integration Method.

@@ -1,84 +1,88 @@
-% In SiHoFemLab, the problem definition is stored in a structure.
-% In this script, the following problem will be defined:
-%
-%                        f(x)
-%   /|---> ---> ---> ---> ---> ---> ---> --->
-%   /|======================================= --> F
-%   /|          rho,E,A,L
-%
-% A bar, characterized by its density rho, Youngs modulus E, area A and
-% length L is loaded by a distributed force (one-dimensional "body-force")
-% and a nodal load F.
-%
-% This elastodynamic problem will be analyzed using
-% Central Difference Method
+% A very simple example of an analysis script. 
+% Solves the problem of an elastic bar, which is fixed on one end and
+% loaded by a volume load.
 
 %% clear variables, close figures
-clear all;
+clear all; %#ok
 close all;
-clc;
 warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
 %% problem definition
-problem.name = 'dynamicBar1D (Central Difference Method)';
-problem.dimension = 1;
+problem.name='trussSystem2D';
+problem.dimension = 2;
 
 % parameter
-rho = 1.0;
-E = 1.0;
-A = 1.0;
-L = 1.0;
-p = 1;
-
-% loads
-f = @(x) x/L;
-F0 = 0;
+rho = 1;
+E = 1;
+A = 1;
 
 % damping parameter
-problem.dynamics.massCoeff = 1.0;
+problem.dynamics.massCoeff = 0.0;
 problem.dynamics.stiffCoeff = 0.0;
 
-% dynamic element types
-problem.elementTypes = { poCreateElementTypeStandardLine1d(struct(...
-    'gaussOrder', p+1, ...
+% subelement types
+subelementType1 = poCreateSubelementType( 'LINEAR_LINE', struct() );
+problem.subelementTypes = { subelementType1 };
+
+% element types
+elementType1 = poCreateElementType( 'STANDARD_TRUSS_2D', struct(...
     'youngsModulus', E, ...
     'area', A, ...
-    'massDensity', rho)) };
+    'massDensity', rho));
+problem.elementTypes = { elementType1 };
 
-problem.nodes = [ 0, 0.5*L, L ];
+% nodes
+problem.nodes = [ 0.0 1.0 1.0; 
+                  0.0 0.0 1.0 ];
 
-problem.elementNodeIndices = { [1 2], [2 3] };
-problem.elementTopologies = [ 1 1 ];
-problem.elementTypeIndices = [ 1 1 ];
+% elements or 'quadrature supports'
+problem.elementTopologies = [1, 1, 1];
+problem.elementTypeIndices = [1, 1, 1];
+problem.elementNodeIndices = { [1 2], [2 3], [1 3] };
+                       
+% elements or 'dof supports'
+problem.subelementTopologies = [1, 1, 1];
+problem.subelementTypeIndices = [1, 1, 1];
+problem.subelementNodeIndices = { [1 2], [2 3], [1 3] };
 
-problem = poCreateSubElements( problem );
+% connections / transformations between elements and subelements
 problem = poCreateElementConnections( problem );
+                            
+% loads and boundary conditions
+problem.loads = { [0.2; 0.1] };
+problem.penalties = { [0, 1e60;
+                       0, 1e60],
+                      [0, 0;
+                       0, 1e60] };
+problem.foundations = { };
 
-problem.subelementTypes = { poCreateSubelementTypeLegendreLine(struct('order', p)) };
-problem.loads = { f, F0 };
-problem.penalties = { [0, 1e60] };
+% element loads and boundary conditions
+problem.elementLoads = { [], [], [] };
+problem.elementPenalties = { [], [], [] };
+problem.elementFoundations = { [], [], [] };
 
-problem.elementLoads = { 1, 1 };
-problem.elementPenalties = { [], [] };
-problem.elementFoundations = { [], [] };
-
-problem.nodeLoads = { [],[],2 };
-problem.nodePenalties = { 1,[],[] };
+% nodal loads and boundary conditions
+problem.nodeLoads = { [], [], [1] };
+problem.nodePenalties = { [1], [2], [] };
+problem.nodeFoundations = { [], [], [] };
 
 % time integration parameters
-problem.dynamics.timeIntegration = 'Central Difference';
+problem.dynamics.timeIntegration = 'Newmark Integration';
 problem.dynamics.time = 0;
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
-problem.dynamics.nTimeSteps = 401;
+problem.dynamics.nTimeSteps = 5;
 
 % initialize dynamic problem
 problem = poInitializeDynamicProblem(problem);
 
+% plot mesh and boundary conditions
+goPlotLoads(problem, 1, 1);
+goPlotMesh(problem, 1);
+goPlotPenalties(problem, 1);
+
 
 %% dynamic analysis
-displacementAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
-
 % create system matrices
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 
@@ -108,16 +112,22 @@ V0Dynamic = zeros(nTotalDof, 1);
 
 % create effective system matrices
 [ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K);
+
 % ... and add penalty constraints
 KEff = KEff + Kp;
+
+% solution quantity
+displacement = zeros(nTotalDof, problem.dynamics.nTimeSteps);
+
 
 for timeStep = 1 : problem.dynamics.nTimeSteps
     
     % extract necessary quantities from solution
-    displacementAtLastNode(timeStep) = UDynamic(3);
+    displacement(:,timeStep) = UDynamic;
     
     % calculate effective force vector
     [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
+    
     % ... and add penalty constraints
     FEff = FEff + Fp;
     
@@ -135,23 +145,7 @@ end
 % disassemble
 [ allUe ] = goDisassembleVector( UDynamic, allLe );
 
-% check for stability
-poCheckDynamicStabilityCDM(problem, M, K);
-
 
 %% post processing
-timeVector = goGetTimeVector(problem);
+% todo: animation
 
-% steady state value (of displacement at last node)
-uSteadyState = 16/48;
-
-% plotting necessary quantities over time
-figure(1);
-plot(timeVector, displacementAtLastNode/uSteadyState, 'LineWidth', 1.6);
-hold on;
-grid on;
-plot([timeVector(1), timeVector(end)], [1 1], 'k:', 'LineWidth', 1.6);
-
-title([problem.dynamics.timeIntegration, ' Method: u_{norm}(t, x = L)']);
-xlabel('Time [sec]');
-ylabel('normalized Displacement [-]');

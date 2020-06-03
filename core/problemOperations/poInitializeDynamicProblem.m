@@ -10,6 +10,7 @@ function [ problem ] = poInitializeDynamicProblem(problem)
     if(~isfield(problem, 'dynamics'))
     % if structure "dynamics" not defined
         problem.dynamics.timeIntegration = standardTimeIntegration;
+        problem.dynamics.time = standardTStart;
         problem.dynamics.tStart = standardTStart;
         problem.dynamics.tStop = standardTStop;
         problem.dynamics.nTimeSteps = standardNTimeSteps;
@@ -32,6 +33,11 @@ function [ problem ] = poInitializeDynamicProblem(problem)
             problem.dynamics.tStart = standardTStart;
             warning(['WARNING! No dynamics.tStart defined. Assume ', num2str(standardTStart)]);
         end
+        % if field "time" not defined
+        if(~isfield(problem.dynamics, 'time'))
+            problem.dynamics.time = problem.dynamics.tStart;
+            warning(['WARNING! No dynamics.time defined. Assume ', num2str(problem.dynamics.tStart)]);
+        end
         % if field "tStop" not defined
         if(~isfield(problem.dynamics, 'tStop'))
             problem.dynamics.tStop = standardTStop;
@@ -52,6 +58,7 @@ function [ problem ] = poInitializeDynamicProblem(problem)
     % calculate sampling time "deltaT"
     deltaT = goGetSamplingTime(problem);
     
+    %% Damping
     % apply parameters for Rayleigh damping
     if(~isfield(problem.dynamics, 'massCoeff'))
         problem.dynamics.massCoeff = 0.0;
@@ -62,6 +69,7 @@ function [ problem ] = poInitializeDynamicProblem(problem)
         % no warning
     end
     
+    %% Solver
     % attach dynamicSolver to the "dynamics" structure
     if(strcmp(problem.dynamics.timeIntegration, 'Central Difference'))
         problem.dynamics.dynamicSolver = @cdmDynamicSolver;
