@@ -1,8 +1,9 @@
-function [ Me, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementIndex)
+function [ Me, Ke, Fe ] = dynamicSystemMatricesCreator(problem, elementIndex)
 
     % gather some information
     elementTypeIndex = problem.elementTypeIndices(elementIndex);
     nDof = eoGetNumberOfShapeFunctions(problem,elementIndex) * problem.dimension;
+    elementType = problem.elementTypes{elementTypeIndex};
     
     % initialize matrices
     Ke = zeros(nDof,nDof);
@@ -10,10 +11,17 @@ function [ Me, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementI
     Fe = zeros(nDof,1);
 
     % create copy of function handles for shorter notation
-    quadraturePointGetter = problem.elementTypes{elementTypeIndex}.quadraturePointGetter;
-    elasticityMatrixGetter = problem.elementTypes{elementTypeIndex}.elasticityMatrixGetter;
-    massDensity = problem.elementTypes{elementTypeIndex}.massDensity;
+    quadraturePointGetter = elementType.quadraturePointGetter;
+    elasticityMatrixGetter = elementType.elasticityMatrixGetter;
+    massDensity = elementType.massDensity;
 
+    % gather dimension related quantities
+    if (elementType.localDimension == 2)
+        thickness = elementType.thickness;
+    elseif (elementType.localDimension == 1)
+        area = elementType.area;
+    end
+    
     % create quadrature points
     [ points, weights ] = quadraturePointGetter(problem, elementIndex);
     nPoints = numel(weights);
@@ -28,6 +36,13 @@ function [ Me, Ke, Fe ] = standardDynamicSystemMatricesCreator(problem, elementI
         shapeFunctionGlobalDerivatives = eoEvaluateShapeFunctionGlobalDerivative(problem,elementIndex,localCoordinates);
         jacobian = eoEvaluateJacobian(problem,elementIndex,localCoordinates);
         detJ = det(jacobian);
+        
+        % simplify integrand
+        if (elementType.localDimension == 2)
+            detJ = detJ * thickness;
+        elseif (elementType.localDimension == 1)
+            detJ = detJ * area;
+        end
         
         % add stiffness matrix integrand
         B = moComposeStrainDisplacementMatrix(shapeFunctionGlobalDerivatives);

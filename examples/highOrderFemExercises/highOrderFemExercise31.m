@@ -13,11 +13,11 @@ problem.dimension = 2;
 p=5;
 
 % element types
-elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', 1, 'poissonRatio', 0.3 ));
+elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', 1, 'poissonRatio', 0.3, 'thickness', 1 ));
 elementType1.mappingEvaluator = @myBlendedQuadMapping;
 elementType1.jacobianEvaluator = @myBlendedQuadJacobian;
 
-elementType2 = poCreateElementType( 'STANDARD_LINE_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', 1, 'poissonRatio', 0.3 ));
+elementType2 = poCreateElementType( 'STANDARD_LINE_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', 1, 'poissonRatio', 0.3, 'thickness', 1 ));
 elementType2.mappingEvaluator = @myBlendedLineMapping;
 elementType2.jacobianEvaluator = @myBlendedLineJacobian;
 

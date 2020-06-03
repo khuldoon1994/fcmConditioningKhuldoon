@@ -3,11 +3,12 @@
 %
 %                        f(x)
 %   /|---> ---> ---> ---> ---> ---> ---> --->
-%   /|=======================================
+%   /|======================================= --> F
 %   /|          rho,E,A,L
 %
 % A bar, characterized by its density rho, Youngs modulus E, area A and
-% length L is loaded by a distributed force (one-dimensional "body-force").
+% length L is loaded by a distributed force (one-dimensional "body-force")
+% and a nodal load F.
 %
 % This elastodynamic problem will be analyzed using
 % Central Difference Method
@@ -28,6 +29,7 @@ E = 1.0;
 A = 1.0;
 L = 1.0;
 f = @(x)( x/L );
+F = 0;
 
 % damping parameter
 massCoeff = 1.0;
@@ -40,7 +42,7 @@ tStart = 0;
 tStop = 10;
 nTimeSteps = 401;
 
-problem = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, ...
+problem = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, F, ...
                                     tStart, tStop, nTimeSteps, ...
                                     massCoeff, stiffCoeff);
 
@@ -59,6 +61,13 @@ D = goAssembleMatrix(allDe, allLe);
 K = goAssembleMatrix(allKe, allLe);
 F = goAssembleVector(allFe, allLe);
 
+% add nodal forces
+Fn = goCreateNodalLoadVector(problem);
+F = F + Fn;
+
+% compute penalty stiffness matrix and penalty load vector
+[ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
+
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);
 U0Dynamic = zeros(nTotalDof, 1);
@@ -72,6 +81,8 @@ V0Dynamic = zeros(nTotalDof, 1);
 
 % create effective system matrices
 [ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K);
+% ... and add penalty constraints
+KEff = KEff + Kp;
 
 for timeStep = 1 : problem.dynamics.nTimeSteps
     
@@ -80,7 +91,10 @@ for timeStep = 1 : problem.dynamics.nTimeSteps
     
     % calculate effective force vector
     [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
+    % ... and add penalty constraints
+    FEff = FEff + Fp;
     
+    % add force F=1 to last node
     FEff(3) = FEff(3) + 1;
     
     % solve linear system of equations (UNewDynamic = KEff \ FEff)

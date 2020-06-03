@@ -21,7 +21,7 @@ function [ totalFoundationStiffness ] = eoEvaluateTotalFoundationStiffness( prob
             totalFoundationStiffness = totalFoundationStiffness + foundation;    
         else
             % foundation stiffness is a function of the global position
-            X=eoEvaluateMapping(problem,elementIndex,r);
+            X = eoEvaluateMapping(problem,elementIndex,r);
             totalFoundationStiffness = totalFoundationStiffness + foundation(X);
         end
         

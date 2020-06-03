@@ -7,13 +7,14 @@ function goPlotAnimatedPostGridSolution( problem, allUeDynamic, postGrid, soluti
     
     for timeStep = 1:nTimeSteps
         allUe = allUeDynamic{timeStep};
-        delete(gca);
+        % dummy plot to delete the current figure
+        plot(0,0);
         hold on;
         grid on;
+        
         tic();
         % plot deformed structure
         for iPostGridCell=1:numel(postGrid)
-        
           topology = postGrid{iPostGridCell}{1};
           nodesGlobal = postGrid{iPostGridCell}{2};
           cellIndex = postGrid{iPostGridCell}{3};
@@ -24,11 +25,14 @@ function goPlotAnimatedPostGridSolution( problem, allUeDynamic, postGrid, soluti
         
           goPlotBasicCell(problem, topology, nodesGlobal, solution, deformation);
         end
-        toc()
-        axis equal
+        toc();
+        axis equal;
         title(['Displacement solution, time = ', num2str(timeVector(timeStep))]);
         % without colorbar it is much quicker
         %colorbar;
+        
+        % update figure
+        drawnow limitrate;
         pause(0.01);
         hold off;
     end

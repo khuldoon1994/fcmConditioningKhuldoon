@@ -74,7 +74,8 @@ function [ newType ] = poCreateElementTypeFCMLine1d( typeData )
 
     newType.elasticityMatrixGetter = @linearElasticityMatrix1d;
     newType.elasticityMatrixGetterData.youngsModulus = E;
-    newType.elasticityMatrixGetterData.area = A;
+    
+    newType.area = A;
 
     newType.mappingEvaluator = @linearLineMapping;
     newType.jacobianEvaluator = @linearLineJacobian;

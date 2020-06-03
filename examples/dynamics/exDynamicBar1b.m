@@ -3,11 +3,12 @@
 %
 %                        f(x)
 %   /|---> ---> ---> ---> ---> ---> ---> --->
-%   /|=======================================
+%   /|======================================= --> F
 %   /|          rho,E,A,L
 %
 % A bar, characterized by its density rho, Youngs modulus E, area A and
-% length L is loaded by a distributed force (one-dimensional "body-force").
+% length L is loaded by a distributed force (one-dimensional "body-force")
+% and a nodal load F.
 %
 % This elastodynamic problem will be analyzed using
 % Central Difference Method
@@ -27,15 +28,18 @@ rho = 1.0;
 E = 1.0;
 A = 1.0;
 L = 1.0;
-f = @(x)( x/L );
 p = 1;
+
+% loads
+f = @(x,t) x/L;
+F0 = @(t) 0;
 
 % damping parameter
 problem.dynamics.massCoeff = 1.0;
 problem.dynamics.stiffCoeff = 0.0;
 
 % dynamic element types
-problem.elementTypes = { poCreateElementTypeDynamicLine1d(struct(...
+problem.elementTypes = { poCreateElementTypeStandardLine1d(struct(...
     'gaussOrder', p+1, ...
     'youngsModulus', E, ...
     'area', A, ...
@@ -51,17 +55,19 @@ problem = poCreateSubElements( problem );
 problem = poCreateElementConnections( problem );
 
 problem.subelementTypes = { poCreateSubelementTypeLegendreLine(struct('order', p)) };
-problem.loads = { f };
+problem.loads = { f, F0 };
 problem.penalties = { [0, 1e60] };
+
 problem.elementLoads = { 1, 1 };
 problem.elementPenalties = { [], [] };
 problem.elementFoundations = { [], [] };
 
-problem.nodeLoads = { [],[],[] };
+problem.nodeLoads = { [],[],2 };
 problem.nodePenalties = { 1,[],[] };
 
 % time integration parameters
 problem.dynamics.timeIntegration = 'Central Difference';
+problem.dynamics.time = 0;
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;

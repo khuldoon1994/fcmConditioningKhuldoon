@@ -9,18 +9,22 @@ function [ newType ] = poCreateElementTypeStandardQuad2d( typeData )
 %   gaussOrder:    The gaussian order.
 %   physics:       PLAIN_STRAIN or PLAIN_STRESS
 %   youngsModulus: The youngsModulus.
-%   area:          The cross sectional area.
+%   nu:            The poissonRatio.
+%   rho:           The mass density.
+%   thickness:     The thickness.
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateElementType may be used for convenience.
 %   
-%   See also p poCreateElementType, poCreateElementTypeStandardLine1d, 
+%   See also poCreateElementType, poCreateElementTypeStandardLine1d, 
 %   poCreateElementTypeStandardLine1d.
 
     %% parse input
     p = moParseScalar('gaussOrder',typeData,2,'typeData for element type STANDARD_QUAD_2D');
-    E = moParseScalar('youngsModulus',typeData,1,'typeData for element type STANDARD_QUAD_2D');
-    nu = moParseScalar('poissonRatio',typeData,1,'typeData for element type STANDARD_QUAD_2D');
+    E = moParseScalar('youngsModulus',typeData,1.0,'typeData for element type STANDARD_QUAD_2D');
+    nu = moParseScalar('poissonRatio',typeData,1.0,'typeData for element type STANDARD_QUAD_2D');
+    rho = moParseScalar('massDensity',typeData,1.0,'typeData for element type STANDARD_QUAD_2D');
+    d = moParseScalar('thickness',typeData,1.0,'typeData for element type STANDARD_QUAD_2D');
 
     physics = moParseString('physics',typeData, 'PLAIN_STRAIN', 'typeData for element type STANDARD_QUAD_2D');
     elasticityMatrixGetter=@linearPlaneStrainElasticityMatrix;
@@ -41,6 +45,7 @@ function [ newType ] = poCreateElementTypeStandardQuad2d( typeData )
     newType.mapperData = { };
     
     newType.systemMatricesCreator = @standardSystemMatricesCreator;
+    newType.dynamicSystemMatricesCreator = @dynamicSystemMatricesCreator;
     
     newType.quadraturePointGetter = @gaussianQuadrature2d;
     newType.quadraturePointGetterData.gaussOrder = p;
@@ -48,6 +53,9 @@ function [ newType ] = poCreateElementTypeStandardQuad2d( typeData )
     newType.elasticityMatrixGetter = elasticityMatrixGetter;
     newType.elasticityMatrixGetterData.youngsModulus = E;
     newType.elasticityMatrixGetterData.poissonRatio = nu;
+    
+    newType.massDensity = rho;
+    newType.thickness = d;
     
     newType.elementPlotter = @plotLinearQuad;
     newType.postGridCellCreator = @createQuadPostGridCells;

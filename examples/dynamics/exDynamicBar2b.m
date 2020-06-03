@@ -3,11 +3,12 @@
 %
 %                        f(x)
 %   /|---> ---> ---> ---> ---> ---> ---> --->
-%   /|=======================================
+%   /|======================================= --> F
 %   /|          rho,E,A,L
 %
 % A bar, characterized by its density rho, Youngs modulus E, area A and
-% length L is loaded by a distributed force (one-dimensional "body-force").
+% length L is loaded by a distributed force (one-dimensional "body-force")
+% and a nodal load F.
 %
 % This elastodynamic problem will be analyzed using
 % Newmark Integration Method
@@ -35,7 +36,7 @@ problem.dynamics.massCoeff = 1.0;
 problem.dynamics.stiffCoeff = 0.0;
 
 % dynamic element types
-problem.elementTypes = { poCreateElementTypeDynamicLine1d(struct(...
+problem.elementTypes = { poCreateElementTypeStandardLine1d(struct(...
     'gaussOrder', p+1, ...
     'youngsModulus', E, ...
     'area', A, ...
@@ -62,6 +63,7 @@ problem.nodePenalties = { 1,[],[] };
 
 % time integration parameters
 problem.dynamics.timeIntegration = 'Newmark Integration';
+problem.dynamics.time = 0;
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;

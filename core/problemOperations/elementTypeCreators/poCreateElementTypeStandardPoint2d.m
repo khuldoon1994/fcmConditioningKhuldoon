@@ -1,12 +1,12 @@
-function [ newType ] = poCreateElementTypeDynamicPoint2d( typeData )
-% poCreateElementTypeDynamicPoint2d Creates a two dimensional point mass, i.e.
+function [ newType ] = poCreateElementTypeStandardPoint2d( typeData )
+% poCreateElementTypeStandardPoint2d Creates a two dimensional point mass, i.e.
 % a point mass that can move in two-dimensional space.
 %
-%   newType = poCreateElementTypeDynamicPoint2d(typeData) creates a new
+%   newType = poCreateElementTypeStandardPoint2d(typeData) creates a new
 %   type according to the parameters given in typeData.
 %
 %   typeData must be a structure array with the following fields:
-%   mass:    The mass of the point
+%   mass:    The mass.
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateElementType may be used for convenience.
@@ -15,14 +15,15 @@ function [ newType ] = poCreateElementTypeDynamicPoint2d( typeData )
 %   poCreateElementTypeStandardQuad2d,
 
     %% parse input
-    mass = moParseScalar('mass',typeData,1,'typeData for element type STANDARD_LINE_1D');
+    mass = moParseScalar('mass',typeData,1.0,'typeData for element type STANDARD_POINT_2D');
     
     
     %% create type
-    newType.name = 'DYNAMIC_POINT_2D';
+    newType.name = 'STANDARD_POINT_2D';
     newType.localDimension = 0;
     
-    newType.systemMatricesCreator = @pointMassDynamicSystemMatricesCreator;
+    newType.systemMatricesCreator = @standardPointMassSystemMatricesCreator;
+    newType.dynamicSystemMatricesCreator = @dynamicPointMassSystemMatricesCreator;
     
     newType.mass = mass;
     

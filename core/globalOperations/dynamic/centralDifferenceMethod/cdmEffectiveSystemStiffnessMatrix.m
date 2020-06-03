@@ -13,8 +13,4 @@ function [ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K)
     % effective stiffness matrix
     KEff = a0*M + a1*D;
     
-    % add penalty constraints to effective stiffness matrix
-    [ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
-    KEff = KEff + Kp;
-    
 end
