@@ -1,9 +1,9 @@
 % SiHoFemLab - Step 3
 % As in step 1, a problem structure will be set up in this step. This time,
-% the problem consists of ractangle, which is clamped at one end  andloaded
-% by a surface straction on the other end. The rectangle is 1 by 2 meters
-% and should behave according plane strain physics with a Youngs modulus of
-% E=1, Poisson ration nu=0.3.
+% the problem consists of ractangle, which is clamped at one end and loaded
+% by a surface traction on the other end. The rectangle is 1 by 2 meters
+% and has a thickness of 1. it should behave according plane strain physics
+% with a Youngs modulus of E=1, Poisson ration nu=0.3.
 
 %      _____________________
 %    /|                     |--->
