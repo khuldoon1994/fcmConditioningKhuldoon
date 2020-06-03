@@ -10,8 +10,8 @@ function [ newType ] = poCreateElementTypeStandardQuad2d( typeData )
 %   physics:       PLAIN_STRAIN or PLAIN_STRESS
 %   youngsModulus: The youngsModulus.
 %   nu:            The poissonRatio.
-%   area:          The cross sectional area.
 %   rho:           The mass density.
+%   thickness:     The thickness.
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateElementType may be used for convenience.

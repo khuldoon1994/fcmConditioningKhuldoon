@@ -7,9 +7,8 @@ function [ newType ] = poCreateElementTypeStandardTruss2d( typeData )
 %
 %   typeData must be a structure array with the following fields:
 %   youngsModulus: The youngsModulus.
-%   nu:            The poissonRatio.
-%   area:          The cross sectional area.
 %   rho:           The mass density.
+%   area:          The cross sectional area.
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateStandardElementType may be used for convenience.
