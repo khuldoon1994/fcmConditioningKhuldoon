@@ -3,11 +3,12 @@
 %
 %                        f(x)
 %   /|---> ---> ---> ---> ---> ---> ---> --->
-%   /|=======================================
+%   /|======================================= --> F
 %   /|          rho,E,A,L
 %
 % A bar, characterized by its density rho, Youngs modulus E, area A and
-% length L is loaded by a distributed force (one-dimensional "body-force").
+% length L is loaded by a distributed force (one-dimensional "body-force")
+% and a nodal load F.
 %
 % This elastodynamic problem will be analyzed using
 % Central Difference Method
@@ -66,6 +67,7 @@ problem.nodePenalties = { 1,[],[] };
 
 % time integration parameters
 problem.dynamics.timeIntegration = 'Central Difference';
+problem.dynamics.time = 0;
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 401;

@@ -32,6 +32,7 @@ exElasticBarConvergenceStudy
 exHighOrderFemLectureNodes221
 exThreeElementBar
 exElasticQuad
+exTrussSystem2d
 
 
 %% reset stuff

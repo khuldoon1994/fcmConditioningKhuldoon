@@ -28,11 +28,17 @@ function [ solutionQuantities ] = cdmDynamicSolver(problem, solutionPointer, glo
     V0Dynamic = globalInitialValues{2};
     A0Dynamic = globalInitialValues{3};
     
+    % compute penalty stiffness matrix and load vector
+    [ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
+    
     % initialize values
     [ UOldDynamic, UDynamic, VDynamic, ADynamic ] = cdmInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
     
     % create effective system matrices
     [ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K);
+    
+    % ... and add penalty constraints
+    KEff = KEff + Kp;
     
     for iTimeStep = 1:nTimeSteps
         
@@ -46,6 +52,9 @@ function [ solutionQuantities ] = cdmDynamicSolver(problem, solutionPointer, glo
         
         % calculate effective force vector
         [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
+        
+        % and add penalty constraints
+        FEff = FEff + Fp;
         
         % solve linear system of equations (UNewDynamic = KEff \ FEff)
         UNewDynamic = moSolveSparseSystem( KEff, FEff );

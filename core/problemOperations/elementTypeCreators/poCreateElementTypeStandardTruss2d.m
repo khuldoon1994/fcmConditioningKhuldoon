@@ -23,7 +23,7 @@ function [ newType ] = poCreateElementTypeStandardTruss2d( typeData )
     %% create type
     newType.name = 'STANDARD_TRUSS_2D';
     
-    newType.localDimension = 1;
+    newType.localDimension = 2;
     
     newType.systemMatricesCreator = @standardTruss2dSystemMatricesCreator;
     newType.dynamicSystemMatricesCreator = @dynamicTruss2dSystemMatricesCreator;

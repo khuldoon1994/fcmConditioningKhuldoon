@@ -24,8 +24,4 @@ function [ FEff ] = newmarkEffectiveSystemForceVector(problem, M, D, K, F, u, uD
     % effective force vector
     FEff = F + M*(a0*u+a2*uDot+a3*uDdot) + D*(a1*u+a4*uDot+a5*uDdot);
     
-    % add penalty constraints to effective force vector
-    [ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
-    FEff = FEff + Fp;
-    
 end

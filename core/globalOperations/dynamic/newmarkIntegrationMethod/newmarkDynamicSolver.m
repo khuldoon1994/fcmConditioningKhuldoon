@@ -28,11 +28,17 @@ function [ solutionQuantities ] = newmarkDynamicSolver(problem, solutionPointer,
     V0Dynamic = globalInitialValues{2};
     A0Dynamic = globalInitialValues{3};
     
+    % compute penalty stiffness matrix and load vector
+    [ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
+    
     % initialize values
     [ UDynamic, VDynamic, ADynamic ] = newmarkInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
     
     % create effective system matrices
     [ KEff ] = newmarkEffectiveSystemStiffnessMatrix(problem, M, D, K);
+    
+    % ... and add penalty constraints
+    KEff = KEff + Kp;
     
     for iTimeStep = 1:nTimeSteps
         
@@ -46,6 +52,9 @@ function [ solutionQuantities ] = newmarkDynamicSolver(problem, solutionPointer,
         
         % calculate effective force vector
         [ FEff ] = newmarkEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, VDynamic, ADynamic);
+        
+        % and add penalty constraints
+        FEff = FEff + Fp;
         
         % solve linear system of equations (UNewDynamic = KEff \ FEff)
         UNewDynamic = moSolveSparseSystem( KEff, FEff );

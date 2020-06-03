@@ -20,7 +20,7 @@ clc;
 warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
 %% problem definition
-problem.name = 'dynamicTwoQuads2D (Central Difference Method)';
+problem.name = 'dynamicQuad2D (Central Difference Method, 2x1 elements)';
 problem.dimension = 2;
 
 % parameter
@@ -91,6 +91,7 @@ problem.dynamics.time = 0;
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 201;
+problem.dynamics.time = 0;
 
 % initialize dynamic problem
 problem = poInitializeDynamicProblem(problem);
@@ -191,6 +192,7 @@ title(['Displacement solution (p = ', num2str(p), ')']);
 
 
 %% post processing (animation)
+disp('press enter to continue');
 pause();
 
 % Animation

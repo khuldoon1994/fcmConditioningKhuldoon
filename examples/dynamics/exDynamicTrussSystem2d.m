@@ -8,16 +8,11 @@ close all;
 warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
 %% problem definition
-problem.name='ex21';
+problem.name='trussSystem2D';
 problem.dimension = 2;
-
-problem.dynamics.tStart = 0;
-problem.dynamics.tStop = 10;
-problem.dynamics.nTimeSteps = 401;
 
 % parameter
 rho = 1;
-m = 2.5;
 E = 1;
 A = 1;
 
@@ -51,9 +46,9 @@ problem.subelementTypeIndices = [1, 1, 1];
 problem.subelementNodeIndices = { [1 2], [2 3], [1 3] };
 
 % connections / transformations between elements and subelements
-problem.elementConnections = { { { 1 [1] } }, { { 2 [1] } }, { { 3 [1] } } };
-                                   
-% boundary conditions
+problem = poCreateElementConnections( problem );
+                            
+% loads and boundary conditions
 problem.loads = { [0.2; 0.1] };
 problem.penalties = { [0, 1e60;
                        0, 1e60],
@@ -61,22 +56,22 @@ problem.penalties = { [0, 1e60;
                        0, 1e60] };
 problem.foundations = { };
 
-% element boundary condition connections
+% element loads and boundary conditions
 problem.elementLoads = { [], [], [] };
 problem.elementPenalties = { [], [], [] };
 problem.elementFoundations = { [], [], [] };
 
-% TODO: make nodal boundary condition work...
+% nodal loads and boundary conditions
 problem.nodeLoads = { [], [], [1] };
 problem.nodePenalties = { [1], [2], [] };
 problem.nodeFoundations = { [], [], [] };
 
-
 % time integration parameters
-% TODO: Rename 'Newmark Integration' to 'NEWMARK', similar for CDM
 problem.dynamics.timeIntegration = 'Newmark Integration';
-% TODO: Rename 'No Lumping' to 'OFF'
-problem.dynamics.lumping = 'No Lumping';
+problem.dynamics.time = 0;
+problem.dynamics.tStart = 0;
+problem.dynamics.tStop = 10;
+problem.dynamics.nTimeSteps = 5;
 
 % initialize dynamic problem
 problem = poInitializeDynamicProblem(problem);
@@ -86,10 +81,8 @@ goPlotLoads(problem, 1, 1);
 goPlotMesh(problem, 1);
 goPlotPenalties(problem, 1);
 
-%% dynamic analysis
-% displacementOverTime = zeros(6, problem.dynamics.nTimeSteps);
-% velocityOverTime = zeros(6, problem.dynamics.nTimeSteps);
 
+%% dynamic analysis
 % create system matrices
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 
@@ -99,67 +92,60 @@ D = goAssembleMatrix(allDe, allLe);
 K = goAssembleMatrix(allKe, allLe);
 F = goAssembleVector(allFe, allLe);
 
-% % set initial displacement and velocity
-% [ nTotalDof ] = goNumberOfDof(problem);
-% U0 = zeros(nTotalDof,1);
-% V0 = zeros(nTotalDof,1);
-% 
-% 
-% % compute initial acceleration
-% [ A0 ] = goComputeInitialAcceleration(problem, M, D, K, F, U0, V0);
-% 
-% % initialize values
-% [ U, V, A ] = newmarkInitialize(problem, U0, V0, A0);
-% 
-% % create effective system matrices
-% [ KEff ] = newmarkEffectiveSystemStiffnessMatrix(problem, M, D, K);
-% 
-% 
-% for timeStep = 1 : problem.dynamics.nTimeSteps
-%     
-%     % extract necessary quantities from solution
-%     displacementOverTime(:,timeStep) = U;
-%     velocityOverTime(:,timeStep) = V;
-% 
-%     % calculate effective force vector
-%     [ FEff ] = newmarkEffectiveSystemForceVector(problem, M, D, K, F, U, V, A);
-%     FEff = FEff + [0; 0; 0; 0; 0.2; 0.1];
-%     
-%     % solve linear system of equations (UNew = KEff \ FEff)
-%     UNew = moSolveSparseSystem( KEff, FEff );
-%     
-%     % calculate velocities and accelerations
-%     [ VNew, ANew ] = newmarkVelocityAcceleration(problem, UNew, U, V, A);
-%     
-%     % update kinematic quantities
-%     [ U, V, A ] = newmarkUpdateKinematics(UNew, VNew, ANew);
-%     
-% end
+% add nodal forces
+Fn = goCreateNodalLoadVector(problem);
+F = F + Fn;
 
-% add penalty constraints to effective stiffness matrix
+% compute penalty stiffness matrix and penalty load vector
 [ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
-K = K + Kp;
-F = F + Fp;
 
-F = F + [0; 0; 0; 0; 0.2; 0.1];
+% set initial displacement and velocity
+[ nTotalDof ] = goNumberOfDof(problem);
+U0Dynamic = zeros(nTotalDof, 1);
+V0Dynamic = zeros(nTotalDof, 1);
 
-U = K\F;
+% compute initial acceleration
+[ A0Dynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, U0Dynamic, V0Dynamic);
+
+% initialize values
+[ UOldDynamic, UDynamic ] = cdmInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
+
+% create effective system matrices
+[ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K);
+
+% ... and add penalty constraints
+KEff = KEff + Kp;
+
+% solution quantity
+displacement = zeros(nTotalDof, problem.dynamics.nTimeSteps);
+
+
+for timeStep = 1 : problem.dynamics.nTimeSteps
+    
+    % extract necessary quantities from solution
+    displacement(:,timeStep) = UDynamic;
+    
+    % calculate effective force vector
+    [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
+    
+    % ... and add penalty constraints
+    FEff = FEff + Fp;
+    
+    % solve linear system of equations (UNewDynamic = KEff \ FEff)
+    UNewDynamic = moSolveSparseSystem( KEff, FEff );
+    
+    % calculate velocities and accelerations
+    [ VDynamic, ADynamic ] = cdmVelocityAcceleration(problem, UNewDynamic, UDynamic, UOldDynamic);
+    
+    % update kinematic quantities
+    [ UDynamic, UOldDynamic ] = cdmUpdateKinematics(UNewDynamic, UDynamic);
+    
+end
+
+% disassemble
+[ allUe ] = goDisassembleVector( UDynamic, allLe );
 
 
 %% post processing
-goPlotDisplacementArrows2d(problem, U, 1)
-% figure(2)
-% plot(2.5 + displacementOverTime(5,:), 1.5 + displacementOverTime(6,:))
-% xlabel("x-position")
-% ylabel("y-position")
-
-% plot deformed mesh
-
-%% check
-URef=[0, 0, 0, 0, 0.1+2*sqrt(2)/5, -0.1]';
-if norm(URef-U) > 1e-12
-   error('exElasticBar: Check failed!'); 
-else
-   disp('exElasticBar: Check passed.'); 
-end
+% todo: animation
 
