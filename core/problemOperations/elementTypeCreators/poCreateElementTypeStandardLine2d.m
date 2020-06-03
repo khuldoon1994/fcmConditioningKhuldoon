@@ -21,9 +21,10 @@ function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
 
     %% parse input
     p = moParseScalar('gaussOrder',typeData,2,'typeData for element type STANDARD_LINE_2D');
-    E = moParseScalar('youngsModulus',typeData,1,'typeData for element type STANDARD_LINE_2D');
-    nu = moParseScalar('poissonRatio',typeData,1,'typeData for element type STANDARD_LINE_2D');
-    rho = moParseScalar('massDensity',typeData,1,'typeData for element type STANDARD_LINE_2D');
+    E = moParseScalar('youngsModulus',typeData,1.0,'typeData for element type STANDARD_LINE_2D');
+    nu = moParseScalar('poissonRatio',typeData,1.0,'typeData for element type STANDARD_LINE_2D');
+    rho = moParseScalar('massDensity',typeData,1.0,'typeData for element type STANDARD_LINE_2D');
+    d = moParseScalar('thickness',typeData,1.0,'typeData for element type STANDARD_LINE_2D');
 
     %% TODO: Why is this needed? It's a boundary element...  
     physics = moParseString('physics',typeData, 'PLAIN_STRAIN', 'typeData for element type STANDARD_LINE_2D');
@@ -53,7 +54,7 @@ function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
     newType.elasticityMatrixGetterData.poissonRatio = nu;
     
     newType.massDensity = rho;
-    newType.area = A;
+    newType.thickness = d;
     
     newType.mappingEvaluator = @linearLineMapping;
     newType.jacobianEvaluator = @linearLineJacobian;

@@ -19,9 +19,9 @@ function [ newType ] = poCreateElementTypeStandardLine1d( typeData )
 
     %% parse input
     p = moParseScalar('gaussOrder',typeData,2,'typeData for element type STANDARD_LINE_1D');
-    E = moParseScalar('youngsModulus',typeData,1,'typeData for element type STANDARD_LINE_1D');
-    A = moParseScalar('area',typeData,1,'typeData for element type STANDARD_LINE_1D');
-    rho = moParseScalar('massDensity',typeData,1,'typeData for element type STANDARD_LINE_1D');
+    E = moParseScalar('youngsModulus',typeData,1.0,'typeData for element type STANDARD_LINE_1D');
+    A = moParseScalar('area',typeData,1.0,'typeData for element type STANDARD_LINE_1D');
+    rho = moParseScalar('massDensity',typeData,1.0,'typeData for element type STANDARD_LINE_1D');
     
     
     %% create type
@@ -36,7 +36,6 @@ function [ newType ] = poCreateElementTypeStandardLine1d( typeData )
     
     newType.elasticityMatrixGetter = @linearElasticityMatrix1d;
     newType.elasticityMatrixGetterData.youngsModulus =  E;
-    newType.elasticityMatrixGetterData.area = A;
     
     newType.massDensity = rho;
     newType.area = A;

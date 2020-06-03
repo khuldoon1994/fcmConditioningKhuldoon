@@ -15,7 +15,7 @@ function [ newType ] = poCreateElementTypeStandardPoint2d( typeData )
 %   poCreateElementTypeStandardQuad2d,
 
     %% parse input
-    mass = moParseScalar('mass',typeData,1,'typeData for element type STANDARD_LINE_1D');
+    mass = moParseScalar('mass',typeData,1.0,'typeData for element type STANDARD_LINE_1D');
     
     
     %% create type

@@ -17,9 +17,9 @@ function [ newType ] = poCreateElementTypeStandardTruss2d( typeData )
 %   See also poCreateElementType, poCreateElementTypeStandardQuad2d,
 
     %% parse input
-    E = moParseScalar('youngsModulus',typeData,1,'typeData for element type STANDARD_TRUSS_2D');
-    A = moParseScalar('area',typeData,1,'typeData for element type STANDARD_TRUSS_2D');
-    rho = moParseScalar('massDensity',typeData,1,'typeData for element type STANDARD_TRUSS_2D');
+    E = moParseScalar('youngsModulus',typeData,1.0,'typeData for element type STANDARD_TRUSS_2D');
+    A = moParseScalar('area',typeData,1.0,'typeData for element type STANDARD_TRUSS_2D');
+    rho = moParseScalar('massDensity',typeData,1.0,'typeData for element type STANDARD_TRUSS_2D');
 
     %% create type
     newType.name = 'STANDARD_TRUSS_2D';
