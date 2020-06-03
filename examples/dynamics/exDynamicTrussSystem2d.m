@@ -8,15 +8,11 @@ close all;
 warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
 %% problem definition
-problem.name='truss2D';
+problem.name='trussSystem2D';
 problem.dimension = 2;
 
-problem.dynamics.time = 0;
-problem.dynamics.tStart = 0;
-problem.dynamics.tStop = 10;
-problem.dynamics.nTimeSteps = 401;
-
 % parameter
+rho = 1;
 E = 1;
 A = 1;
 
@@ -31,7 +27,8 @@ problem.subelementTypes = { subelementType1 };
 % element types
 elementType1 = poCreateElementType( 'STANDARD_TRUSS_2D', struct(...
     'youngsModulus', E, ...
-    'area', A));
+    'area', A, ...
+    'massDensity', rho));
 problem.elementTypes = { elementType1 };
 
 % nodes
@@ -69,19 +66,29 @@ problem.nodeLoads = { [], [], [1] };
 problem.nodePenalties = { [1], [2], [] };
 problem.nodeFoundations = { [], [], [] };
 
-% check problem
-problem = poCheckProblem(problem);
+% time integration parameters
+problem.dynamics.timeIntegration = 'Newmark Integration';
+problem.dynamics.time = 0;
+problem.dynamics.tStart = 0;
+problem.dynamics.tStop = 10;
+problem.dynamics.nTimeSteps = 5;
+
+% initialize dynamic problem
+problem = poInitializeDynamicProblem(problem);
 
 % plot mesh and boundary conditions
 goPlotLoads(problem, 1, 1);
 goPlotMesh(problem, 1);
 goPlotPenalties(problem, 1);
 
-%% analysis
+
+%% dynamic analysis
 % create system matrices
-[ allKe, allFe, allLe ] = goCreateElementMatrices( problem );
+[ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 
 % assemble
+M = goAssembleMatrix(allMe, allLe);
+D = goAssembleMatrix(allDe, allLe);
 K = goAssembleMatrix(allKe, allLe);
 F = goAssembleVector(allFe, allLe);
 
@@ -89,28 +96,56 @@ F = goAssembleVector(allFe, allLe);
 Fn = goCreateNodalLoadVector(problem);
 F = F + Fn;
 
-% add penalty constraints
+% compute penalty stiffness matrix and penalty load vector
 [ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
-K = K + Kp;
-F = F + Fp;
 
-% solve
-U = K\F;
+% set initial displacement and velocity
+[ nTotalDof ] = goNumberOfDof(problem);
+U0Dynamic = zeros(nTotalDof, 1);
+V0Dynamic = zeros(nTotalDof, 1);
+
+% compute initial acceleration
+[ A0Dynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, U0Dynamic, V0Dynamic);
+
+% initialize values
+[ UOldDynamic, UDynamic ] = cdmInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
+
+% create effective system matrices
+[ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K);
+
+% ... and add penalty constraints
+KEff = KEff + Kp;
+
+% solution quantity
+displacement = zeros(nTotalDof, problem.dynamics.nTimeSteps);
+
+
+for timeStep = 1 : problem.dynamics.nTimeSteps
+    
+    % extract necessary quantities from solution
+    displacement(:,timeStep) = UDynamic;
+    
+    % calculate effective force vector
+    [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
+    
+    % ... and add penalty constraints
+    FEff = FEff + Fp;
+    
+    % solve linear system of equations (UNewDynamic = KEff \ FEff)
+    UNewDynamic = moSolveSparseSystem( KEff, FEff );
+    
+    % calculate velocities and accelerations
+    [ VDynamic, ADynamic ] = cdmVelocityAcceleration(problem, UNewDynamic, UDynamic, UOldDynamic);
+    
+    % update kinematic quantities
+    [ UDynamic, UOldDynamic ] = cdmUpdateKinematics(UNewDynamic, UDynamic);
+    
+end
 
 % disassemble
-[ allUe ] = goDisassembleVector( U, allLe );
+[ allUe ] = goDisassembleVector( UDynamic, allLe );
+
 
 %% post processing
-goPlotDisplacementArrows2d(problem, U, 1);
-
-% plot deformed mesh
-
-
-%% check
-URef=[0, 0, 0, 0, 0.1+sqrt(2)*2/5, -0.1]';
-if norm(URef-U) > 1e-12
-   error('exTruss2d: Check failed!'); 
-else
-   disp('exTruss2d: Check passed.'); 
-end
+% todo: animation
 

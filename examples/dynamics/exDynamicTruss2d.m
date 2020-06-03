@@ -11,14 +11,23 @@ warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn(
 problem.name='truss2D';
 problem.dimension = 2;
 
+problem.dynamics.time = 0;
+problem.dynamics.tStart = 0;
+problem.dynamics.tStop = 10;
+problem.dynamics.nTimeSteps = 401;
+
 % parameter
 rho = 1;
+m = 2.5;
 E = 1;
 A = 1;
 
 % damping parameter
 problem.dynamics.massCoeff = 0.0;
 problem.dynamics.stiffCoeff = 0.0;
+
+% gravity
+g = 9.81;
 
 % subelement types
 subelementType1 = poCreateSubelementType( 'LINEAR_LINE', struct() );
@@ -32,58 +41,59 @@ elementType1 = poCreateElementType( 'STANDARD_TRUSS_2D', struct(...
 problem.elementTypes = { elementType1 };
 
 % nodes
-problem.nodes = [ 0.0 1.0 1.0; 
-                  0.0 0.0 1.0 ];
+problem.nodes = [ 0.0 2.5; 
+                  0.0 1.5];
 
 % elements or 'quadrature supports'
-problem.elementTopologies = [1, 1, 1];
-problem.elementTypeIndices = [1, 1, 1];
-problem.elementNodeIndices = { [1 2], [2 3], [1 3] };
+problem.elementTopologies = [1];
+problem.elementTypeIndices = [1];
+problem.elementNodeIndices = { [1 2] };
                        
 % elements or 'dof supports'
-problem.subelementTopologies = [1, 1, 1];
-problem.subelementTypeIndices = [1, 1, 1];
-problem.subelementNodeIndices = { [1 2], [2 3], [1 3] };
+problem.subelementTopologies = [1];
+problem.subelementTypeIndices = [1];
+problem.subelementNodeIndices = { [1 2] };
 
 % connections / transformations between elements and subelements
-problem = poCreateElementConnections( problem );
-                            
-% loads and boundary conditions
-problem.loads = { [0.2; 0.1] };
+problem.elementConnections = { { { 1 [1] } } };
+                                   
+% boundary conditions % TODO: make element loads work...
+problem.loads = { [0; -m*g], [2; 1] };
 problem.penalties = { [0, 1e60;
-                       0, 1e60],
-                      [0, 0;
                        0, 1e60] };
 problem.foundations = { };
 
-% element loads and boundary conditions
-problem.elementLoads = { [], [], [] };
-problem.elementPenalties = { [], [], [] };
-problem.elementFoundations = { [], [], [] };
+% element boundary condition connections
+problem.elementLoads = { [] };
+problem.elementPenalties = { [] };
+problem.elementFoundations = { [] };
 
-% nodal loads and boundary conditions
-problem.nodeLoads = { [], [], [1] };
-problem.nodePenalties = { [1], [2], [] };
-problem.nodeFoundations = { [], [], [] };
+% TODO: make nodal boundary condition work...
+problem.nodeLoads = { [], [2] };
+problem.nodePenalties = { [1], [] };
+problem.nodeFoundations = { [], [] };
+
 
 % time integration parameters
+% TODO: Rename 'Newmark Integration' to 'NEWMARK', similar for CDM
 problem.dynamics.timeIntegration = 'Newmark Integration';
-problem.dynamics.time = 0;
-problem.dynamics.tStart = 0;
-problem.dynamics.tStop = 10;
-problem.dynamics.nTimeSteps = 5;
+% TODO: Rename 'No Lumping' to 'OFF'
+problem.dynamics.lumping = 'No Lumping';
 
 % initialize dynamic problem
 problem = poInitializeDynamicProblem(problem);
 
 % plot mesh and boundary conditions
-goPlotLoads(problem, 1, 1);
-goPlotMesh(problem, 1);
-goPlotPenalties(problem, 1);
-
+goPlotLoads(problem,1,1);
+goPlotMesh(problem,1);
+goPlotPenalties(problem,1);
 
 %% dynamic analysis
+displacementOverTime = zeros(4, problem.dynamics.nTimeSteps);
+velocityOverTime = zeros(4, problem.dynamics.nTimeSteps);
+
 % create system matrices
+problem.solution = zeros(4,1);
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 
 % assemble
@@ -96,56 +106,57 @@ F = goAssembleVector(allFe, allLe);
 Fn = goCreateNodalLoadVector(problem);
 F = F + Fn;
 
-% compute penalty stiffness matrix and penalty load vector
-[ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
-
 % set initial displacement and velocity
 [ nTotalDof ] = goNumberOfDof(problem);
-U0Dynamic = zeros(nTotalDof, 1);
-V0Dynamic = zeros(nTotalDof, 1);
+U0 = zeros(4,1);
+V0 = zeros(4,1);
+
 
 % compute initial acceleration
-[ A0Dynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, U0Dynamic, V0Dynamic);
+[ A0 ] = goComputeInitialAcceleration(problem, M, D, K, F, U0, V0);
 
 % initialize values
-[ UOldDynamic, UDynamic ] = cdmInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
+[ U, V, A ] = newmarkInitialize(problem, U0, V0, A0);
 
 % create effective system matrices
-[ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K);
-
-% ... and add penalty constraints
-KEff = KEff + Kp;
-
-% solution quantity
-displacement = zeros(nTotalDof, problem.dynamics.nTimeSteps);
+[ KEff ] = newmarkEffectiveSystemStiffnessMatrix(problem, M, D, K);
 
 
 for timeStep = 1 : problem.dynamics.nTimeSteps
     
+    problem.dynamics.time = (problem.dynamics.tStop - problem.dynamics.tStart)*timeStep/problem.dynamics.nTimeSteps;
+    
     % extract necessary quantities from solution
-    displacement(:,timeStep) = UDynamic;
-    
+    displacementOverTime(:,timeStep) = U;
+    velocityOverTime(:,timeStep) = V;
+
     % calculate effective force vector
-    [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
+    [ FEff ] = newmarkEffectiveSystemForceVector(problem, M, D, K, F, U, V, A);
+    FEff = [0; 0; 0; -10000];
     
-    % ... and add penalty constraints
-    FEff = FEff + Fp;
-    
-    % solve linear system of equations (UNewDynamic = KEff \ FEff)
-    UNewDynamic = moSolveSparseSystem( KEff, FEff );
+    % solve linear system of equations (UNew = KEff \ FEff)
+    UNew = moSolveSparseSystem( KEff, FEff );
+    %UNew(1:2) = zeros(1,2);
+    problem.solution = UNew;
     
     % calculate velocities and accelerations
-    [ VDynamic, ADynamic ] = cdmVelocityAcceleration(problem, UNewDynamic, UDynamic, UOldDynamic);
+    [ VNew, ANew ] = newmarkVelocityAcceleration(problem, UNew, U, V, A);
     
     % update kinematic quantities
-    [ UDynamic, UOldDynamic ] = cdmUpdateKinematics(UNewDynamic, UDynamic);
+    [ U, V, A ] = newmarkUpdateKinematics(UNew, VNew, ANew);
     
 end
 
-% disassemble
-[ allUe ] = goDisassembleVector( UDynamic, allLe );
-
-
-%% post processing
-% animation
-
+%% TODO: Reactivate test
+% %% post processing
+% plot(2.5 + displacementOverTime(3,:), 1.5 + displacementOverTime(4,:))
+% xlabel("x-position")
+% ylabel("y-position")
+% 
+% %% check
+% URef=[2.00499999999507537e+02 -1.93864452500081171e+0]';
+% if sum(URef==U)==3
+%    error('exElasticBar: Check failed!'); 
+% else
+%    disp('exElasticBar: Check passed.'); 
+% end
