@@ -29,8 +29,8 @@ problem.nodes=[0 1 2 0 1 2;
 
 % Here are the element types. We need one for the quadrilaterals and one
 % for the right edge, where we have to integrate the surface traction t.
-elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct('gaussOrder', 3, 'physics', 'PLANE_STRAIN', 'youngsModulus', 1, 'poissonRatio', 0.3) );
-elementType2 = poCreateElementType( 'STANDARD_LINE_2D', struct('gaussOrder', 3, 'physics', 'PLANE_STRAIN', 'youngsModulus', 1, 'poissonRatio', 0.3) );
+elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct('gaussOrder', 3, 'physics', 'PLANE_STRAIN', 'youngsModulus', 1, 'poissonRatio', 0.3, 'thickness', 1) );
+elementType2 = poCreateElementType( 'STANDARD_LINE_2D', struct('gaussOrder', 3, 'physics', 'PLANE_STRAIN', 'youngsModulus', 1, 'poissonRatio', 0.3, 'thickness', 1) );
 problem.elementTypes = { elementType1, elementType2 };
 
 % Now we need subelement types. Each quadrilateral should use high-order
