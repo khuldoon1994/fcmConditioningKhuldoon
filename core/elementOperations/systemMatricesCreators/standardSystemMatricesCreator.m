@@ -14,6 +14,13 @@ function [ Ke, Fe ] = standardSystemMatricesCreator(problem, elementIndex)
     quadraturePointGetter = problem.elementTypes{elementTypeIndex}.quadraturePointGetter;
     elasticityMatrixGetter = problem.elementTypes{elementTypeIndex}.elasticityMatrixGetter;
 
+    % gather dimension related quantities
+    if (problem.elementTypes{elementTypeIndex}.localDimension == 2)
+        thickness = problem.elementTypes{elementTypeIndex}.thickness;
+    elseif (problem.elementTypes{elementTypeIndex}.localDimension == 1)
+        area = problem.elementTypes{elementTypeIndex}.area;
+    end
+    
     % create quadrature points
     [ points, weights ] = quadraturePointGetter(problem, elementIndex);
     nPoints = numel(weights);
@@ -29,6 +36,13 @@ function [ Ke, Fe ] = standardSystemMatricesCreator(problem, elementIndex)
         shapeFunctionGlobalDerivatives = eoEvaluateShapeFunctionGlobalDerivative(problem,elementIndex,localCoordinates);
         jacobian = eoEvaluateJacobian(problem,elementIndex,localCoordinates);
         detJ = det(jacobian);
+        
+        % simplify integrand
+        if (problem.elementTypes{elementTypeIndex}.localDimension == 2)
+            detJ = detJ * thickness;
+        elseif (problem.elementTypes{elementTypeIndex}.localDimension == 1)
+            detJ = detJ * area;
+        end
         
         % add stiffness matrix integrand
         B = moComposeStrainDisplacementMatrix(shapeFunctionGlobalDerivatives);

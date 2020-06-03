@@ -14,6 +14,13 @@ function [ Me, Ke, Fe ] = dynamicSystemMatricesCreator(problem, elementIndex)
     elasticityMatrixGetter = problem.elementTypes{elementTypeIndex}.elasticityMatrixGetter;
     massDensity = problem.elementTypes{elementTypeIndex}.massDensity;
 
+    % gather dimension related quantities
+    if (problem.elementTypes{elementTypeIndex}.localDimension == 2)
+        thickness = problem.elementTypes{elementTypeIndex}.thickness;
+    elseif (problem.elementTypes{elementTypeIndex}.localDimension == 1)
+        area = problem.elementTypes{elementTypeIndex}.area;
+    end
+    
     % create quadrature points
     [ points, weights ] = quadraturePointGetter(problem, elementIndex);
     nPoints = numel(weights);
@@ -29,6 +36,13 @@ function [ Me, Ke, Fe ] = dynamicSystemMatricesCreator(problem, elementIndex)
         jacobian = eoEvaluateJacobian(problem,elementIndex,localCoordinates);
         detJ = det(jacobian);
         
+        % simplify integrand
+        if (problem.elementTypes{elementTypeIndex}.localDimension == 2)
+            detJ = detJ * thickness;
+        elseif (problem.elementTypes{elementTypeIndex}.localDimension == 1)
+            detJ = detJ * area;
+        end
+        
         % add stiffness matrix integrand
         B = moComposeStrainDisplacementMatrix(shapeFunctionGlobalDerivatives);
         C = elasticityMatrixGetter(problem, elementIndex, localCoordinates);
@@ -41,10 +55,6 @@ function [ Me, Ke, Fe ] = dynamicSystemMatricesCreator(problem, elementIndex)
         
         % add mass matrix integrand
         rho = massDensity;
-        if(problem.dimension == 1)
-            A = problem.elementTypes{elementTypeIndex}.area;
-            rho = massDensity*A;
-        end
         Me = Me + N'*rho*N * weights(i) * detJ;
         
         % add elastic foundation integrand
