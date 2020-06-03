@@ -3,10 +3,11 @@ function [ Ke, Fe ] = standardTruss2dSystemMatricesCreator(problem, elementIndex
     % gather some information
     elementTypeIndex = problem.elementTypeIndices(elementIndex);
     nDof = 2 * problem.dimension;
+    elementType = problem.elementTypes{elementTypeIndex};
     
     % structure
-    E = problem.elementTypes{elementTypeIndex}.youngsModulus;
-    A = problem.elementTypes{elementTypeIndex}.area;
+    E = elementType.youngsModulus;
+    A = elementType.area;
     
     % geometry
     i1 = problem.elementNodeIndices{elementIndex}(1);

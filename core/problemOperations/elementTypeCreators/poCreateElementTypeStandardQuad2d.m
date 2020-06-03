@@ -10,8 +10,8 @@ function [ newType ] = poCreateElementTypeStandardQuad2d( typeData )
 %   physics:       PLAIN_STRAIN or PLAIN_STRESS
 %   youngsModulus: The youngsModulus.
 %   nu:            The poissonRatio.
-%   area:          The cross sectional area.
 %   rho:           The mass density.
+%   thickness:     The thickness.
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateElementType may be used for convenience.
@@ -21,9 +21,10 @@ function [ newType ] = poCreateElementTypeStandardQuad2d( typeData )
 
     %% parse input
     p = moParseScalar('gaussOrder',typeData,2,'typeData for element type STANDARD_QUAD_2D');
-    E = moParseScalar('youngsModulus',typeData,1,'typeData for element type STANDARD_QUAD_2D');
-    nu = moParseScalar('poissonRatio',typeData,1,'typeData for element type STANDARD_QUAD_2D');
-    rho = moParseScalar('massDensity',typeData,1,'typeData for element type STANDARD_QUAD_2D');
+    E = moParseScalar('youngsModulus',typeData,1.0,'typeData for element type STANDARD_QUAD_2D');
+    nu = moParseScalar('poissonRatio',typeData,1.0,'typeData for element type STANDARD_QUAD_2D');
+    rho = moParseScalar('massDensity',typeData,1.0,'typeData for element type STANDARD_QUAD_2D');
+    d = moParseScalar('thickness',typeData,1.0,'typeData for element type STANDARD_QUAD_2D');
 
     physics = moParseString('physics',typeData, 'PLAIN_STRAIN', 'typeData for element type STANDARD_QUAD_2D');
     elasticityMatrixGetter=@linearPlaneStrainElasticityMatrix;
@@ -54,6 +55,7 @@ function [ newType ] = poCreateElementTypeStandardQuad2d( typeData )
     newType.elasticityMatrixGetterData.poissonRatio = nu;
     
     newType.massDensity = rho;
+    newType.thickness = d;
     
     newType.elementPlotter = @plotLinearQuad;
     newType.postGridCellCreator = @createQuadPostGridCells;

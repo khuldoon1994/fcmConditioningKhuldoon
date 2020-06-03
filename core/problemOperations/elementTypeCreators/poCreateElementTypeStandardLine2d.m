@@ -7,10 +7,11 @@ function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
 %
 %   typeData must be a structure array with the following fields:
 %   gaussOrder:    The gaussian order.
+%   physics:       PLAIN_STRAIN or PLAIN_STRESS
 %   youngsModulus: The youngsModulus.
 %   nu:            The poissonRatio.
-%   area:          The cross sectional area.
 %   rho:           The mass density.
+%   thickness:     The thickness.
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateElementType may be used for convenience.
@@ -21,9 +22,10 @@ function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
 
     %% parse input
     p = moParseScalar('gaussOrder',typeData,2,'typeData for element type STANDARD_LINE_2D');
-    E = moParseScalar('youngsModulus',typeData,1,'typeData for element type STANDARD_LINE_2D');
-    nu = moParseScalar('poissonRatio',typeData,1,'typeData for element type STANDARD_LINE_2D');
-    rho = moParseScalar('massDensity',typeData,1,'typeData for element type STANDARD_LINE_2D');
+    E = moParseScalar('youngsModulus',typeData,1.0,'typeData for element type STANDARD_LINE_2D');
+    nu = moParseScalar('poissonRatio',typeData,1.0,'typeData for element type STANDARD_LINE_2D');
+    rho = moParseScalar('massDensity',typeData,1.0,'typeData for element type STANDARD_LINE_2D');
+    d = moParseScalar('thickness',typeData,1.0,'typeData for element type STANDARD_LINE_2D');
 
     %% TODO: Why is this needed? It's a boundary element...  
     physics = moParseString('physics',typeData, 'PLAIN_STRAIN', 'typeData for element type STANDARD_LINE_2D');
@@ -47,12 +49,14 @@ function [ newType ] = poCreateElementTypeStandardLine2d( typeData )
     newType.systemMatricesCreator = @boundarySystemMatricesCreator;
     newType.dynamicSystemMatricesCreator = @dynamicBoundarySystemMatricesCreator;
     
-    %% TODO: Why is this needed? It's a boundary element...  
+    %% TODO: Why is this needed? It's a boundary element...
+    %% thickness is needed
     newType.elasticityMatrixGetter = elasticityMatrixGetter;
     newType.elasticityMatrixGetterData.youngsModulus = E;
     newType.elasticityMatrixGetterData.poissonRatio = nu;
     
     newType.massDensity = rho;
+    newType.thickness = d;
     
     newType.mappingEvaluator = @linearLineMapping;
     newType.jacobianEvaluator = @linearLineJacobian;

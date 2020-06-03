@@ -6,7 +6,7 @@ function [ newType ] = poCreateElementTypeStandardPoint2d( typeData )
 %   type according to the parameters given in typeData.
 %
 %   typeData must be a structure array with the following fields:
-%   mass:    The mass of the point
+%   mass:    The mass.
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateElementType may be used for convenience.
@@ -15,7 +15,7 @@ function [ newType ] = poCreateElementTypeStandardPoint2d( typeData )
 %   poCreateElementTypeStandardQuad2d,
 
     %% parse input
-    mass = moParseScalar('mass',typeData,1,'typeData for element type STANDARD_LINE_1D');
+    mass = moParseScalar('mass',typeData,1.0,'typeData for element type STANDARD_POINT_2D');
     
     
     %% create type
