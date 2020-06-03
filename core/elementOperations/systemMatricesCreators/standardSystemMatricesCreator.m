@@ -5,20 +5,21 @@ function [ Ke, Fe ] = standardSystemMatricesCreator(problem, elementIndex)
     % gather some information
     elementTypeIndex = problem.elementTypeIndices(elementIndex);
     nDof = eoGetNumberOfShapeFunctions(problem,elementIndex) * problem.dimension;
+    elementType = problem.elementTypes{elementTypeIndex};
     
     % initialize matrices
     Ke=zeros(nDof,nDof);
     Fe=zeros(nDof,1);
 
     % create copy of function handles for shorter notation
-    quadraturePointGetter = problem.elementTypes{elementTypeIndex}.quadraturePointGetter;
-    elasticityMatrixGetter = problem.elementTypes{elementTypeIndex}.elasticityMatrixGetter;
+    quadraturePointGetter = elementType.quadraturePointGetter;
+    elasticityMatrixGetter = elementType.elasticityMatrixGetter;
 
     % gather dimension related quantities
-    if (problem.elementTypes{elementTypeIndex}.localDimension == 2)
-        thickness = problem.elementTypes{elementTypeIndex}.thickness;
-    elseif (problem.elementTypes{elementTypeIndex}.localDimension == 1)
-        area = problem.elementTypes{elementTypeIndex}.area;
+    if (elementType.localDimension == 2)
+        thickness = elementType.thickness;
+    elseif (elementType.localDimension == 1)
+        area = elementType.area;
     end
     
     % create quadrature points
@@ -38,9 +39,9 @@ function [ Ke, Fe ] = standardSystemMatricesCreator(problem, elementIndex)
         detJ = det(jacobian);
         
         % simplify integrand
-        if (problem.elementTypes{elementTypeIndex}.localDimension == 2)
+        if (elementType.localDimension == 2)
             detJ = detJ * thickness;
-        elseif (problem.elementTypes{elementTypeIndex}.localDimension == 1)
+        elseif (elementType.localDimension == 1)
             detJ = detJ * area;
         end
         

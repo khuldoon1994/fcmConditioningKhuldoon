@@ -3,6 +3,7 @@ function [ Me, Ke, Fe ] = dynamicSystemMatricesCreator(problem, elementIndex)
     % gather some information
     elementTypeIndex = problem.elementTypeIndices(elementIndex);
     nDof = eoGetNumberOfShapeFunctions(problem,elementIndex) * problem.dimension;
+    elementType = problem.elementTypes{elementTypeIndex};
     
     % initialize matrices
     Ke = zeros(nDof,nDof);
@@ -10,15 +11,15 @@ function [ Me, Ke, Fe ] = dynamicSystemMatricesCreator(problem, elementIndex)
     Fe = zeros(nDof,1);
 
     % create copy of function handles for shorter notation
-    quadraturePointGetter = problem.elementTypes{elementTypeIndex}.quadraturePointGetter;
-    elasticityMatrixGetter = problem.elementTypes{elementTypeIndex}.elasticityMatrixGetter;
-    massDensity = problem.elementTypes{elementTypeIndex}.massDensity;
+    quadraturePointGetter = elementType.quadraturePointGetter;
+    elasticityMatrixGetter = elementType.elasticityMatrixGetter;
+    massDensity = elementType.massDensity;
 
     % gather dimension related quantities
-    if (problem.elementTypes{elementTypeIndex}.localDimension == 2)
-        thickness = problem.elementTypes{elementTypeIndex}.thickness;
-    elseif (problem.elementTypes{elementTypeIndex}.localDimension == 1)
-        area = problem.elementTypes{elementTypeIndex}.area;
+    if (elementType.localDimension == 2)
+        thickness = elementType.thickness;
+    elseif (elementType.localDimension == 1)
+        area = elementType.area;
     end
     
     % create quadrature points
@@ -37,9 +38,9 @@ function [ Me, Ke, Fe ] = dynamicSystemMatricesCreator(problem, elementIndex)
         detJ = det(jacobian);
         
         % simplify integrand
-        if (problem.elementTypes{elementTypeIndex}.localDimension == 2)
+        if (elementType.localDimension == 2)
             detJ = detJ * thickness;
-        elseif (problem.elementTypes{elementTypeIndex}.localDimension == 1)
+        elseif (elementType.localDimension == 1)
             detJ = detJ * area;
         end
         
