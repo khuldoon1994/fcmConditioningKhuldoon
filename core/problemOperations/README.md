@@ -33,7 +33,7 @@ myCoolElementType1.quadraturePointGetter = @gaussianQuadrature1d;
 myCoolElementType1.quadraturePointGetterData = { 'gaussOrder', 2 };
 myCoolElementType1.elementMatricesCreator = @standardElementMatricesCreator;
 myCoolElementType1.elasticityMatrixGetter = @linearElasticityMatrix1d;
-myCoolElementType1.elasticityMatrixGetterData = {'youngsModulus', 1.0e6, 'area', 1.0 };
+myCoolElementType1.elasticityMatrixGetterData = {'youngsModulus', 1.0e6 };
 myCoolElementType1.mappingEvaluator = @linearLineMapping1d;
 myCoolElementType1.jacobianEvaluator = @linearLineJacobian1d;
 
@@ -162,7 +162,7 @@ problem.elementPenalties = {
 };
 ```
 
-**The best way to understand all the fields of the problem data structure is to look through the [examples](/core/examples).**
+**The best way to understand all the fields of the problem data structure is to look through the [examples](/examples).**
 
 
 ##  Files in core/problemOperations ##

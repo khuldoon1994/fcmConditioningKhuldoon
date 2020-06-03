@@ -1,8 +1,8 @@
 % As in step 1, a problem structure will be set up in this step. This time,
 % the problem consists of ractangle, which is clamped at one end and loaded
-% by a surface traction on the other end. The rectangle is 1 by 1 meters
-% and should behave according plane strain physics with a Youngs modulus of
-% E=1, Poisson ration nu=0.3.
+% by a surface traction on the other end. The rectangle is 1 by 2 meters
+% and has a thickness of 1. it should behave according plane strain physics
+% with a Youngs modulus of E=1, Poisson ration nu=0.3.
 %
 %      _____________________
 %    /|                     |--->
@@ -11,7 +11,7 @@
 %    /|                     |---> 
 %    /|_____________________|--->
 %
-%    material parameter: rho, E, nu
+%    parameter: rho, E, nu, t
 
 %% clear variables, close figures
 clear all;
@@ -20,13 +20,14 @@ clc;
 warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
 
 %% problem definition
-problem.name = 'dynamicTwoQuads2D (Central Difference Method)';
+problem.name = 'dynamicQuad2D (Central Difference Method, 2x1 elements)';
 problem.dimension = 2;
 
 % parameter
 rho = 1.0;
 E = 1.0;
 nu = 0.3;
+d = 1.0;
 p = 2;
 traction = 0.15;
 
@@ -39,8 +40,8 @@ problem.nodes = [ 0.0, 1.0, 2.0, 0.0, 1.0, 2.0;
                   0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ];
 
 % element types
-elementType1 = poCreateElementType( 'DYNAMIC_QUAD_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'massDensity', rho) );
-elementType2 = poCreateElementType( 'DYNAMIC_LINE_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'massDensity', rho) );
+elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'thickness', d, 'massDensity', rho) );
+elementType2 = poCreateElementType( 'STANDARD_LINE_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', nu, 'thickness', d, 'massDensity', rho) );
 problem.elementTypes = { elementType1, elementType2 };
 
 subelementType1 = poCreateSubelementType( 'LEGENDRE_QUAD', struct('order', p) );
@@ -86,16 +87,17 @@ problem.nodeFoundations = { [],[],[],[],[],[] };
 
 % time integration parameters
 problem.dynamics.timeIntegration = 'Newmark Integration';
+problem.dynamics.time = 0;
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
 problem.dynamics.nTimeSteps = 201;
+problem.dynamics.time = 0;
 
 % initialize dynamic problem
 problem = poInitializeDynamicProblem(problem);
 
 
 %% static analysis
-[ ~, ~, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 [ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 [ K, F ] = goAssembleSystem(allKe, allFe, allLe);
 
@@ -190,6 +192,7 @@ title(['Displacement solution (p = ', num2str(p), ')']);
 
 
 %% post processing (animation)
+disp('press enter to continue');
 pause();
 
 % Animation

@@ -81,7 +81,7 @@ $`
 `$
 
 ### eoEvaluateTotalLoad.m ###
-Function returning the load vector denoted by $`\mathbf{b}`$ or $`\mathbf{t}`$ in the weak form depending on wether a volume element (body load) or a surface element (traction) is considered. In any case, the total load is simply the sum of all loads acting on the elements, i.e. 
+Function returning the load vector denoted by $`\mathbf{b}`$ or $`\mathbf{t}`$ in the weak form depending on wether a volume element (body load) or a surface element (traction) is considered. The load can be also time-dependent. In any case, the total load is simply the sum of all loads acting on the elements, i.e. 
 
 $`
 \mathbf{b} = \sum_i^{n_\mathrm{loads}} \mathbf{b}_i \quad \text{or} \quad \mathbf{t} = \sum_i^{n_\mathrm{loads}} \mathbf{t}_i.

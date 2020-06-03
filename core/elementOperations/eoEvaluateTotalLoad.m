@@ -17,11 +17,16 @@ function [ totalLoad ] = eoEvaluateTotalLoad( problem, elementIndex, r )
         % add value to total load
         if isnumeric(load)
             % load is constant
-            totalLoad = totalLoad + load;    
-        else
+            totalLoad = totalLoad + load;  
+        elseif nargin(load) == 1
             % load is a function of the global position
-            X=eoEvaluateMapping(problem,elementIndex,r);
+            X = eoEvaluateMapping(problem,elementIndex,r);
             totalLoad = totalLoad + load(X);
+        else
+            % load is a function of the global position and time
+            X = eoEvaluateMapping(problem,elementIndex,r);
+            t = problem.dynamics.time;
+            totalLoad = totalLoad + load(X, t);
         end
         
     end

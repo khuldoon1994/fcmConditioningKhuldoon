@@ -1,10 +1,10 @@
-function [ problem ] = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, ...
+function [ problem ] = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, F, ...
     tStart, tStop, nTimeSteps, massCoeff, stiffCoeff)
 % Creates a ready to use problem data structure. An elastic bar with
 % Youngs modulus E, area A, mass density rho and 
 % length L is discretized with n elements with shape
 % functions of order p (integrated Legendre polynomials). It is loaded by a
-% distributed force f, which can be a function handle.
+% distributed force f, which can be a function handle and a nodal load F.
 %
 % tStart < t < tStop
 % nTimeSteps is the number of time samples
@@ -33,18 +33,21 @@ function [ problem ] = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, ...
         f = @(x)( x/L );
     end
     if nargin < 8
-        tStart = 0;
+        F = 1;
     end
     if nargin < 9
-        tStop = 10;
+        tStart = 0;
     end
     if nargin < 10
-        nTimeSteps = 1001;
+        tStop = 10;
     end
     if nargin < 11
-        massCoeff = 1.0;
+        nTimeSteps = 1001;
     end
     if nargin < 12
+        massCoeff = 1.0;
+    end
+    if nargin < 13
         stiffCoeff = 0.0;
     end
     
@@ -63,7 +66,7 @@ function [ problem ] = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, ...
     
     % element types
     elementTypeData1 = struct( 'gaussOrder', p+1, 'youngsModulus', E, 'area', A, 'massDensity', rho );
-    elementType1 = poCreateElementType( 'DYNAMIC_LINE_1D', elementTypeData1 );
+    elementType1 = poCreateElementType( 'STANDARD_LINE_1D', elementTypeData1 );
     problem.elementTypes = { elementType1 };
     
     % nodes
@@ -94,7 +97,7 @@ function [ problem ] = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, ...
     %problem.cellElementConnections = createCellElementConnections( problem );
     
     % boundary conditions
-    problem.loads = { f };
+    problem.loads = { f, F };
     problem.penalties = { [0, E*1e15] };
     problem.foundations = { };
     
@@ -109,6 +112,7 @@ function [ problem ] = poCreateDynamicBarProblem(E, A, rho, L, p, n, f, ...
     
     % nodal boundary condition connections
     problem.nodeLoads = cell(1,n+1);
+    problem.nodeLoads{n+1} = 2;
     problem.nodePenalties = cell(1,n+1);
     problem.nodePenalties{1} = 1;
     problem.nodeFoundations = cell(1,n+1);

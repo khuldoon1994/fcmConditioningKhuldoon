@@ -8,21 +8,6 @@ It calls the actual  element type creators stored in this subdirectory. Again, t
 <h2> Files in core/problemOperations/elementTypeCreators/</h2>
 
 
-<h3> poCreateElementTypeDynamicLine1d.m </h2>
-<p>The one dimensional element for dynamic analysis.</p>
-<pre><code> file="poCreateElementTypeDynamicLine1d.m"
-</code></pre>
-
-<h3> poCreateElementTypeDynamicQuad2d.m </h2>
-<p>The linear quad element for dynamic analysis.</p>
-<pre><code> file="poCreateElementTypeDynamicQuad2d.m"
-</code></pre>
-
-<h3> poCreateElementTypeDynamicLine2d.m </h2>
-<p>A line element, also for dynamic analysis, to be used in two-dimensional problem, e.g. for load integration.</p>
-<pre><code> file="poCreateElementTypeDynamicLine2d.m"
-</code></pre>
-
 <h3> poCreateElementTypeFCMLine1d.m </h2>
 <p>The one dimensional element for the Finite Cell Method (FCM).</p>
 <pre><code> file="poCreateElementTypeFCMLine1d.m"
@@ -41,5 +26,15 @@ It calls the actual  element type creators stored in this subdirectory. Again, t
 <h3> poCreateElementTypeStandardLine2d.m </h2>
 <p>A line element to be used in two-dimensional problem, e.g. for load integration.</p>
 <pre><code> file="poCreateElementTypeStandardLine2d.m"
+</code></pre>
+
+<h3> poCreateElementTypeStandardTruss2d.m </h2>
+<p>A 2d truss element to be used in two-dimensional problem e.g. for truss systems.</p>
+<pre><code> file="poCreateElementTypeStandardTruss2d.m"
+</code></pre>
+
+<h3> poCreateElementTypeStandardPoint2d.m </h2>
+<p>A 2d point mass element to be used in two-dimensional problem.</p>
+<pre><code> file="poCreateElementTypeStandardPoint2d.m"
 </code></pre>
 
