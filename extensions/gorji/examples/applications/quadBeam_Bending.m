@@ -37,7 +37,7 @@ nu = 0.3;
 d = 1.0;
 p = 2;
 % traction = @(y) 0.15;
-traction = @(y) 0.05*y/h;
+traction = @(y) -0.05*y/h;
 
 % damping parameter
 problem.dynamics.massCoeff = 1.0;
