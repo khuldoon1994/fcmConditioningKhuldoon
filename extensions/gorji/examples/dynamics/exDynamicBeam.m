@@ -1,0 +1,143 @@
+%% clear variables, close figures
+clear all;
+close all;
+clc;
+warning('off', 'MATLAB:nearlySingularMatrix'); % get with [a, MSGID] = lastwarn();
+
+%% problem definition
+problem.name = 'dynamicBeam';
+problem.dimension = 1;
+
+% parameter
+rho = 1.0;
+E = 1.0;
+A = 1.0;
+I = 1.0;
+L = 1.0;
+
+% loads
+f = @(x) x/L;
+F0 = 0;
+
+% damping parameter
+problem.dynamics.massCoeff = 1.0;
+problem.dynamics.stiffCoeff = 0.0;
+
+% dynamic element types
+problem.elementTypes = { poCreateElementTypeStandardBeam1d(struct(...
+    'gaussOrder', 4, ...
+    'youngsModulus', E, ...
+    'area', A, ...
+    'massDensity', rho, ...
+    'areaMomentOfInertia', I)) };
+
+problem.nodes = [ 0, L ];
+
+problem.elementNodeIndices = { [1] };
+problem.elementTopologies = [ 1 ];
+problem.elementTypeIndices = [ 1 ];
+
+problem = poCreateSubElements( problem );
+problem = poCreateElementConnections( problem );
+
+problem.subelementTypes = { poCreateSubelementTypeHermiteLine() };
+problem.loads = { f, F0 };
+problem.penalties = { [0, 1e60] };
+
+problem.elementLoads = { 1 };
+problem.elementPenalties = { [] };
+problem.elementFoundations = { [] };
+
+problem.nodeLoads = { [],2 };
+problem.nodePenalties = { 1,[] };
+
+% time integration parameters
+problem.dynamics.timeIntegration = 'Central Difference';
+problem.dynamics.time = 0;
+problem.dynamics.tStart = 0;
+problem.dynamics.tStop = 10;
+problem.dynamics.nTimeSteps = 401;
+
+% initialize dynamic problem
+problem = poInitializeDynamicProblem(problem);
+
+
+%% dynamic analysis
+displacementAtLastNode = zeros(problem.dynamics.nTimeSteps, 1);
+
+% create system matrices
+[ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
+
+% assemble
+M = goAssembleMatrix(allMe, allLe);
+D = goAssembleMatrix(allDe, allLe);
+K = goAssembleMatrix(allKe, allLe);
+F = goAssembleVector(allFe, allLe);
+
+% add nodal forces
+Fn = goCreateNodalLoadVector(problem);
+F = F + Fn;
+
+% compute penalty stiffness matrix and penalty load vector
+[ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
+
+% % set initial displacement and velocity
+% [ nTotalDof ] = goNumberOfDof(problem);
+% U0Dynamic = zeros(nTotalDof, 1);
+% V0Dynamic = zeros(nTotalDof, 1);
+% 
+% % compute initial acceleration
+% [ A0Dynamic ] = goComputeInitialAcceleration(problem, M, D, K, F, U0Dynamic, V0Dynamic);
+% 
+% % initialize values
+% [ UOldDynamic, UDynamic ] = cdmInitialize(problem, U0Dynamic, V0Dynamic, A0Dynamic);
+% 
+% % create effective system matrices
+% [ KEff ] = cdmEffectiveSystemStiffnessMatrix(problem, M, D, K);
+% % ... and add penalty constraints
+% KEff = KEff + Kp;
+% 
+% for timeStep = 1 : problem.dynamics.nTimeSteps
+%     
+%     % extract necessary quantities from solution
+%     displacementAtLastNode(timeStep) = UDynamic(3);
+%     
+%     % calculate effective force vector
+%     [ FEff ] = cdmEffectiveSystemForceVector(problem, M, D, K, F, UDynamic, UOldDynamic);
+%     % ... and add penalty constraints
+%     FEff = FEff + Fp;
+%     
+%     % solve linear system of equations (UNewDynamic = KEff \ FEff)
+%     UNewDynamic = moSolveSparseSystem( KEff, FEff );
+%     
+%     % calculate velocities and accelerations
+%     [ VDynamic, ADynamic ] = cdmVelocityAcceleration(problem, UNewDynamic, UDynamic, UOldDynamic);
+%     
+%     % update kinematic quantities
+%     [ UDynamic, UOldDynamic ] = cdmUpdateKinematics(UNewDynamic, UDynamic);
+%     
+% end
+% 
+% % disassemble
+% [ allUe ] = goDisassembleVector( UDynamic, allLe );
+% 
+% % check for stability
+% poCheckDynamicStabilityCDM(problem, M, K);
+% 
+% 
+% %% post processing
+% timeVector = goGetTimeVector(problem);
+% 
+% % steady state value (of displacement at last node)
+% uSteadyState = 16/48;
+% 
+% % plotting necessary quantities over time
+% figure(1);
+% plot(timeVector, displacementAtLastNode/uSteadyState, 'LineWidth', 1.6);
+% hold on;
+% grid on;
+% plot([timeVector(1), timeVector(end)], [1 1], 'k:', 'LineWidth', 1.6);
+% 
+% title([problem.dynamics.timeIntegration, ' Method: u_{norm}(t, x = L)']);
+% xlabel('Time [sec]');
+% ylabel('normalized Displacement [-]');
