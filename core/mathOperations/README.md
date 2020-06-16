@@ -23,6 +23,14 @@ Topology indices are defined as follows:
 <h3>moMakeFull.m</h3>
 Elevates the given input vectors (provided as a matrix) to the given higher dimension. This is done by setting the new dimensions to a given default value.
 
+<h3>moParseFunctionHandle.m</h3>
+Function which extracts a function handle from a data structure and parses it to the output variable. It warns you, if the function handle is not defined in the data structure.
+
+<h3>moParseScalar.m</h3>
+Function which extracts a scalar value from a data structure and parses it to the output variable. It warns you, if the scalar value is not defined in the data structure.
+
+<h3>moParseScalarWithoutWarning.m</h3>
+Same as moParseScalar, but without a warning.
 
 <h3>moPseudoDeterminant.m</h3>
 A function returning the pseudo determinant for non-square matrices

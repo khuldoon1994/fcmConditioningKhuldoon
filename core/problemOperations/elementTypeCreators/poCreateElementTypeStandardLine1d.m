@@ -8,8 +8,8 @@ function [ newType ] = poCreateElementTypeStandardLine1d( typeData )
 %   typeData must be a structure array with the following fields:
 %   gaussOrder:    The gaussian order.
 %   youngsModulus: The youngsModulus.
-%   rho:           The mass density.
 %   area:          The cross sectional area.
+%   rho:           The mass density. (optional)
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateElementType may be used for convenience.
@@ -21,7 +21,7 @@ function [ newType ] = poCreateElementTypeStandardLine1d( typeData )
     p = moParseScalar('gaussOrder',typeData,2,'typeData for element type STANDARD_LINE_1D');
     E = moParseScalar('youngsModulus',typeData,1.0,'typeData for element type STANDARD_LINE_1D');
     A = moParseScalar('area',typeData,1.0,'typeData for element type STANDARD_LINE_1D');
-    rho = moParseScalar('massDensity',typeData,1.0,'typeData for element type STANDARD_LINE_1D');
+    rho = moParseScalarWithoutWarning('massDensity', typeData, 1.0);
     
     
     %% create type
