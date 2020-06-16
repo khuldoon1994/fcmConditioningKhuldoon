@@ -59,7 +59,10 @@ can be used instead of this functions, however, warnings may appear if the matri
 <h2>Subdirectories in core/mathOperations/</h2>
 
 <h3>specialMatrices/</h3>
-Contains function to create special matrices like strain-displacement-matrices or interpolation matrices.
+Contains functions to create special matrices like strain-displacement-matrices or interpolation matrices.
 
 <h3>specialFunctions/</h3>
 Contains MATLAB-functions to evaluate special mathematical functions like Lagrange polynomials, integrated Legendgre polynomials, etc.
+
+<h3>specialFunctions/</h3>
+Contains functions to create special points and weights e.g. for numerical integration like Gauss–Legendre quadrature points.
