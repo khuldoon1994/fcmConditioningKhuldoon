@@ -104,6 +104,10 @@ U = K\F;
 goPlotDisplacementArrows2d(problem, U, 1);
 
 % todo: plot deformed mesh
+postGridCells = goCreatePostGrid( problem, 0 );
+figure(2);
+goPlotPostGridSolution( problem, allUe, postGridCells, @eoEvaluateSolution, @eoEvaluateSolution, 2);
+axis equal;
 
 
 %% check
