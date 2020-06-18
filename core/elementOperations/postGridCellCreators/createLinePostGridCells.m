@@ -2,18 +2,18 @@ function [ postGridCells ] = createLinePostGridCells( problem, elementIndex, cut
 % createLinePostGridCells Creates post grid cells for a line element.
 
     % get mapping evaluator
-    elementTypeIndex = problem.elementTypeIndices{elementIndex}(2);
+    elementTypeIndex = problem.elementTypeIndices(elementIndex);
     mappingEvaluator = problem.elementTypes{elementTypeIndex}.mappingEvaluator;
 
     % local coordinates of the new nodes
-    r=linspace(-1,1,cuts+2);
+    r = linspace(-1,1,cuts+2);
     
     % create new nodes
     postGridNodesGlobal = zeros(problem.dimension,cuts+2);
     postGridNodesLocal = zeros(1,cuts+2);
-    for iNode=1:cuts+2
-        postGridNodesLocal(:,iNode) = r(i);
-        postGridNodesGlobal(:,iNode) = mappingEvaluator(problem, elementIndex, r(i));
+    for i=1:cuts+2
+        postGridNodesLocal(:,i) = r(i);
+        postGridNodesGlobal(:,i) = mappingEvaluator(problem, elementIndex, r(i));
     end
 
     % create new cells

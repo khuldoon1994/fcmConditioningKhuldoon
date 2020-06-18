@@ -6,7 +6,7 @@ function [ postGridCells ] = createQuadPostGridCells( problem, elementIndex, cut
     mappingEvaluator = problem.elementTypes{elementTypeIndex}.mappingEvaluator;
     
     % one-dimensional local coordinates of new nodes
-    r=linspace(-1,1,cuts+2);
+    r = linspace(-1,1,cuts+2);
         
     % create new nodes
     postGridNodesGlobal = zeros(problem.dimension,(cuts+2)*(cuts+2));
