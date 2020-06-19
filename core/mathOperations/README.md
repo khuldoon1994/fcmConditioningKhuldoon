@@ -4,9 +4,9 @@ This directory contains simple functions, which are not naturally provided by MA
 Most of them are listed below, some of them are stored in two additional subdirectories.
 
 <h2>Files in core/mathOperations/</h2>
-<h3>README.md</h3>
-This file
 
+<h3>README.md</h3>
+This file.
 
 <h3>moContainsAll.m</h3>
 Checks if all elements in the second argument (a matrix) are contained in the first argument (a matrix).
@@ -47,6 +47,13 @@ x = A \ b;
 </code></pre>
 can be used instead of this functions, however, warnings may appear if the matrix is badly conditioned.
 
+<h3>moParseFunctionHandler.m</h3>
+
+<h3>moParseScalar.m</h3>
+
+<h3>moListCoincide.m</h3>
+
+<h3>moParseString.m</h3>
 
 <h2>Subdirectories in core/mathOperations/</h2>
 
@@ -55,3 +62,5 @@ Contains function to create special matrices like strain-displacement-matrices o
 
 <h3>specialFunctions/</h3>
 Contains MATLAB-functions to evaluate special mathematical functions like Lagrange polynomials, integrated Legendgre polynomials, etc.
+
+<h3>specialPoints</h3>
