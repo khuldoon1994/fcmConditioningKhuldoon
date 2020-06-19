@@ -4,6 +4,6 @@ function [ handle ] = plotLinearLine( problem, elementIndex )
   
   fullNodes = moMakeFull(nodes,3,0);
 
-  handle = plot3(fullNodes(1,:), fullNodes(2,:), fullNodes(3,:), 'k-', 'linewidth', 2 );
+  handle = plot3(fullNodes(1,:), fullNodes(2,:), fullNodes(3,:), problem.plot, 'linewidth', 2 );
 
 end
