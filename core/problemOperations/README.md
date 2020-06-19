@@ -166,7 +166,8 @@ problem.elementPenalties = {
 
 
 ##  Files in core/problemOperations ##
-###  content.txt  ###
+
+###  README.md  ###
 This documentation page.
 
 ###  poCheckDynamicStabilityCDM.m  ###
@@ -189,6 +190,7 @@ Checks if all fields reffering to the dynamic analysis are aviable and if their 
 For not defined or incomplete fields standard variables will be defined.
 Also the sampling time $`\Delta t`$ will be defined.
 
+###  poSetupElementQuadratures.m  ###
 
 ##  Subdirectories in core/problemOperations ##
 
