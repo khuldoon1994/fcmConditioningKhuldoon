@@ -19,6 +19,10 @@ if problem.nSubelementTypes<1
    disp('ERROR! Problem subelementTypes must be a cell array with at least one entry.'); 
 end
 
+if ~isfield(problem,'plotData')
+    problem.plotData = 'k-';
+end
+
 %% nodes
 problem.nNodes = size(problem.nodes,2);
 if(size(problem.nodes,1)~=problem.dimension)

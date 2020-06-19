@@ -84,7 +84,7 @@ problem.subelementTypeIndices = ones(1,problem.nelement);
 problem = poCreateElementConnections( problem );
 
 % boundary conditions % TODO: make element loads work...
-problem.loads = { [0; -m*g], [2; 1] };
+problem.loads = { [0; -m*g], [.2; .1] };
 problem.penalties = { [0, 1e60;
                        0, 1e60],
                       [0, 0;
@@ -106,16 +106,17 @@ problem.nodePenalties (1:problem.nnodes)= { [] };
 problem.nodeFoundations (1:problem.nnodes)= { [] };
 
 % NodeLoads
-problem.nodeLoads (1,6)= { [2] };
-problem.nodeLoads (1,5)= { [2] };
+problem.nodeLoads (6)= { [2] };
+problem.nodeLoads (5)= { [2] };
 
 % Lineloads
-problem.elementLoads (1,9)= { [] };
+problem.elementLoads (9)= { [] };
 
 % Boundry Conditions
-problem.nodePenalties (1,1)= { [1] };
-problem.nodePenalties (1,5)= { [2] };
-problem.nodeFoundations (1,2)= { [] };
+problem.nodePenalties (1)= { [1] };
+problem.nodePenalties (2)= { [1] };
+problem.nodePenalties (5)= { [2] };
+problem.nodeFoundations (2)= { [] };
 
 % time integration parameters
 % TODO: Rename 'Newmark Integration' to 'NEWMARK', similar for CDM
@@ -125,6 +126,9 @@ problem.dynamics.lumping = 'No Lumping';
 
 % initialize dynamic problem
 problem = poInitializeDynamicProblem(problem);
+
+%ProblemCheck
+problem = poCheckProblem(problem);
 
 % plot mesh and boundary conditions
 % goPlotLoads(problem,1,1);
@@ -154,15 +158,17 @@ F = F + Fn;
 K = K + Kp;
 F = F + Fp;
 U = K\F;
-problem.displ=problem;
-problem.displ.nodes=reshape(U,2,[])+problem.nodes;
-problem.plot='k-';
-problem.displ.plot='k--';
+
+problem2=problem;
+problem2.nodes=reshape(U,2,[])+problem.nodes;
+problem.plotData='k--';
+
 goPlotMesh(problem,1);
-goPlotMesh(problem.displ,1);
+goPlotMesh(problem2,1);
 goPlotPenalties(problem,1);
 goPlotLoads2(problem,1,1,F);
 goPlotDisplacementArrows2d(problem, U, 1)
+
 % %% Dynamik analysis
 % % set initial displacement and velocity
 % [ nTotalDof ] = goNumberOfDof(problem);
