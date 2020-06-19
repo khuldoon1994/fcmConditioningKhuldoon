@@ -7,33 +7,35 @@ It calls the actual  element type creators stored in this subdirectory. Again, t
 
 <h2> Files in core/problemOperations/elementTypeCreators/</h2>
 
+<h3> README.md </h3>
+This documentation page.
 
-<h3> poCreateElementTypeFCMLine1d.m </h2>
+<h3> poCreateElementTypeFCMLine1d.m </h3>
 <p>The one dimensional element for the Finite Cell Method (FCM).</p>
 <pre><code> file="poCreateElementTypeFCMLine1d.m"
 </code></pre>
 
-<h3> poCreateElementTypeStandardLine1d.m </h2>
+<h3> poCreateElementTypeStandardLine1d.m </h3>
 <p>The standard one dimensional element.</p>
 <pre><code> file="poCreateElementTypeStandardLine1d.m"
 </code></pre>
 
-<h3> poCreateElementTypeStandardQuad2d.m </h2>
+<h3> poCreateElementTypeStandardQuad2d.m </h3>
 <p>The standard linear quad element.</p>
 <pre><code> file="poCreateElementTypeStandardQuad2d.m"
 </code></pre>
 
-<h3> poCreateElementTypeStandardLine2d.m </h2>
+<h3> poCreateElementTypeStandardLine2d.m </h3>
 <p>A line element to be used in two-dimensional problem, e.g. for load integration.</p>
 <pre><code> file="poCreateElementTypeStandardLine2d.m"
 </code></pre>
 
-<h3> poCreateElementTypeStandardTruss2d.m </h2>
+<h3> poCreateElementTypeStandardTruss2d.m </h3>
 <p>A 2d truss element to be used in two-dimensional problem e.g. for truss systems.</p>
 <pre><code> file="poCreateElementTypeStandardTruss2d.m"
 </code></pre>
 
-<h3> poCreateElementTypeStandardPoint2d.m </h2>
+<h3> poCreateElementTypeStandardPoint2d.m </h3>
 <p>A 2d point mass element to be used in two-dimensional problem.</p>
 <pre><code> file="poCreateElementTypeStandardPoint2d.m"
 </code></pre>
