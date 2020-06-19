@@ -3,6 +3,10 @@
 Here you can find a step by step guide going through all the details of the code.
 
 ## Files in examples/firstSteps ##
+
+### README.md ###
+This file.
+
 ### step1.m ###
 Sets up a problem data structure for a simple one-dimensional problem.
 

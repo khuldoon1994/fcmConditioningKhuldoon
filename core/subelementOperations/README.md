@@ -6,5 +6,17 @@ Therefore each element is made up of several subelements. While the element itse
 For example, a quad element is made up of one quad subelement, providing nodal and internal modes and four edge subelements, providing the edge modes. Now, if adjacent quad elements share the same subelement, the orientation issue mentioned above is fixed almost automatically.
 All that needs to be done is to transform the coordinate, where the shape function is to be evaluated to the local coordinate system of the edge subelement. This coordinate system may coincide with that from one of the elements or be differently oriented. In any case, the corresponding transformation matrix can be computed automatically.
 
-
 [This document](pFemTransformations.pdf), although incomplete, may serve as a detailed explanation.
+
+## Files in SiHoFemLab/core/subelementOperations/ ##
+
+### README.md ###
+This file.
+
+### seoCreateLocationVector.m ###
+
+### seoGetNumberOfShapeFunctions.m ###
+
+## Subdirectories in core/globalOperations
+
+### shapeFunctionEvaluators ###

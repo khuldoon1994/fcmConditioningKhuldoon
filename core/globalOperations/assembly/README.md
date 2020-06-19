@@ -4,6 +4,9 @@ This subdirectory contains simple functions for the assembly and disassembly of 
 
 <h2> Files in core/globalOperations/assembly/</h2>
 
+<h3>Readme.md</h3>
+This file. 
+
 <h3> goAssembleMatrix.m </h3>
 Used, e.g., to assemble the system matrices.
 

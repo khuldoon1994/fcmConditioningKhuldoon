@@ -4,6 +4,9 @@ This directory contains functions that work on the (global) problem data structu
 
 ## Files in core/globalOperations
 
+### README.md ###
+This file.
+
 ### goCreateElementMatrices.m
 Creates all element matrices (stiffness matrix, right hand side or load vector and location vector).
 
@@ -27,6 +30,8 @@ The dynamic version of *goCreateElementMatrices.m*. Includes mass and damping ma
 
 ### goAssembleSolveDisassemble.m 
 Performs the three steps indicated by its name.
+
+### goCreateNodalLoadVector.m ###
 
 ## Subdirectories in core/globalOperations
 #### assembly

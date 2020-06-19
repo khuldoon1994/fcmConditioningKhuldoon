@@ -5,10 +5,22 @@ It is recommended to look into the [first steps](/examples/firstSteps) before co
 
 ## Files in examples/dynamics
 
+### README.md ###
+This file.
+
 ### exDynamicBar1.m ###
 Sets up a problem data structure for a simple one-dimensional problem and solves the problem with *Central Difference Method*.
 
+### exDynamicBar1b.m ###
+Sets up a problem data structure for a simple one-dimensional problem and solves the problem with *Central Difference Method*.
+
+### exDynamicBar1c.m ###
+Sets up a problem data structure for a simple one-dimensional problem and solves the problem with *Central Difference Method*.
+
 ### exDynamicBar2.m ###
+Sets up a problem data structure for a simple one-dimensional problem and solves the problem with *Newmark Integration Method*.
+
+### exDynamicBar2b.m ###
 Sets up a problem data structure for a simple one-dimensional problem and solves the problem with *Newmark Integration Method*.
 
 ### exDynamicPointMass.m ###
@@ -22,3 +34,7 @@ The two dimensional plate from exDynamicQuad discretized with 2 elements.
 
 ### exDynamicTruss2d.m ###
 Sets up a truss system which is loaded by a nodal force.
+
+### exDynamicTrussSystem2d.m ###
+
+### exDynamicBarConvergenceStudy.m ###

@@ -1,6 +1,6 @@
 TODO: Correct and cleanup
 # Post processing #
-Post processing in *SiHoFemLab* is so far something you have to car about yourself. However, some convenient routines are provided for the most common tasks.
+Post processing in *SiHoFemLab* is so far something you have to care about yourself. However, some convenient routines are provided for the most common tasks.
 
 ## Computing something at a point within an element ##
 Say you have an element $`e`$ and you want to compute something at the local element coordinates $`\mathbf{r}`$. Given the element degree of freedom solution vector $`\mathbf{u}_e`$ you can compute pretty much everything using standard functions.
@@ -58,21 +58,10 @@ There are two convenient function for integrating something over an element, one
 
 ##  Files in core/globalOperations/postProcessing/ ##
 
-### content.txt ###
+### Readme.md ###
 This file.
-
-### goPlotMesh.m ###
-Plots a mesh as is. Curved element geometries are not shown.
-
 
 ### goCreatePostGrid.m ###
 Creates a post grid to be used for a more detailed (not only nodal values) evaluation of the solution.
 
-### goPlotPostGrid.m ###
-Plots a given post grid.
-
-### goPlotPostGridSolution.m ###
-Plots a solution (given as a function handle) over a post mesh. The mesh can be deformed by a solution provided through another function handle.
-
-### goPlotBasicCell.m ###
-A function used by the above functions to plot cells of arbitrary topology.
+### goComputeLinearStrainEnergy.m ###
