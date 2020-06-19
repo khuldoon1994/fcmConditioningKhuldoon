@@ -1,19 +1,10 @@
 # Examples #
 
-## Subdirectories in examples/ ##
-### dynamics/ ###
-Examples for elastodynamic simulations.
+## Files in SiHoFemLab/examples/ ##
 
-### fcm/ ###
-Examples of the finite cell method.
+### README.md ###
+This file.
 
-### firstSteps/ ###
-Two extensively documented example to get an overview.
-
-### highOrderFemExercises ###
-Code for the lecture High-Order FEM.
-
-## Files in examples/ ##
 ### exElasticBar.m ###
 A good template for everything one-dimensional.
 
@@ -29,5 +20,20 @@ The example from Section 2.2.1 of the lecture notes for High-Order FEM (yet anot
 ### exElasticQuad.m ###
 A good template for everything two-dimensional.
 
-### exElasticBarFCM.m ###
-A first example of the finite cell method in 1D. 
+### exTrussSystem.m ###
+
+### runExamples.m ###
+
+## Subdirectories in SiHoFemLab/examples/ ##
+
+### dynamics/ ###
+Examples for elastodynamic simulations.
+
+### fcm/ ###
+Examples of the finite cell method.
+
+### firstSteps/ ###
+Two extensively documented example to get an overview.
+
+### highOrderFemExercises/ ###
+Code for the lecture High-Order FEM.
