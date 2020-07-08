@@ -7,8 +7,8 @@ function [ newType ] = poCreateElementTypeStandardTruss2d( typeData )
 %
 %   typeData must be a structure array with the following fields:
 %   youngsModulus: The youngsModulus.
-%   rho:           The mass density.
 %   area:          The cross sectional area.
+%   rho:           The mass density. (optional)
 %  
 %   Instead of calling this function directly, the function 
 %   poCreateStandardElementType may be used for convenience.
@@ -18,7 +18,7 @@ function [ newType ] = poCreateElementTypeStandardTruss2d( typeData )
     %% parse input
     E = moParseScalar('youngsModulus',typeData,1.0,'typeData for element type STANDARD_TRUSS_2D');
     A = moParseScalar('area',typeData,1.0,'typeData for element type STANDARD_TRUSS_2D');
-    rho = moParseScalar('massDensity',typeData,1.0,'typeData for element type STANDARD_TRUSS_2D');
+    rho = moParseScalarWithoutWarning('massDensity', typeData, 1.0);
 
     %% create type
     newType.name = 'STANDARD_TRUSS_2D';
