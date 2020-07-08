@@ -5,13 +5,13 @@
 % with a Youngs modulus of E=1, Poisson ration nu=0.3.
 %
 %      ____________________________________________
-%    /|                                            |--->
-%    /|                                            |-->
-%    /|                                            |->
-%    /|                                            |   traction
-%    /|                                          <-|
+%    /|                                        <---|
 %    /|                                         <--|
-%    /|________________________________________<---|
+%    /|                                          <-|
+%    /|                                            |   traction
+%    /|                                            |->
+%    /|                                            |-->
+%    /|____________________________________________|--->
 %
 %    parameter: rho, E, nu, t
 
@@ -31,16 +31,16 @@ l = 4;              % length
 h = 0.5;              % height
 
 % parameter
-rho = 1.0;
-E = 1.0;
+rho = 0.03;
+E = 210.0;
 nu = 0.3;
-d = 1.0;
+d = 0.1;
 p = 2;
-% traction = @(y) 0.15;
-traction = @(y) -0.05*y/h;
+% traction = @(y) 31.5;
+traction = @(y) -10.5*y/h;
 
 % damping parameter
-problem.dynamics.massCoeff = 1.0;
+problem.dynamics.massCoeff = 0.25;
 problem.dynamics.stiffCoeff = 0.0;
 
 
@@ -141,7 +141,7 @@ problem.dynamics.timeIntegration = 'Newmark Integration';
 problem.dynamics.time = 0;
 problem.dynamics.tStart = 0;
 problem.dynamics.tStop = 10;
-problem.dynamics.nTimeSteps = 101;
+problem.dynamics.nTimeSteps = 501;
 problem.dynamics.time = 0;
 
 
@@ -165,26 +165,26 @@ uStatic = K \ F;
 
 %% dynamic analysis
 % Quad element:
-%           /3 ---- 4 -->
-%           /|      | -->
-%           /|      | -->
-%           /1 ---- 2 -->
+%           /nN+1 - + ---- ... nNodes -->
+%           /|      |               | -->
+%           /|      |               | -->
+%           /1 ---- 2 ---- ... --- nN -->
 %
-% displacementAtSecondNodeX = Ux(node 2)
-% displacementAtSecondNodeY = Uy(node 2)
+% displacementAtSecondNodeX = Ux(node nNodes)
+% displacementAtSecondNodeY = Uy(node nNodes)
 %
 % Symmetry:
-%                 Ux(node 2) = Ux(node 4)
-%                 Uy(node 2) = -Uy(node 4)
+%                 Ux(node nN) = Ux(node nNodes)
+%                 Uy(node nN) = -Uy(node nNodes)
 %
 % Clamped at left edge:
-%                 Ux(node 1) = 0 = Ux(node 3)
-%                 Uy(node 1) = 0 = Uy(node 3)
+%                 Ux(node 1) = 0 = Ux(node nN+1)
+%                 Uy(node 1) = 0 = Uy(node nN+1)
 
 displacementAtSecondNodeX = zeros(problem.dynamics.nTimeSteps, 1);
 displacementAtSecondNodeY = zeros(problem.dynamics.nTimeSteps, 1);
 
-solutionPointer = {{'displacement', [3:4]}, ...
+solutionPointer = {{'displacement', [2*nNodes-1:2*nNodes]}, ...
                    {'displacement', 'all'}};
 
 
@@ -223,7 +223,7 @@ legend('u_{2,x}(t)', ...
 
 
 % post processing
-nCuts = 3;
+nCuts = 2;
 
 figure(2);
 postGridCells = goCreatePostGrid( problem, nCuts );
