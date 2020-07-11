@@ -44,6 +44,13 @@ uQx_NM = zeros(1, N);
 uQy_NM = zeros(1, N);
 uNM = zeros(nDof, N);
 
+vQx_NM = zeros(1, N);
+vQy_NM = zeros(1, N);
+vNM = zeros(nDof, N);
+
+aQx_NM = zeros(1, N);
+aQy_NM = zeros(1, N);
+aNM = zeros(nDof, N);
 
 % set initial displacement and velocity
 U0Dynamic = zeros(nDof, 1);
@@ -67,6 +74,14 @@ for timeStep = 1 : N
     uQx_NM(timeStep) = UDynamic(indexQ(1));
     uQy_NM(timeStep) = UDynamic(indexQ(2));
     uNM(:,timeStep) = UDynamic;
+    
+    vQx_NM(timeStep) = VDynamic(indexQ(1));
+    vQy_NM(timeStep) = VDynamic(indexQ(2));
+    vNM(:,timeStep) = VDynamic;
+    
+    aQx_NM(timeStep) = ADynamic(indexQ(1));
+    aQy_NM(timeStep) = ADynamic(indexQ(2));
+    aNM(:,timeStep) = ADynamic;
     
     % calculate effective force vector
     ti = timeStep*deltaT;
@@ -95,4 +110,8 @@ tNM = timeVector(1:N);
 
 
 %% save results
-save('computation/LShape_results_NM.mat', 'uQx_NM', 'uQy_NM', 'uNM', 'tNM');
+save('computation/LShape_results_NM.mat', 'tNM', ...
+     'uQx_NM', 'uQy_NM', 'uNM', ...
+     'vQx_NM', 'vQy_NM', 'vNM', ...
+     'aQx_NM', 'aQy_NM', 'aNM');
+ 
