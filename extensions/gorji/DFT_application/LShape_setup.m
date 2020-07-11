@@ -21,7 +21,7 @@ simulateDynamic = true;
 % -----------------------------
 
 %% problem definition
-problem.name='elasticQuad';
+problem.name='LShape_DFT';
 problem.dimension = 2;
 
 % polynomial degree
@@ -344,119 +344,40 @@ problem.nodePenalties(1:nEdgesPenalty+1) = { 1 };
 % check and complete problem data structure
 problem = poCheckProblem(problem);
 
-% plot mesh and boundary conditions
-goPlotMesh(problem,1);
-goPlotLoads(problem,1,1);
-goPlotPenalties(problem,1);
-title('Problem setup');
-axis equal;
+
+% damping parameter
+problem.dynamics.massCoeff = 1.0;
+problem.dynamics.stiffCoeff = 1.0;
 
 
-%% static analysis
-[ allKe, allFe, allLe ] = goCreateElementMatrices( problem );
+%% compute system matrices and vectors
+% create system matrices
+[ allMe, allDe, allKe, allFe, allLe ] = goCreateDynamicElementMatrices( problem );
 
-[ K, F ] = goAssembleSystem(allKe, allFe, allLe);
+% assemble
+M = goAssembleMatrix(allMe, allLe);
+D = goAssembleMatrix(allDe, allLe);
+K = goAssembleMatrix(allKe, allLe);
+F0 = goAssembleVector(allFe, allLe);
 
-U = K \ F;
+% add nodal forces
+Fn = goCreateNodalLoadVector(problem);
+F0 = F0 + Fn;
 
-[ allUe ] = goDisassembleVector( U, allLe );
+% compute penalty stiffness matrix and penalty load vector
+[ Kp, Fp ] = goCreateAndAssemblePenaltyMatrices(problem);
 
+% % convert to full matrices
+% M = full(M);
+% D = full(D);
+% K = full(K);
+% Kp = full(Kp);
 
-% post processing
-postGridCells = goCreatePostGrid( problem, 1 );
-figure(2);
-goPlotPostGridSolution( problem, allUe, postGridCells, @eoEvaluateSolution, @eoEvaluateSolution, 2);
-axis equal;
-title('Displacement solution');
-
-
-
-
-
-
-
-
-
-
+% total number of Dof
+[ nDof ] = goNumberOfDof(problem);
 
 
-%% dynamic analysis
-%
-%  !!!!!!!!!!!!!!!!
-%   ______________
-%  |              |
-%  |              |
-%  |       _______Q
-%  |      |
-%  |      |
-%  |______|
-%  ///////
-%
-% displacement = displacement at point Q
-    
-if(simulateDynamic)
-    % damping parameter
-    problem.dynamics.massCoeff = 1.0;
-    problem.dynamics.stiffCoeff = 0.0;
-    
-    % time integration parameters
-    problem.dynamics.timeIntegration = 'Newmark Integration';
-    problem.dynamics.time = 0;
-    problem.dynamics.tStart = 0;
-    problem.dynamics.tStop = 10;
-    problem.dynamics.nTimeSteps = 201;
-    problem.dynamics.time = 0;
-    
-    % initialize dynamic problem
-    problem = poInitializeDynamicProblem(problem);
-    
-    displacementX = zeros(problem.dynamics.nTimeSteps, 1);
-    displacementY = zeros(problem.dynamics.nTimeSteps, 1);
-    
-    solutionPointer = {{'displacement', [37:38]}, ...
-        {'displacement', 'all'}};
-    
-    
-    [ nTotalDof ] = goNumberOfDof(problem);
-    U0Dynamic = zeros(nTotalDof, 1);
-    V0Dynamic = zeros(nTotalDof, 1);
-    
-    % main dynamic function
-    [ solutionQuantities ] = goSolveLinearDynamics(problem, solutionPointer, U0Dynamic, V0Dynamic);
-    
-    % post processing
-    displacementAtSecondNodeX = solutionQuantities{1}(1,:);
-    displacementAtSecondNodeY = solutionQuantities{1}(2,:);
-    allDisplacements = solutionQuantities{2};
-    
-    % disassemble
-    allUeDynamic = goDisassembleDynamicVector(problem, allDisplacements, allLe);
-    
-    
-    % post processing
-    timeVector = goGetTimeVector(problem);
-    
-    % plotting the displacements of node Q over time
-    figure(3);
-    hold on;
-    grid on;
-    plot(timeVector, displacementAtSecondNodeX, 'LineWidth', 1.6);
-    plot(timeVector, displacementAtSecondNodeY, 'LineWidth', 1.6);
-    
-    title([problem.dynamics.timeIntegration, ' Method: u(t, x, y)']);
-    xlabel('Time [sec]');
-    ylabel('Displacements [meters]');
-    legend('u_{Q,x}(t)', ...
-        'u_{Q,y}(t)', ...
-        'Location', 'NorthEast');
-    
-    
-    % post processing (animation)
-    disp('press enter to continue');
-    pause();
-    
-    % Animation
-    figure(4);
-    postGridCells = goCreatePostGrid( problem, 0 );
-    goPlotAnimatedPostGridSolution( problem, allUeDynamic, postGridCells, @eoEvaluateSolution, @eoEvaluateSolution, 4);
-end
+%% save data
+save('LShape_data.mat', 'M', 'D', 'K', 'F0', 'Kp', 'Fp', 'nDof');
+
+
