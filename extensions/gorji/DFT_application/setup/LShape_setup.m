@@ -28,16 +28,20 @@ problem.dimension = 2;
 p=1;
 
 % material parameter
-rho = 1.0;
-E = 21;
-nu = 0.3;
-th = 1.0;
+rho = 2700;                 % 2700 kg/m^3
+E = 70e6;                   % 70 MPa
+nu = 0.3;                   % [-]
+th = 1e-3;                  % 1 mm
 
 % geometry parameter
-L = 3.0;
+L = 3.0;                    % m
 
-% load
-Fy = 0.25;
+% damping parameter
+alphaM = 0.1;
+alphaK = 0.01;
+
+% traction
+traction = 500;                   % N/m^2
 
 % element types
 elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct(...
@@ -322,7 +326,7 @@ problem = poCreateElementConnections( problem );
 
 
 % boundary conditions
-problem.loads = { [ 0.0; -Fy ] };
+problem.loads = { [ 0.0; -traction ] };
 problem.penalties = { [0, 1e15; 0, 1e15] };
 problem.foundations = { }; %foundations added
 
@@ -346,8 +350,8 @@ problem = poCheckProblem(problem);
 
 
 % damping parameter
-problem.dynamics.massCoeff = 1.0;
-problem.dynamics.stiffCoeff = 1.0;
+problem.dynamics.massCoeff = alphaM;
+problem.dynamics.stiffCoeff = alphaK;
 
 
 %% compute system matrices and vectors

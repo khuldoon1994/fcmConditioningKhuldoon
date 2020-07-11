@@ -21,23 +21,23 @@ simulateDynamic = true;
 % -----------------------------
 
 %% problem definition
-problem.name='elasticQuad';
+problem.name='LShape';
 problem.dimension = 2;
 
 % polynomial degree
 p=1;
 
 % material parameter
-rho = 1.0;
-E = 21;
+rho = 2700;
+E = 70e6;
 nu = 0.3;
-th = 1.0;
+th = 1e-3;
 
 % geometry parameter
 L = 3.0;
 
 % load
-Fy = 0.25;
+Fy = 500;
 
 % element types
 elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct(...
@@ -345,8 +345,10 @@ problem.nodePenalties(1:nEdgesPenalty+1) = { 1 };
 problem = poCheckProblem(problem);
 
 % plot mesh and boundary conditions
+scaleForce = 5e-4;
+
 goPlotMesh(problem,1);
-goPlotLoads(problem,1,1);
+goPlotLoads(problem,1,scaleForce);
 goPlotPenalties(problem,1);
 title('Problem setup');
 axis equal;
@@ -396,8 +398,8 @@ title('Displacement solution');
     
 if(simulateDynamic)
     % damping parameter
-    problem.dynamics.massCoeff = 1.0;
-    problem.dynamics.stiffCoeff = 0.0;
+    problem.dynamics.massCoeff = 0.1;
+    problem.dynamics.stiffCoeff = 0.01;
     
     % time integration parameters
     problem.dynamics.timeIntegration = 'Newmark Integration';
