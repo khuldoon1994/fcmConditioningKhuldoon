@@ -378,6 +378,6 @@ F0 = F0 + Fn;
 
 
 %% save data
-save('LShape_data.mat', 'M', 'D', 'K', 'F0', 'Kp', 'Fp', 'nDof');
+save('setup/LShape_data.mat', 'M', 'D', 'K', 'F0', 'Kp', 'Fp', 'nDof', 'problem', 'allLe');
 
 

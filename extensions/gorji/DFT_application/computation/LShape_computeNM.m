@@ -1,7 +1,11 @@
+clear all
+close all
+clc
+
 
 % load data
-load('LShape_data.mat');
-load('LShape_data_dynamic.mat');
+load('setup/LShape_data.mat');
+load('setup/LShape_data_dynamic.mat');
 
 % setup force
 F = @(t) F0*f(t);
@@ -91,4 +95,4 @@ tNM = timeVector(1:N);
 
 
 %% save results
-save('LShape_results_NM.mat', 'uQx_NM', 'uQy_NM', 'uNM', 'tNM');
+save('computation/LShape_results_NM.mat', 'uQx_NM', 'uQy_NM', 'uNM', 'tNM');
