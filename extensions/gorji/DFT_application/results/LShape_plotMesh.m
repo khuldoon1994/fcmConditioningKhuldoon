@@ -1,5 +1,8 @@
-% first run: 'LShape_setup.m'
 
+% load data
+load('setup/LShape_data.mat');
+
+%% plot mesh
 scaleLoad = 5e-4;
 
 % plot mesh and boundary conditions
