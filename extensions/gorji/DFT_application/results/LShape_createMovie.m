@@ -1,7 +1,6 @@
 
 % load data
 load('results/LShape_frame_data.mat');
-
 % load('results/LShape_frame_data1.mat');
 % load('results/LShape_frame_data2.mat');
 % load('results/LShape_frame_data3.mat');
@@ -21,3 +20,4 @@ writeVideo(videoObj,Frames);
 close(videoObj);
 
 disp(['Movie created.']);
+

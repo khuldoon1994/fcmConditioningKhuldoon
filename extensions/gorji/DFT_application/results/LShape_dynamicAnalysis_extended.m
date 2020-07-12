@@ -18,14 +18,14 @@ iFig = get(gcf,'Number');
 postGridCells = goCreatePostGrid( problem, 0 );
 goPlotPostGridSolution( problem, allUe, postGridCells, @eoEvaluateSolution, @eoEvaluateSolution, iFig);
 axis equal;
-title(['t = ',num2str(ti),' s']);
+title(['t = ',num2str(ti),' s'],'FontSize',20);
 
 % plot excitation
 axes('Position', [.65 .15 .16 .16]);
-plot(tDFT,f(tDFT),'k','LineWidth',1.2);
+plot(tDFT,f(tDFT),'k','LineWidth',1.8);
 hold on
 grid on
-plot(ti,f(ti),'ro','LineWidth',1.2);
+plot(ti,f(ti),'ro','LineWidth',2.0,'Markersize',9);
 
 
 
@@ -83,7 +83,7 @@ for i = 1:N+1
 %     axis equal;
 %     axis([-1.17 4.17 0 3]);
     axis([-1.437 4.437 0 3.3]);
-    title(['t = ',num2str(ti),' s']);
+    title(['t = ',num2str(ti),' s'],'FontSize',20);
     % without colorbar it is much quicker
 %     colorbar;
     
