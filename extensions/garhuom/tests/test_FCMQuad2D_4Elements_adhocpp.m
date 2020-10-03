@@ -105,10 +105,11 @@ problem.elementQuadratures = poSetupElementQuadratures(problem);
 % check and complete problem data structure
 problem = poCheckProblem(problem);
 
+%% integration error
 Aq = sum( [problem.elementQuadratures{1}.weights,problem.elementQuadratures{2}.weights,problem.elementQuadratures{3}.weights, problem.elementQuadratures{4}.weights] )*2500/4;
-Aex = 100*100 - pi*(10)^2/4;
+Aex = 100*100 - pi*(R)^2/4;
 
-e_r = abs( (Aq - Aex) / Aex );
+relativeErrorIntegration = abs( (Aq - Aex) / Aex )
 
 %% analysis
 [ allKe, allFe, allLe ] = goCreateElementMatrices( problem );
@@ -173,16 +174,16 @@ condition_adhocpp = 3.0016147107e+05;
 
 Uen=U'*K*U / 2;
 
-relativeErrorU = abs( (Uen - energy_adhocpp) / energy_adhocpp )
-relativeErrorCond = abs( (condition - condition_adhocpp) / condition_adhocpp )
+relativeErrorEnergy = abs( (Uen - energy_adhocpp) / energy_adhocpp )
+relativeErrorCondition = abs( (condition - condition_adhocpp) / condition_adhocpp )
 
-if relativeErrorU>1e-13
+if relativeErrorEnergy>1e-13
    error('exElasticBarFCM: Energy check failed!');
 else
    disp('exElasticBarFCM: Energy check passed.');
 end
 
-if relativeErrorCond>1e-3
+if relativeErrorCondition>1e-3
    error('exElasticBarFCM: Condition check failed!');
 else
    disp('exElasticBarFCM: Condition check passed.');

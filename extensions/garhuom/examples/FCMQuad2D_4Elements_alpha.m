@@ -6,7 +6,7 @@ close all
 
 format long;
 %% problem definition
-problem.name='FCM 2D 4 Elements conditioning for different radius R';
+problem.name='FCM plate with a hole 2D 4 Elements conditioning for different alpha';
 problem.dimension = 2;
 
 %% parameters
@@ -20,14 +20,16 @@ n=5;
 E = 206900.0;
 mu = 0.29;
 
-alpha = 0;
+R = 60;
 
 load = 450;
 
 i = 1;
 k = 1;
 %% Start analysis
-for R=10:10:60
+for q=0:3:12
+    alpha = 10.0^(-q);
+    
     %level set
     %R=10;
     X0 = 100;
@@ -110,10 +112,11 @@ for R=10:10:60
         % check and complete problem data structure
         problem = poCheckProblem(problem);
 
+        %% integration error
         Aq = sum( [problem.elementQuadratures{1}.weights,problem.elementQuadratures{2}.weights,problem.elementQuadratures{3}.weights, problem.elementQuadratures{4}.weights] )*2500/4;
-        Aex = 100*100 - pi*(10)^2/4;
+        Aex = 100*100 - pi*(R)^2/4;
 
-        e_r = abs( (Aq - Aex) / Aex )
+        relativeErrorIntegration = abs( (Aq - Aex) / Aex );
 
         %% analysis
         [ allKe, allFe, allLe ] = goCreateElementMatrices( problem );
@@ -123,13 +126,6 @@ for R=10:10:60
         U = K \ F;
 
         [ allUe ] = goDisassembleVector( U, allLe );
-
-        %% error in energy
-
-        Uen=U'*K*U / 2
-        Uref=4590.7731146;
-
-        eE_rel = abs( (Uen - Uref) / Uref ) % R = 10
 
         %% conditioning number
         %eigen = eig(K)
@@ -171,7 +167,7 @@ for R=10:10:60
     xlabel('polynomial degree $p$','FontSize',20, 'Interpreter','latex')
     ylabel('condition number $k$','FontSize',20, 'Interpreter','latex')
 
-    leg{k}=[append('R = ',num2str(R))];
+    leg{k}=[append('q = ',num2str(q))];
     k = k+1;
     grid on;
 end
@@ -179,18 +175,15 @@ leg = legend(leg) ;
 set(leg,'Location','northwest')
 
 %% postprocess results
-% plot integration points
+%plot integration points
 plotAdaptiveGaussLegendre2d( problem, 2)
 
-% plot mesh and boundary conditions
+%plot mesh and boundary conditions
 goPlotMesh(problem,3);
 goPlotLoads(problem,3, 0.03);
-%view(2);
-%axis equal;
+axis equal;
 
-% plot displacement field
+%plot displacement field
 postGridCells = goCreatePostGrid( problem, 10 );
 goPlotPostGridSolution( problem, allUe, postGridCells, @eoEvaluateSolution, @eoEvaluateSolution, 4);
-
-%view(3)
-%axis equal;
+axis equal;
