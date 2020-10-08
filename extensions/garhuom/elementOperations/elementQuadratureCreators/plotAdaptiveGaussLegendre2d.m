@@ -63,7 +63,10 @@ for i=1:length(problem.elementQuadratures)
     elementType = problem.elementTypes{iElementType};
     
     localPoints = problem.elementQuadratures{i}.points;
-    
+    if (isempty(localPoints) == 1)
+        continue
+    end
+        
     globalPoints = zeros(size(localPoints));
     for j=1:length(localPoints(1,:))
         globalPoints(:,j) = elementType.mappingEvaluator(problem, i, localPoints(:,j));
