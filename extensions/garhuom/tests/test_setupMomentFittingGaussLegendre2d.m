@@ -6,20 +6,27 @@ clc
 close
 
 %%
-pA = 2;
+size = 2;
+radius = 0.5; 
+xc = 0.0; 
+yc = 0.0;
 
-quadraturePointGetterData.levelSetFunction = @(X) -( (X(1,:) - 1).^2 + (X(2,:) - 1).^2 - 0.75^2 );
-quadraturePointGetterData.depth = 9;
-quadraturePointGetterData.gaussOrder = 2*pA+1;
-quadraturePointGetterData.alphaFCM = 1.0e-7;
+quadraturePointGetterData.levelSetFunction = @(X) -( (X(1,:) - xc).^2 + (X(2,:) - yc).^2 - radius^2 );
+
+pA = 3;
+gaussOrder = 2*pA+1;
+quadraturePointGetterData.depth = 7;
+quadraturePointGetterData.gaussOrder = gaussOrder;
+quadraturePointGetterData.alphaFCM = 0;
 
 %%
 problem.name='Test: Setup moment fitting integration 2d';
 problem.dimension = 2;
 
-problem.nodes=[0 2 0 2 ; 0 0 2 2];
+problem.nodes=[0.0 size 0.0 size ;
+               0.0 0.0 size size];
 
-elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct( 'gaussOrder', 2*pA+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', 1, 'poissonRatio', 0.3 ) );
+elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct( 'gaussOrder', gaussOrder, 'physics', 'PLANE_STRAIN', 'youngsModulus', 1, 'poissonRatio', 0.3 ) );
 elementType1.quadraturePointGetterData = quadraturePointGetterData;
 
 problem.elementTypes = { elementType1 };
@@ -38,7 +45,7 @@ ng = length(problem.elementQuadratures{1}.weights)
 %%
 
 Aq = sum( problem.elementQuadratures{1}.weights )
-Aex = 4 - pi*0.75^2
+Aex = size*size - (pi*radius^2)/4
 
 e_r = abs( (Aq - Aex) / Aex )
 
@@ -47,6 +54,11 @@ e_r = abs( (Aq - Aex) / Aex )
 plotAdaptiveGaussLegendre2d( problem, 1 )
 
 points = problem.elementQuadratures{1}.points;
-weights = problem.elementQuadratures{1}.weights;
+weights = (problem.elementQuadratures{1}.weights);
 
-
+%% test
+if e_r>1e-6
+   error('MomentFittingGaussLegendre2d: Integration check failed!');
+else
+   disp('MomentFittingGaussLegendre2d: Integration check passed.');
+end
