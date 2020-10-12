@@ -11,7 +11,7 @@ problem.dimension = 2;
 
 %% parameters
 % polynomial degree
-p=3;
+p=1;
 
 % integration depth
 n=5;
@@ -28,7 +28,6 @@ i = 1;
 k = 1;
 %% Start analysis
 %for q=0:3:12
-    q = 6;
     alpha = 10.0^(-q);
     
     %level set
