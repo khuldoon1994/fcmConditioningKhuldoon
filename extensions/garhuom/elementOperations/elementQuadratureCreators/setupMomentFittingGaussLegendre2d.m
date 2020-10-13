@@ -51,7 +51,8 @@ if ~isempty(insideElements)
         
         % tmpPoints is within range [-1 1]x[-1,1]
         tmpPoints = geometryInfo.mappingEvaluator(Rmin, Rmax, xg);
-        tmpWeights = wg * geometryInfo.determinant(Rmin, Rmax);
+        tmpWeights = wg;
+        
         points = [points, tmpPoints];
         weights = [weights, tmpWeights];
     end
@@ -64,13 +65,12 @@ if ~isempty(brokenElements)
         % map points and weights
         Rmin = iElement.nodesMinMax(:,1);
         Rmax = iElement.nodesMinMax(:,2);
+        
         % tmpPoints is within range [-1 1]x[-1,1]
         tmpPoints = geometryInfo.mappingEvaluator(Rmin, Rmax, xg);
         
         % Compute the moment fitting weights using the octree  
         elementQuadraturePoint = eoSetupAdaptiveGaussLegendre2d( problem, 1 );
-        
-        %tmpWeights = wg * quadTree.determinant(Rmin, Rmax);
         tmpWeights = zeros(size(wg));
         
         points_ = elementQuadraturePoint.points;
