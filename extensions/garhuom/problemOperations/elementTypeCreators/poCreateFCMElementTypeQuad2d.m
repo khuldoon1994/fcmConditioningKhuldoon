@@ -22,7 +22,7 @@ infoStr = 'typeData for element type FCM_QUAD_2D';
     if strcmp(quadratureRule,'ADAPTIVE_GAUSS_LEGENDRE')
         qpGetter = @eoSetupAdaptiveGaussLegendre2d;
     elseif strcmp(quadratureRule,'MOMENT_FITTING_GAUSS_LEGENDRE')
-        qpGetter = @setupMomentFittingGaussLegendre1d;
+        qpGetter = @setupMomentFittingGaussLegendre2d;
     else
         quadratureRule = ADAPTIVE_GAUSS_LEGENDRE;
         warning('WARNING: Field "quadratureRule" in data for element type FCM_Quad_2D needs to be one of (ADAPTIVE_GAUSS_LEGENDRE,MOMENT_FITTING_GAUSS_LEGENDRE). Assuming 2.!');
