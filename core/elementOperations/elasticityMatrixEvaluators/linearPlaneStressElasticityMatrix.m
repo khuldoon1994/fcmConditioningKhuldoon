@@ -1,4 +1,5 @@
-function [ C ] = linearPlaneStressElasticityMatrix(problem, elementTypeIndex, elementIndex, r)
+function [ C ] = linearPlaneStressElasticityMatrix(problem, elementIndex, r)
+
     elementTypeIndex = problem.elementTypeIndices(elementIndex);
     elementType = problem.elementTypes{elementTypeIndex};
     data = elementType.elasticityMatrixGetterData;
