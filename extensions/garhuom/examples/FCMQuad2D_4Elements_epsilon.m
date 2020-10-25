@@ -20,21 +20,27 @@ n=5;
 E = 206900.0;
 mu = 0.29;
 
+%level set
 R = 60;
+X0 = 100;
+Y0 = 0;
+levelSetFunction =  @(X) -( (X(1,:) -X0).^2 + (X(2,:) -Y0 ).^2 - R.^2);
 
+alpha = 0;
 load = 450;
 
+penalty = 1.0e20;
 i = 1;
 k = 1;
+
+% stablization parameters
+%problem.stablization.epsilon = 1.0e-4;
+problem.stablization.tolerenceEig = 1.0;
+problem.stablization.tolerenceStrain = 1.0e-6;
+
 %% Start analysis
 for q=12:-2:4
-    alpha = 10.0^(-q);
-    
-    %level set
-    %R=10;
-    X0 = 100;
-    Y0 = 0;
-    levelSetFunction =  @(X) -( (X(1,:) -X0).^2 + (X(2,:) -Y0 ).^2 - R.^2);
+    problem.stablization.epsilon = 10.0^(-q);
 
     for p=1:2:pA
         % cell types
@@ -91,9 +97,9 @@ for q=12:-2:4
 
           % boundary conditions
         problem.loads = { [0 ; load] };
-        penalty1 = [0, 0; 0, 1e20] ; %no movement in y
-        penalty2 =  [ 0, 1e20; 0, 0] ; %no movement in x
-        penalty3 =  [ 0, 1e20; 0, 1e20] ;
+        penalty1 = [0, 0; 0, penalty] ; %no movement in y
+        penalty2 =  [ 0, penalty; 0, 0] ; %no movement in x
+        penalty3 =  [ 0, penalty; 0, penalty] ;
         problem.penalties = { penalty1, penalty2, penalty3};
         problem.foundations = { [] };
 
@@ -156,6 +162,10 @@ for q=12:-2:4
 
         %condition = abs(maxEig/minEig)
         %cond = cond(ke2)
+        
+        %% Reciprocal condition number
+        % If K is well conditioned, rcond(K) is near 1.0. If A is badly conditioned, rcond(K) is near 0.
+        % rcb = rcond(full(K))
     end
     i = 1;
     %% plot conditioning number
@@ -169,8 +179,8 @@ for q=12:-2:4
 
     leg{k}=[append('q = ',num2str(q))];
     k = k+1;
-    %grid on;
-    annotation('textbox', [0.38, 0.8, 0.1, 0.1], 'String', "$\alpha = 10^{-q}$", 'Interpreter','latex', 'FontSize',16)
+   % grid on;
+    annotation('textbox', [0.38, 0.8, 0.1, 0.1], 'String', "$\epsilon = 10^{-q}$", 'Interpreter','latex', 'FontSize',16)
 end
 leg = legend(leg) ;
 set(leg,'Location','northwest')
