@@ -34,8 +34,8 @@ i = 1;
 k = 1;
 
 % stablization parameters
-%problem.stablization.epsilon = 1.0e-4;
-problem.stablization.tolerenceEig = 1.0;
+% problem.stablization.epsilon = 1.0e-4;
+problem.stablization.tolerenceEig = 0.01;
 problem.stablization.tolerenceStrain = 1.0e-6;
 
 %% Start analysis
