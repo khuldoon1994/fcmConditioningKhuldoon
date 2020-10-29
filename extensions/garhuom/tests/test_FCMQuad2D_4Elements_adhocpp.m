@@ -5,22 +5,25 @@ clc
 close all
 
 format longE;
+
 %% problem definition
 problem.name='FCM Test 2D 4 Elements conditioning';
 problem.dimension = 2;
 
 %% parameters
 % polynomial degree
-p=3;
+p= 7;
 
 % integration depth
 n=5;
 
 % material
+%digits(15);
+%E = vpa(206900.0);
 E = 206900.0;
 mu = 0.29;
 
-alpha = 1.0e-4;
+alpha = 0;
 load = 450;
 
 %level set
@@ -28,6 +31,11 @@ R = 60;
 X0 = 100;
 Y0 = 0;
 levelSetFunction =  @(X) -( (X(1,:) -X0).^2 + (X(2,:) -Y0 ).^2 - R.^2);
+
+% stablization parameters
+problem.stablization.epsilon = 1.0e-4;
+problem.stablization.tolerenceEig = 1.0e-1;
+problem.stablization.tolerenceStrain = 1.0e-6;
 
 %% Start analysis
 % cell types 
@@ -123,8 +131,8 @@ U = K \ F;
 %% conditioning number
 
 % git the matrix of interest
-%ke2 = allKe{2};
-ke2 = full(K);
+ke2 = allKe{1};
+%ke2 = full(K);
 
 % compute the eigen values
 eigV = eig(ke2);
@@ -172,19 +180,34 @@ condition_adhocpp = 3.0016147107e+05;
 
 %% error in energy
 
-Uen=U'*K*U / 2;
+% Uen=U'*K*U / 2;
+% 
+% relativeErrorEnergy = abs( (Uen - energy_adhocpp) / energy_adhocpp )
+% relativeErrorCondition = abs( (condition - condition_adhocpp) / condition_adhocpp )
+% 
+% if relativeErrorEnergy>1e-13
+%    error('exElasticBarFCM: Energy check failed!');
+% else
+%    disp('exElasticBarFCM: Energy check passed.');
+% end
+% 
+% if relativeErrorCondition>1e-3
+%    error('exElasticBarFCM: Condition check failed!');
+% else
+%    disp('exElasticBarFCM: Condition check passed.');
+% end
 
-relativeErrorEnergy = abs( (Uen - energy_adhocpp) / energy_adhocpp )
-relativeErrorCondition = abs( (condition - condition_adhocpp) / condition_adhocpp )
+%% singular value decomposition
 
-if relativeErrorEnergy>1e-13
-   error('exElasticBarFCM: Energy check failed!');
-else
-   disp('exElasticBarFCM: Energy check passed.');
-end
+%s = svd(ke2)
+%s_ = eig(ke2)
 
-if relativeErrorCondition>1e-3
-   error('exElasticBarFCM: Condition check failed!');
-else
-   disp('exElasticBarFCM: Condition check passed.');
-end
+% try chol(ke2);
+%     disp('Matrix is symmetric positive definite.')
+% catch ME
+%     disp('Matrix is not symmetric positive definite')
+% end
+
+%condition
+
+%isSym = issymmetric(ke2)
