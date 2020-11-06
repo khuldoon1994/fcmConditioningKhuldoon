@@ -48,7 +48,7 @@ function [ Ke, Fe ] = eoStandardSystemMatricesCreator(problem, elementIndex)
     %% only if epsilon is pre defined apply the stablization
     if(isfield(problem, 'stablization'))
         % apply eigenvalue stablization if cell is broken
-        status = isCellBroken2D(problem, elementIndex);
+        status = isCellBroken2D(problem, elementIndex)
 
         epsilon = problem.stablization.epsilon;
         tolerenceEig = problem.stablization.tolerenceEig;
