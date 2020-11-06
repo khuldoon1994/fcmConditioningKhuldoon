@@ -95,7 +95,7 @@ if alphaFCM > 0.0
     for j=1:length(tmpPoints(1,:))
         tmpGlobalPoints(:,j) = elementType.mappingEvaluator(problem, elementIndex, tmpPoints(:,j));
     end
-    tmpEvaluatedGlobalPoints = problem.elementTypes{elementTypeIndex}.quadraturePointGetterData.levelSetFunction(tmpGlobalPoints);
+    tmpEvaluatedGlobalPoints = levelSetFunction(tmpGlobalPoints);
     
     checkGlobalPointsOutside = (tmpEvaluatedGlobalPoints > 0);
     if ~isempty(checkGlobalPointsOutside)
