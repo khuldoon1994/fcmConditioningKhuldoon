@@ -23,7 +23,7 @@ quadTree.brokenElements = {}; % list of elements
 %% setup quadtree
 
 tmpElements = {};
-treeDepthLevel = problem.elementTypes{elementIndex}.quadraturePointGetterData.depth;
+treeDepthLevel = elementType.quadraturePointGetterData.depth;
 for iLevel=0:treeDepthLevel
     
     % initialize root of line tree
@@ -37,7 +37,7 @@ for iLevel=0:treeDepthLevel
         for i=1:length(localPoints)
             globalPoints(:,i) = elementType.mappingEvaluator(problem, elementIndex, localPoints(:,i));
         end
-        evaluatedGlobalPoints = problem.elementTypes{elementIndex}.quadraturePointGetterData.levelSetFunction(globalPoints);
+        evaluatedGlobalPoints = elementType.quadraturePointGetterData.levelSetFunction(globalPoints);
         
         checkPoints = evaluatedGlobalPoints > 0;
         if sum(checkPoints) == 0
@@ -90,7 +90,7 @@ for iLevel=0:treeDepthLevel
                 for i=1:length(localPoints)
                     globalPoints(:,i) = elementType.mappingEvaluator(problem, elementIndex, localPoints(:,i));
                 end
-                evaluatedGlobalPoints = problem.elementTypes{elementIndex}.quadraturePointGetterData.levelSetFunction(globalPoints);
+                evaluatedGlobalPoints = elementType.quadraturePointGetterData.levelSetFunction(globalPoints);
                 
                 checkPoints = evaluatedGlobalPoints > 0;
                 if sum(checkPoints) == 0

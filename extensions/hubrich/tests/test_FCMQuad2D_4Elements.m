@@ -73,7 +73,7 @@ problem.nodePenalties = { 1,1,3,[],[],2,[],[],2};
 problem.nodeFoundations = { [],[],[],[],[],[],[],[],[],[] };
 
 % quadrature types
-problem = poSetupElementQuadratures(problem);
+problem.elementQuadratures = poSetupElementQuadratures(problem);
 
 %% check and complete problem data structure
 

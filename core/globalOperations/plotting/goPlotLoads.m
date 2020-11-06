@@ -1,4 +1,8 @@
 function goPlotLoads( problem, fig, factor )
+    
+    if ( nargin < 3)
+       factor = 1.0; 
+    end
 
     figure(fig);
     hold on;
