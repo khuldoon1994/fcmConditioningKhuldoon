@@ -7,8 +7,18 @@ function [ X ] = myBlendedQuadMapping2( problem, elementIndex, localCoordinates,
   r = localCoordinates(1);
   s = localCoordinates(2);
   
-  E3 = [ 100 - R*(cos(pi*((s+1.0)/2.0)/4.0)); R* (sin(pi*((s+1.0)/2)/4.0)) ];
+  if elementIndex == 1
   
-  X = nodes * shapeFunctions' + ( E3 - (1.0-s)/2.0 * nodes(:,2) - (1.0+s)/2.0 * nodes(:,3)) * (1+r)/2.0;
+        E3 = [ 100 - R*(cos(pi*((s+1.0)/2.0)/4.0)); R* (sin(pi*((s+1.0)/2)/4.0)) ];
+  
+        X = nodes * shapeFunctions' + ( E3 - (1.0-s)/2.0 * nodes(:,2) - (1.0+s)/2.0 * nodes(:,3)) * (1+r)/2.0;
+  
+  elseif elementIndex == 2
+      
+        E3 = [ 100 - R*(cos(pi*((r+3.0)/2.0)/4.0)); R* (sin(pi*((r+3.0)/2.0)/4.0)) ];
+        
+        X = nodes * shapeFunctions' + ( E3 - (1.0-r)/2.0 * nodes(:,1) - (1.0+r)/2.0 * nodes(:,2)) * (1-s)/2.0;
+      
+  end
  
 end

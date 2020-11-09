@@ -29,11 +29,11 @@ k = 1;
         % cell types
         elementType1 = poCreateElementType( 'STANDARD_QUAD_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', mu, 'thickness', 1 ));
         elementType1.mappingEvaluator = @myBlendedQuadMapping2;
-        elementType1.jacobianEvaluator = @myBlendedQuadJacobian;
+        elementType1.jacobianEvaluator = @myBlendedQuadJacobian2;
 
         elementType2 = poCreateElementType( 'STANDARD_LINE_2D', struct('gaussOrder', p+1, 'physics', 'PLANE_STRAIN', 'youngsModulus', E, 'poissonRatio', mu, 'thickness', 1 ));
-        elementType2.mappingEvaluator = @myBlendedLineMapping;
-        elementType2.jacobianEvaluator = @myBlendedLineJacobian;
+%         elementType2.mappingEvaluator = @myBlendedLineMapping2;
+%         elementType2.jacobianEvaluator = @myBlendedLineJacobian2;
 
     
         problem.elementTypes = { elementType1, elementType2 };
@@ -43,7 +43,7 @@ k = 1;
 
         problem.elementNodeIndices = { [ 1 2 3 6 ], [ 3 4 5 6 ],[1 2],[4 5],[5 6]};
         problem.elementTopologies = [ 2 2 1 1 1];
-        problem.elementTypeIndices = [ 1 1 2 2 2];
+        problem.elementTypeIndices = [ 1 1 2 2 2]; %Penalty constraints
 
         % subelement 
         subelementType1 = poCreateSubelementType( 'LEGENDRE_QUAD', struct( 'order', p ) );
