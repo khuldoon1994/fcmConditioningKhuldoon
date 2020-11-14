@@ -11,14 +11,14 @@ problem.dimension = 2;
 
 %% parameters
 % polynomial degree
-pA=8;
+pA=12;
 
 % integration depth
-n=5;
+n=7;
 
 % material
-E = 206900.0;
-mu = 0.29;
+E = 50.0;
+mu = 0.3;
 
 %level set
 R = 60;
@@ -27,7 +27,7 @@ Y0 = 0;
 levelSetFunction =  @(X) -( (X(1,:) -X0).^2 + (X(2,:) -Y0 ).^2 - R.^2);
 
 alpha = 0;
-load = 450;
+load = -0.1;
 
 penalty = 1.0e20;
 i = 1;
@@ -35,14 +35,14 @@ k = 1;
 
 % stablization parameters
 % problem.stablization.epsilon = 1.0e-4;
-problem.stablization.tolerenceEig = 0.01;
-problem.stablization.tolerenceStrain = 1.0e-6;
+% problem.stablization.tolerenceEig = 0.01;
+% problem.stablization.tolerenceStrain = 1.0e-6;
 
 %% Start analysis
-for q=12:-2:4
+for q=[18,12,9,7,5,4,3,2]
     problem.stablization.epsilon = 10.0^(-q);
 
-    for p=1:2:pA
+    for p=2:2:pA
         % cell types
         elementType1 = poCreateFCMElementTypeQuad2d( struct( ...
             'levelSetFunction', levelSetFunction, ...
@@ -156,13 +156,15 @@ for q=12:-2:4
         %eigV
         minEig = min(eigV);
         maxEig = max(eigV);
-        condition(i) = abs(maxEig/minEig);
+        condition_epsilon(i) = abs(maxEig/minEig);
+        fcmEnergy_epsilon(i) = 0.5*U'*K*U;
+        U_epsilon = U;
         i=i+1;
         %condition(p) = condest(K);
 
         %condition = abs(maxEig/minEig)
         %cond = cond(ke2)
-        
+       
         %% Reciprocal condition number
         % If K is well conditioned, rcond(K) is near 1.0. If A is badly conditioned, rcond(K) is near 0.
         % rcb = rcond(full(K))
@@ -171,15 +173,28 @@ for q=12:-2:4
     %% plot conditioning number
     figure(1)
     poly = 2:2:pA;
-    semilogy(poly, condition, '-o', 'LineWidth',1.7,'MarkerSize',7)
-    hold all;
+    semilogy(poly, condition_epsilon, '-o', 'LineWidth',1.7,'MarkerSize',7)
+    hold on;
 
     xlabel('polynomial degree $p$','FontSize',20, 'Interpreter','latex')
     ylabel('condition number $k$','FontSize',20, 'Interpreter','latex')
+    
+     leg{k}=[append('q = ',num2str(q))];
+    k = k+1;
+    
+    %grid on;
+    annotation('textbox', [0.38, 0.8, 0.1, 0.1], 'String', "$\alpha = 10^{-q}$", 'Interpreter','latex', 'FontSize',16)
+    
+    figure(2)
+    plot(poly, fcmEnergy_epsilon, '-o', 'LineWidth',1.7,'MarkerSize',7)
+    hold on;
+    xlabel('polynomial degree $p$','FontSize',20, 'Interpreter','latex')
+    ylabel('Strain Energy $k$','FontSize',20, 'Interpreter','latex')
 
     leg{k}=[append('q = ',num2str(q))];
     k = k+1;
    % grid on;
+   
     annotation('textbox', [0.38, 0.8, 0.1, 0.1], 'String', "$\epsilon = 10^{-q}$", 'Interpreter','latex', 'FontSize',16)
 end
 leg = legend(leg) ;
