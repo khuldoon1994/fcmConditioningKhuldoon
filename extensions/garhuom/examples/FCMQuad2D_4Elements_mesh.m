@@ -173,16 +173,33 @@ for q=[18,12,9,7,5,4,3,2]
         penalty3 =  [ 0, 1e20; 0, 1e20] ;
         problem.penalties = { penalty1, penalty2, penalty3};
         problem.foundations = { [] };
-
-        problem.elementLoads = {[],[],[],[],[],[],[],[],1,1};
-        problem.elementPenalties = {[],[],[],[],1 ,1, 2 ,2,[],[],};
-        problem.elementFoundations = { [],[],[],[],[],[],[],[],[],[] };
-
-        problem.nodeLoads = { [],[],[],[],[],[],[],[],[]};
-
-        problem.nodePenalties = { 1,1,3,[],[],2,[],[],2};
-        problem.nodeFoundations = { [],[],[],[],[],[],[],[],[],[] };
         
+        %Loads/Penalties on line elements
+        problem.elementLoads = cell(1,numel(problem.elementNodeIndices));
+        problem.elementPenalties = cell(1,numel(problem.elementNodeIndices));
+        problem.elementFoundations = cell(1,numel(problem.elementNodeIndices));
+        for a = 1:1:element_num
+            problem.elementLoads(a+numel(elementNodeIndices1)+(2*element_num)) = {[1]};
+            problem.elementPenalties(a+numel(elementNodeIndices1)) = {[1]};
+            problem.elementPenalties(a+numel(elementNodeIndices1)+element_num) = {[2]};
+            problem.elementPenalties(a+numel(elementNodeIndices1)+(2*element_num)) = {[]};
+        end
+        
+        %Loads/Penalties on Nodes
+        problem.nodeLoads = cell(1,numel(problem.nodes(1,1:end)));
+        problem.nodePenalties = cell(1,numel(problem.nodes(1,1:end)));
+        problem.nodeFoundations = cell(1,numel(problem.nodes(1,1:end)));
+        for a = 1:1:numel(problem.nodes(1,1:end))
+            if a < node_num
+                problem.nodePenalties(a) = {[1]};
+            elseif a == node_num
+                problem.nodePenalties(a) = {[3]};
+            elseif mod(a,node_num) == 0
+                problem.nodePenalties(a) = {[2]};
+            else
+                problem.nodePenalties(a) = {[]};
+            end
+        end        
 
         % quadrature types
         problem.elementQuadratures = poSetupElementQuadratures(problem);
@@ -253,15 +270,15 @@ for q=[18,12,9,7,5,4,3,2]
     
     
 %     %grid on;
-%     annotation('textbox', [0.38, 0.8, 0.1, 0.1], 'String', "$\alpha = 10^{-q}$", 'Interpreter','latex', 'FontSize',16)
-%     
-%     figure(2)
-%     plot(poly, fcmEnergy_alpha, '-o', 'LineWidth',1.7,'MarkerSize',7)
-%     hold on;
-%     xlabel('polynomial degree $p$','FontSize',20, 'Interpreter','latex')
-%     ylabel('Strain Energy $k$','FontSize',20, 'Interpreter','latex')
+    annotation('textbox', [0.38, 0.8, 0.1, 0.1], 'String', "$\alpha = 10^{-q}$", 'Interpreter','latex', 'FontSize',16)
+    
+    figure(2)
+    plot(poly, fcmEnergy_alpha, '-o', 'LineWidth',1.7,'MarkerSize',7)
+    hold on;
+    xlabel('polynomial degree $p$','FontSize',20, 'Interpreter','latex')
+    ylabel('Strain Energy $k$','FontSize',20, 'Interpreter','latex')
 
-%     leg{k}= [append('q = ',num2str(q))];
+    leg2{k}= [append('q = ',num2str(q))];
     %grid on;
     annotation('textbox', [0.38, 0.8, 0.1, 0.1], 'String', "$\alpha = 10^{-q}$", 'Interpreter','latex', 'FontSize',16)
     
@@ -269,6 +286,8 @@ for q=[18,12,9,7,5,4,3,2]
 end
 leg = legend(leg) ;
 set(leg,'Location','northwest')
+leg2 = legend(leg2) ;
+set(leg2,'Location','northwest')
 
 %% postprocess results
 %plot integration points
